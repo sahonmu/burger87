@@ -1,4 +1,4 @@
-package kr.sahonmu.burger87
+package com.sahonmu.burger87
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package kr.sahonmu.burger87.ui.theme
+package com.sahonmu.burger87.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
