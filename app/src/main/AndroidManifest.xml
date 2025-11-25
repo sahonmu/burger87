@@ -14,9 +14,13 @@
         android:theme="@style/Theme.Burger87">
         <activity
             android:name=".ui.theme.screens.MainActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Burger87">
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Burger87"
+            android:windowSoftInputMode="adjustResize|stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
