@@ -3,6 +3,7 @@ package com.sahonmu.burger87.enums
 
 enum class Screens(var route: String) {
     SPLASH("SPLASH"),
+    MAP("MAP"),
 }
 
 //fun screens(route: String, id: Int): String {

@@ -7,12 +7,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.ui.theme.base.BaseScreen
+import com.sahonmu.burger87.ui.theme.screens.map.MapScreen
 import com.sahonmu.burger87.ui.theme.screens.splash.SplashScreen
 
 
-fun NavGraphBuilder.map(
-    navController: NavHostController,
-) {
+//fun NavGraphBuilder.map(
+//    navController: NavHostController,
+//) {
 //    composable(Screens.SPLASH.route) {
 //        BaseScreen(
 //            content = {
@@ -24,7 +25,7 @@ fun NavGraphBuilder.map(
 //            viewDescription = "View_Onboarding"
 //        )
 //    }
-}
+//}
 
 
 //fun NavGraphBuilder.community(
@@ -86,11 +87,14 @@ fun NavGraph(
     screen: Screens
 ) {
     NavHost(navController = navController, startDestination = screen.route) {
-        // splash
+        // 스플래쉬
         composable(Screens.SPLASH.route) {
             BaseScreen(content = { SplashScreen(navController = navController) })
         }
 
-//        map(navController)
+        // 지도
+        composable(Screens.MAP.route) {
+            BaseScreen(content = { MapScreen(navController = navController) })
+        }
     }
 }

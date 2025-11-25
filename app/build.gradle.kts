@@ -6,6 +6,8 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
     kotlin("kapt")
+
+//    alias(libs.plugins.secrets.gradle.plugin)
 }
 
 android {
@@ -52,6 +54,7 @@ android {
 //            versionName = "1.0.0"
             manifestPlaceholders["appNameGradle"] = "@string/app_name"
             manifestPlaceholders["appLabel"] = "@string/app_name"
+            resValue("string", "google_maps_api_key", "AIzaSyDmcAQ5GqHyUR3zBH_sQgmeXTo3da8IV6o")
         }
 
         create("dev") {
@@ -62,6 +65,7 @@ android {
             manifestPlaceholders["appNameGradle"] = "@string/app_name"
             manifestPlaceholders["appLabel"] = "@string/app_name"
             resValue("string","app_name","버거87(DEV)")
+            resValue("string", "google_maps_api_key", "AIzaSyDmcAQ5GqHyUR3zBH_sQgmeXTo3da8IV6o")
         }
     }
 }
@@ -85,6 +89,11 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.25.1")
+
+    // GoogleMap
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.maps.android:maps-compose:2.12.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
     // Compose
     implementation("androidx.navigation:navigation-compose:2.7.7")

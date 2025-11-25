@@ -41,7 +41,7 @@ fun SplashScreen(
 
     LaunchedEffect(Unit) {
         delay(Constants.SPLASH_DURATION)
-//        navController.navigate(Screens.SPLASH)
+        navController.navigate(Screens.MAP)
     }
 
     Box(
