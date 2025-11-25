@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -39,6 +41,27 @@ android {
     buildFeatures {
         compose = true
     }
+
+    flavorDimensions += "version"
+    productFlavors {
+        create("live") {
+            dimension = "version"
+//            versionCode = 1
+//            versionName = "1.0.0"
+            manifestPlaceholders["appNameGradle"] = "@string/app_name"
+            manifestPlaceholders["appLabel"] = "@string/app_name"
+        }
+
+        create("dev") {
+            dimension = "version"
+            versionCode = 1
+            versionName = "1.3.0"
+            applicationIdSuffix = ".dev"
+            manifestPlaceholders["appNameGradle"] = "@string/app_name"
+            manifestPlaceholders["appLabel"] = "@string/app_name"
+            resValue("string","app_name","버거87(DEV)")
+        }
+    }
 }
 
 dependencies {
@@ -57,4 +80,7 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
+    implementation("com.google.firebase:firebase-analytics")
 }

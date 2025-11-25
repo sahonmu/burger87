@@ -1,4 +1,4 @@
-package com.sahonmu.burger87
+package com.sahonmu.burger87.ui.theme.screens
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
