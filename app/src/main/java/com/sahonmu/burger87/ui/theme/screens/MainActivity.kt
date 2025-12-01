@@ -18,10 +18,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.ui.theme.Burger87Theme
-import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.main.NavGraph
 import com.sahonmu.burger87.viewmodels.AppInfoViewModel
 import com.sahonmu.burger87.viewmodels.MainViewModel
