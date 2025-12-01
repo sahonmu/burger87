@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,6 +20,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.ui.theme.SplashBackground
 import com.sahonmu.burger87.viewmodels.MapViewModel
 
@@ -29,7 +31,7 @@ fun MapScreen(
 ) {
 
 
-    val mapViewUiState = mapViewModel.mapViewUiState.collectAsState()
+    val mapViewUiState = mapViewModel.mapViewUiState.collectAsState().value
 
     val mapUiSettings = MapUiSettings(
         compassEnabled = false,
@@ -48,27 +50,34 @@ fun MapScreen(
     ) {
 
         LaunchedEffect(Unit) {
-//            mapViewModel.requestStoreList()
-            mapViewModel.getStoreUseCase()
+            mapViewModel.requestStoreList()
         }
 
-
-//        val cameraPositionState = rememberCameraPositionState {
-//            position = CameraPosition.fromLatLngZoom(seoul, 12f)
-//        }
-
-
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-//            cameraPositionState = cameraPositionState,
-            uiSettings = mapUiSettings
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-//            mapViewUiState.value.storeList.forEach { store ->
-//                val latLng = LatLng(store.latitude, store.longitude)
-//                Marker(
-//                    state = MarkerState(position = latLng)
-//                )
-//            }
+            if (mapViewUiState.loadState == LoadState.LOADING) {
+                Text(
+                    text = "로딩중"
+                )
+            } else {
+
+//                            val cameraPositionState = rememberCameraPositionState {
+//            position = CameraPosition.fromLatLngZoom(seoul, 12f)
+
+                GoogleMap(
+                    modifier = Modifier.fillMaxSize(),
+//            cameraPositionState = cameraPositionState,
+                    uiSettings = mapUiSettings
+                ) {
+                    mapViewUiState.storeList.forEach { store ->
+                        val latLng = LatLng(store.latitude, store.longitude)
+                        Marker(
+                            state = MarkerState(position = latLng)
+                        )
+                    }
+                }
+            }
         }
     }
 }

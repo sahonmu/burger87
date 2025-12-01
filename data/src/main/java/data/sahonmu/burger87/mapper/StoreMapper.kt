@@ -1,20 +1,21 @@
 package data.sahonmu.burger87.mapper
 
 import data.sahonmu.burger87.dto.StoreDto
-import domain.sahonmu.burger87.entity.StoreEntity
-import kotlin.String
+import domain.sahonmu.burger87.vo.Store
 
-fun StoreDto.toEntity(): StoreEntity = StoreEntity(
+fun StoreDto.toDomain(): Store = Store(
     id = this.id,
-    created_at = this.created_at,
+    createdAt = this.createdAt,
     address = this.address,
     branch = this.branch,
-    city_code = this.city_code,
-    city_name = this.city_name,
+    cityCode = this.cityCode,
+    cityName = this.cityName,
     description = this.description,
     latitude = this.latitude,
     longitude = this.longitude,
     instagram = this.instagram,
     name = this.name,
     tel = this.tel,
+    updateDate = this.updateDate,
+    state = this.state
 )

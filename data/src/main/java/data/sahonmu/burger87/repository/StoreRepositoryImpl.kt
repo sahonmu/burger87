@@ -1,22 +1,15 @@
 package data.sahonmu.burger87.repository
 
 import android.util.Log
-import dagger.hilt.android.scopes.ActivityRetainedScoped
 import data.sahonmu.burger87.dto.StoreDto
-import data.sahonmu.burger87.mapper.toEntity
-import domain.sahonmu.burger87.entity.StoreEntity
+import data.sahonmu.burger87.mapper.toDomain
 import domain.sahonmu.burger87.repository.StoreRepository
+import domain.sahonmu.burger87.vo.Store
 import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.storage.Storage
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class StoreRepositoryImpl @Inject constructor(
+class StoreRepositoryImpl(
     private val postgrest: Postgrest,
-    private val storage: Storage,
 ) : StoreRepository {
     override fun getStore() = flow {
         try {
@@ -25,7 +18,7 @@ class StoreRepositoryImpl @Inject constructor(
             val response = postgrest["store"].select()
                 .decodeList<StoreDto>()
 
-            emit(response.map { it.toEntity() })
+            emit(response.map { it.toDomain() })
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -38,11 +31,11 @@ class StoreRepositoryImpl @Inject constructor(
         return false
     }
 
-    override suspend fun updateProduct(storeEntity: StoreEntity): Boolean {
+    override suspend fun updateProduct(store: Store): Boolean {
         return false
     }
 
-    override suspend fun createProduct(storeEntity: StoreEntity): Boolean {
+    override suspend fun createProduct(store: Store): Boolean {
         return false
     }
 }
