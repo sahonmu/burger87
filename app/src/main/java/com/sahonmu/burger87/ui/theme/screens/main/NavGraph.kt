@@ -1,6 +1,7 @@
 package com.sahonmu.burger87.ui.theme.screens.main
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -9,6 +10,7 @@ import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.ui.theme.base.BaseScreen
 import com.sahonmu.burger87.ui.theme.screens.map.MapScreen
 import com.sahonmu.burger87.ui.theme.screens.splash.SplashScreen
+import com.sahonmu.burger87.viewmodels.MapViewModel
 
 
 //fun NavGraphBuilder.map(
@@ -94,7 +96,15 @@ fun NavGraph(
 
         // 지도
         composable(Screens.MAP.route) {
-            BaseScreen(content = { MapScreen(navController = navController) })
+            val mapViewModel: MapViewModel = hiltViewModel()
+            BaseScreen(
+                content = {
+                    MapScreen(
+                        navController = navController,
+                        mapViewModel = mapViewModel
+                    )
+                }
+            )
         }
     }
 }
