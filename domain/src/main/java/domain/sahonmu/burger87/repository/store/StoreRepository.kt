@@ -1,6 +1,6 @@
-package domain.sahonmu.burger87.repository
+package domain.sahonmu.burger87.repository.store
 
-import domain.sahonmu.burger87.vo.Store
+import domain.sahonmu.burger87.vo.store.Store
 import kotlinx.coroutines.flow.Flow
 
 interface StoreRepository {

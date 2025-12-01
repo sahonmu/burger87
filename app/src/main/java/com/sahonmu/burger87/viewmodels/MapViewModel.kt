@@ -5,7 +5,7 @@ import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.viewmodels.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import domain.sahonmu.burger87.usecase.store.StoreUseCase
-import domain.sahonmu.burger87.vo.Store
+import domain.sahonmu.burger87.vo.store.Store
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

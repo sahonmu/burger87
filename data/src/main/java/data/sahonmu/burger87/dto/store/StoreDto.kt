@@ -1,4 +1,4 @@
-package data.sahonmu.burger87.dto
+package data.sahonmu.burger87.dto.store
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StoreDto(
 
-    @SerialName("id")val id: Long ,
+    @SerialName("id")val id: Long,
     @SerialName("created_at")val createdAt: String, // timestamp with time zone → String으로 받는게 안전
     @SerialName("address")val address: String,
     @SerialName("branch")val branch: String,

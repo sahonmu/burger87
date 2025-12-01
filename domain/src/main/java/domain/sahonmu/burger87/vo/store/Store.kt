@@ -1,4 +1,4 @@
-package domain.sahonmu.burger87.vo
+package domain.sahonmu.burger87.vo.store
 
 import domain.sahonmu.burger87.enums.storeState
 

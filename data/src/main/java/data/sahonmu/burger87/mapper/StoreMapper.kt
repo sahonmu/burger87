@@ -1,7 +1,7 @@
 package data.sahonmu.burger87.mapper
 
-import data.sahonmu.burger87.dto.StoreDto
-import domain.sahonmu.burger87.vo.Store
+import data.sahonmu.burger87.dto.store.StoreDto
+import domain.sahonmu.burger87.vo.store.Store
 
 fun StoreDto.toDomain(): Store = Store(
     id = this.id,

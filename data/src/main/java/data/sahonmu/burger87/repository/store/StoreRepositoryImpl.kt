@@ -1,10 +1,10 @@
-package data.sahonmu.burger87.repository
+package data.sahonmu.burger87.repository.store
 
 import android.util.Log
-import data.sahonmu.burger87.dto.StoreDto
+import data.sahonmu.burger87.dto.store.StoreDto
 import data.sahonmu.burger87.mapper.toDomain
-import domain.sahonmu.burger87.repository.StoreRepository
-import domain.sahonmu.burger87.vo.Store
+import domain.sahonmu.burger87.repository.store.StoreRepository
+import domain.sahonmu.burger87.vo.store.Store
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.flow.flow
 
@@ -14,7 +14,10 @@ class StoreRepositoryImpl(
     override fun getStore() = flow {
         try {
             Log.i("SAHONMU", "252525 SELECT == ${postgrest["store"].select()}")
-            Log.i("SAHONMU", "252525 SELECT DECODE == ${postgrest["store"].select().decodeList<StoreDto>()}")
+            Log.i(
+                "SAHONMU",
+                "252525 SELECT DECODE == ${postgrest["store"].select().decodeList<StoreDto>()}"
+            )
             val response = postgrest["store"].select()
                 .decodeList<StoreDto>()
 
