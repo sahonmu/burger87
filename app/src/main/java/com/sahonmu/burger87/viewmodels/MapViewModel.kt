@@ -1,6 +1,8 @@
 package com.sahonmu.burger87.viewmodels
 
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.viewmodels.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +18,7 @@ import javax.inject.Inject
 data class MapViewModelUiState(
     val loadState: LoadState = LoadState.LOADING,
     var storeList: MutableList<Store> = mutableListOf(),
+    var boundBuilder: LatLngBounds.Builder = LatLngBounds.builder()
 )
 
 @HiltViewModel
@@ -29,10 +32,18 @@ class MapViewModel @Inject constructor(
     fun requestStoreList() {
         viewModelScope.launch {
             storeUseCase.invoke().collect { storeList ->
+
+                val boundBuilder = LatLngBounds.builder()
+                storeList.forEach { store ->
+                    val point = LatLng(store.latitude, store.longitude)
+                    boundBuilder.include(point)
+                }
+
                 _mapViewUiState.update { state ->
                     state.copy(
                         loadState = if(storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
-                        storeList = storeList as MutableList<Store>
+                        storeList = storeList as MutableList<Store>,
+                        boundBuilder = boundBuilder
                     )
                 }
             }

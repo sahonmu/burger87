@@ -3,7 +3,11 @@ package com.sahonmu.burger87.ui.theme.screens.map
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -26,14 +31,15 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.ui.theme.SplashBackground
+import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
 
 @Composable
@@ -62,16 +68,8 @@ fun MapScreen(
         if (mapSize.width == 0 || mapViewUiState.storeList.isEmpty())
             return@LaunchedEffect
 
-        val builder = LatLngBounds.builder()
-
-        mapViewUiState.storeList.forEach { store ->
-            val point = LatLng(store.latitude, store.longitude)
-            builder.include(point)
-        }
-
-        val bounds: LatLngBounds = builder.build()
         val update: CameraUpdate = CameraUpdateFactory.newLatLngBounds(
-            bounds,
+            mapViewUiState.boundBuilder.build(),
             mapSize.width,
             mapSize.height,
             paddingPx
@@ -104,17 +102,29 @@ fun MapScreen(
                     text = "로딩중"
                 )
             } else {
-                GoogleMap(
-                    modifier = Modifier.fillMaxSize(),
-                    cameraPositionState = cameraPositionState,
-                    uiSettings = mapUiSettings
+
+                Box(
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    mapViewUiState.storeList.forEach { store ->
-                        val latLng = LatLng(store.latitude, store.longitude)
-                        Marker(
-                            state = MarkerState(position = latLng)
-                        )
+
+                    GoogleMap(
+                        modifier = Modifier.fillMaxSize(),
+                        cameraPositionState = cameraPositionState,
+                        uiSettings = mapUiSettings
+                    ) {
+                        mapViewUiState.storeList.forEach { store ->
+                            val latLng = LatLng(store.latitude, store.longitude)
+                            Marker(
+                                state = MarkerState(position = latLng)
+                            )
+                        }
                     }
+
+                    RoundButton(
+                        modifier = Modifier.align(Alignment.TopEnd).padding(top = 20.dp, end = 20.dp).size(56.dp),
+                        painter = painterResource(id = R.drawable.ic_44_search),
+                        onClick = { }
+                    )
                 }
             }
         }
