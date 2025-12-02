@@ -1,5 +1,6 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,15 +31,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.ui.theme.SplashBackground
+import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
 
@@ -62,6 +63,8 @@ fun MapScreen(
     val density = LocalDensity.current
     val paddingPx = with(density) { 100.dp.roundToPx() }
     var mapSize by remember { mutableStateOf(IntSize.Zero) }
+
+    val uiState = rememberUiState()
 
     LaunchedEffect(mapViewUiState.storeList.size, mapSize) {
 
@@ -110,18 +113,49 @@ fun MapScreen(
                     GoogleMap(
                         modifier = Modifier.fillMaxSize(),
                         cameraPositionState = cameraPositionState,
-                        uiSettings = mapUiSettings
+                        uiSettings = mapUiSettings,
+                        onMapClick = {
+                        },
                     ) {
                         mapViewUiState.storeList.forEach { store ->
-                            val latLng = LatLng(store.latitude, store.longitude)
-                            Marker(
-                                state = MarkerState(position = latLng)
+                            StoreMarker(
+                                store = store,
+                                onClick = {
+                                    Toast.makeText(uiState.context, store.name, Toast.LENGTH_SHORT)
+                                        .show()
+                                }
                             )
                         }
                     }
 
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 15.dp)
+                    ) {
+                        SummaryPager(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp)
+                                .align(Alignment.BottomCenter),
+                            storeList = mapViewUiState.storeList,
+                            onSelectStore = { store ->
+                                val latLng = LatLng(store.latitude, store.longitude)
+                                cameraPositionState.position = CameraPosition.fromLatLngZoom(
+                                    latLng,
+                                    cameraPositionState.position.zoom
+                                )
+                            }
+                        )
+                    }
+
+
                     RoundButton(
-                        modifier = Modifier.align(Alignment.TopEnd).padding(top = 20.dp, end = 20.dp).size(56.dp),
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(top = 20.dp, end = 20.dp)
+                            .size(56.dp),
                         painter = painterResource(id = R.drawable.ic_44_search),
                         onClick = { }
                     )

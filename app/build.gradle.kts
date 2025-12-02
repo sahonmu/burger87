@@ -136,6 +136,9 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
+    // Image Load
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+
     // Supabase
 //    implementation(platform("io.github.jan-tennert.supabase:bom:3.2.6"))
 //    implementation("io.github.jan-tennert.supabase:auth-kt")

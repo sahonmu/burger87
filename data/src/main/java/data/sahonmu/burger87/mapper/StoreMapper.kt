@@ -17,5 +17,7 @@ fun StoreDto.toDomain(): Store = Store(
     name = this.name,
     tel = this.tel,
     updateDate = this.updateDate,
-    state = this.state
+    state = this.state,
+    thumbImage = this.thumbImage,
+    score = this.score
 )

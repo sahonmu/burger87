@@ -17,6 +17,8 @@ data class Store(
     val tel: String,
     val updateDate: String? = null,
     val state: String,
+    val thumbImage: String,
+    val score: Float
 ) {
     var storeState = state.storeState()
 }

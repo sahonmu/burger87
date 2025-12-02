@@ -17,8 +17,10 @@ data class StoreDto(
     @SerialName("longitude")val longitude: Double,
     @SerialName("instagram")val instagram: String,
     @SerialName("name")val name: String,
-    @SerialName("score")val score: String,
+    @SerialName("score")val score: Float,
     @SerialName("tel")val tel: String,
     @SerialName("update_date")val updateDate: String? = null,
     @SerialName("state")val state: String,
+    @SerialName("thumb_image")val thumbImage: String,
+
 )
