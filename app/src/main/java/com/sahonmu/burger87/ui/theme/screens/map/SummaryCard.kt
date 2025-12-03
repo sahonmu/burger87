@@ -51,7 +51,8 @@ fun Preview() {
 @OptIn(ExperimentalGlideComposeApi::class)
 fun SummaryCard(
     modifier: Modifier = Modifier,
-    store: Store
+    store: Store,
+    onClick: (Store) -> Unit = { }
 ) {
 
     Card(
@@ -59,7 +60,8 @@ fun SummaryCard(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
             containerColor = White
-        )
+        ),
+        onClick = { onClick(store) }
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -136,7 +138,8 @@ fun SummaryCard(
 fun SummaryPager(
     modifier: Modifier = Modifier,
     storeList: MutableList<Store>,
-    onSelectStore: (Store) -> Unit = { }
+    onSelectStore: (Store) -> Unit = { },
+    onClickStore: (Store) -> Unit = { },
 ) {
     val pagerState = rememberPagerState(pageCount = {
         storeList.size
@@ -148,10 +151,10 @@ fun SummaryPager(
         pageSpacing = 10.dp,
         contentPadding = PaddingValues(horizontal = 15.dp)
     ) { page ->
-
         SummaryCard(
             modifier = Modifier.fillMaxSize(),
-            store = storeList[page]
+            store = storeList[page],
+            onClick = { onClickStore(storeList[page]) }
         )
     }
 

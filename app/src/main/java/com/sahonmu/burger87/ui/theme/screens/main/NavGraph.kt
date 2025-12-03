@@ -6,11 +6,19 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.firebase.firestore.auth.User
+import com.google.gson.Gson
+import com.sahonmu.burger87.common.BundleKey
 import com.sahonmu.burger87.enums.Screens
+import com.sahonmu.burger87.extensions.decode
 import com.sahonmu.burger87.ui.theme.base.BaseScreen
 import com.sahonmu.burger87.ui.theme.screens.map.MapScreen
 import com.sahonmu.burger87.ui.theme.screens.splash.SplashScreen
+import com.sahonmu.burger87.ui.theme.screens.store.detail.StoreDetailScreen
 import com.sahonmu.burger87.viewmodels.MapViewModel
+import domain.sahonmu.burger87.vo.store.Store
+import timber.log.Timber
+import java.net.URLDecoder
 
 
 //fun NavGraphBuilder.map(
@@ -83,6 +91,26 @@ import com.sahonmu.burger87.viewmodels.MapViewModel
 //    }
 //}
 
+fun NavGraphBuilder.store(
+    navController: NavHostController
+) {
+    composable("${Screens.STORE_DETAIL.route}/{${BundleKey.DATA}}") {
+        it.arguments?.getString(BundleKey.DATA)?.let { json ->
+            json.decode().let { store ->
+                BaseScreen(
+                    content = {
+                        StoreDetailScreen(
+                            navController = navController,
+                            store = store as Store
+                        )
+                    },
+
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -106,5 +134,7 @@ fun NavGraph(
                 }
             )
         }
+
+        store(navController)
     }
 }

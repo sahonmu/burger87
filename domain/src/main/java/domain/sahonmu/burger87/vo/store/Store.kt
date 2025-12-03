@@ -20,5 +20,5 @@ data class Store(
     val thumbImage: String,
     val score: Float
 ) {
-    var storeState = state.storeState()
+//    var storeState = state.storeState()
 }

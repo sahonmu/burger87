@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -103,7 +104,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.25.1")
-
     // GoogleMap
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.maps.android:maps-compose:2.12.0")
@@ -138,6 +138,8 @@ dependencies {
 
     // Image Load
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // Supabase
 //    implementation(platform("io.github.jan-tennert.supabase:bom:3.2.6"))
