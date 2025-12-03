@@ -1,7 +1,7 @@
 package data.sahonmu.burger87.repository.store
 
-import android.util.Log
 import data.sahonmu.burger87.dto.store.StoreDto
+import data.sahonmu.burger87.dto.store.StoreImageDto
 import data.sahonmu.burger87.mapper.toDomain
 import domain.sahonmu.burger87.repository.store.StoreRepository
 import domain.sahonmu.burger87.vo.store.Store
@@ -13,11 +13,6 @@ class StoreRepositoryImpl(
 ) : StoreRepository {
     override fun getStore() = flow {
         try {
-            Log.i("SAHONMU", "252525 SELECT == ${postgrest["store"].select()}")
-            Log.i(
-                "SAHONMU",
-                "252525 SELECT DECODE == ${postgrest["store"].select().decodeList<StoreDto>()}"
-            )
             val response = postgrest["store"].select()
                 .decodeList<StoreDto>()
 
@@ -25,9 +20,14 @@ class StoreRepositoryImpl(
 
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.i("SAHONMU", "252525 ERROR == ${e}")
             emit(emptyList())
         }
+    }
+
+    override fun getStoreImageList(id: Long) = flow {
+        val response =
+            postgrest["store_image"].select { filter { eq("store_id", id) } }.decodeList<StoreImageDto>()
+        emit(response.map { it.toDomain() })
     }
 
     override suspend fun deleteProduct(id: String): Boolean {

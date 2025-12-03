@@ -54,7 +54,7 @@ fun Burger87Theme(
         colorScheme = colorScheme.copy(
             background = Gray_50,
             primary = Gray_50,
-            onPrimaryContainer = Gray_50
+            onPrimaryContainer = Gray_200,
         ),
         typography = Typography,
         content = content

@@ -1,6 +1,7 @@
 package domain.sahonmu.burger87.repository.store
 
 import domain.sahonmu.burger87.vo.store.Store
+import domain.sahonmu.burger87.vo.store.StoreImage
 import kotlinx.coroutines.flow.Flow
 
 interface StoreRepository {
@@ -8,4 +9,5 @@ interface StoreRepository {
     suspend fun updateProduct(storeEntity: Store): Boolean
     suspend fun deleteProduct(id: String): Boolean
     fun getStore(): Flow<List<Store>>
+    fun getStoreImageList(id: Long): Flow<List<StoreImage>>
 }

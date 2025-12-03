@@ -99,7 +99,7 @@ fun SummaryCard(
                             style = fontPadding
                         )
                         Text(
-                            text = "(${store.score})",
+                            text = "(★${store.score})",
                             fontSize = 12.sp,
                             color = Score,
                             style = fontPadding

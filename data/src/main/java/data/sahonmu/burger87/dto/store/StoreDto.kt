@@ -22,5 +22,7 @@ data class StoreDto(
     @SerialName("update_date")val updateDate: String? = null,
     @SerialName("state")val state: String,
     @SerialName("thumb_image")val thumbImage: String,
+    @SerialName("on_the_way")val onTheWay: String,
+
 
 )

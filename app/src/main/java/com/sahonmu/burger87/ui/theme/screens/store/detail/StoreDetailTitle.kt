@@ -1,9 +1,10 @@
 package com.sahonmu.burger87.ui.theme.screens.store.detail
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -18,20 +19,20 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.sahonmu.burger87.R
-import com.sahonmu.burger87.ui.theme.Gray_50
-import com.sahonmu.burger87.ui.theme.Gray_600
-import com.sahonmu.burger87.ui.theme.Gray_700
 import com.sahonmu.burger87.ui.theme.Gray_900
+import com.sahonmu.burger87.ui.theme.Score
 
 @Composable
 fun StoreDetailTitle(
     modifier: Modifier = Modifier,
     title: String,
+    branch: String = "",
+    score: Float,
     onBack: () -> Unit = { }
 ) {
 
     ConstraintLayout(
-        modifier = modifier.fillMaxSize().background(color = Gray_50),
+        modifier = modifier.fillMaxSize(),
     ) {
 
         val (back, text, empty) = createRefs()
@@ -58,7 +59,7 @@ fun StoreDetailTitle(
             )
         }
 
-        Text(
+        Row(
             modifier = Modifier.constrainAs(
                 text
             ) {
@@ -68,10 +69,20 @@ fun StoreDetailTitle(
                 start.linkTo(back.end)
                 end.linkTo(empty.start)
             },
-            text = title,
-            fontSize = 16.sp,
-            color = Gray_900
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = if(branch.isEmpty()) title else "${title}(${branch})",
+                fontSize = 16.sp,
+                color = Gray_900
+            )
+            Text(
+                text = "(★${score})",
+                fontSize = 14.sp,
+                color = Score
+            )
+        }
 
         Spacer(
             modifier = Modifier

@@ -83,8 +83,9 @@ dependencies {
 
     // Supabase
     implementation(platform("io.github.jan-tennert.supabase:bom:2.6.1"))
-    implementation("io.github.jan-tennert.supabase:gotrue-kt")
+//    implementation("io.github.jan-tennert.supabase:gotrue-kt")
 //    implementation("io.github.jan-tennert.supabase:auth-kt")
+    implementation("io.github.jan-tennert.supabase:supabase-kt")
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
     implementation("io.github.jan-tennert.supabase:storage-kt")
 

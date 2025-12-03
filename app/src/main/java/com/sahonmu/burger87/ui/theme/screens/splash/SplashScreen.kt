@@ -1,17 +1,12 @@
 package com.sahonmu.burger87.ui.theme.screens.splash
 
-import android.window.SplashScreen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,7 +25,6 @@ import com.sahonmu.burger87.common.Constants
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.navigate
 import com.sahonmu.burger87.ui.theme.SplashBackground
-import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import kotlinx.coroutines.delay
 
 @Composable

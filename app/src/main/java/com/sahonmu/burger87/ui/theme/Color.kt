@@ -25,3 +25,5 @@ val Gray_600 = Color(0xFF7F7F85)
 val Gray_700 = Color(0xFF5A5A60)
 val Gray_800 = Color(0xFF3F3F48)
 val Gray_900 = Color(0xFF21242B)
+
+val Dot_Un_Selected  = Color(0xFFD9D9D9)
