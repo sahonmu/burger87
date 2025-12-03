@@ -1,27 +1,21 @@
 package com.sahonmu.burger87.ui.theme.screens.store.detail
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.sahonmu.burger87.R
@@ -43,7 +36,6 @@ import com.sahonmu.burger87.ui.theme.screens.components.PagerIndicator
 import com.sahonmu.burger87.utils.log.IntentUtils
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import domain.sahonmu.burger87.vo.store.Store
-import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -52,16 +44,17 @@ fun StoreDetailScreen(
     store: Store,
 ) {
     val mapViewModel: MapViewModel = hiltViewModel()
-    val storeImageUiState = mapViewModel.storeDetailUiState.collectAsState().value
+    val storeDetailUiState = mapViewModel.storeDetailUiState.collectAsState().value
 
     val pagerState = rememberPagerState(pageCount = {
-        storeImageUiState.storeImageLst.size
+        storeDetailUiState.storeImageLst.size
     })
 
     val context = rememberUiState().context
 
     LaunchedEffect(Unit) {
         mapViewModel.requestStoreImageList(store.id)
+        mapViewModel.requestStoreMenuList(store.id)
     }
 
     Column(
@@ -91,7 +84,7 @@ fun StoreDetailScreen(
         ) {
 
             item {
-                if (storeImageUiState.storeImageLst.isNotEmpty()) {
+                if (storeDetailUiState.storeImageLst.isNotEmpty()) {
                     ConstraintLayout(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -111,7 +104,7 @@ fun StoreDetailScreen(
                         ) { page ->
                             GlideImage(
                                 modifier = Modifier.fillMaxSize(),
-                                model = storeImageUiState.storeImageLst[page].image,
+                                model = storeDetailUiState.storeImageLst[page].image,
                                 contentDescription = null
                             ) {
                                 it.centerCrop()
@@ -136,9 +129,9 @@ fun StoreDetailScreen(
 
                 StoreDetailTab(
                     modifier = Modifier.fillMaxWidth().height(56.dp),
-                    selectedTab = storeImageUiState.selectedTab.value
+                    selectedTab = storeDetailUiState.selectedTab.value
                 ) { tab ->
-                    storeImageUiState.selectedTab.value = tab
+                    storeDetailUiState.selectedTab.value = tab
                 }
 
                 Line(
@@ -147,7 +140,7 @@ fun StoreDetailScreen(
                 )
             }
 
-            if(storeImageUiState.selectedTab.value == StoreDetailTab.INFO) {
+            if(storeDetailUiState.selectedTab.value == StoreDetailTab.INFO) {
                 item {
                     Column(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
@@ -185,10 +178,21 @@ fun StoreDetailScreen(
                             }
                         }
                     }
-
                 }
             } else {
-                item {  }
+                if(storeDetailUiState.storeMenuList.isNotEmpty()) {
+                    itemsIndexed(storeDetailUiState.storeMenuList) { index, item,  ->
+                        StoreDetailMenuRow(
+                            modifier = Modifier.fillMaxWidth().height(90.dp),
+                            storeMenu = item
+                        )
+                        if(index != storeDetailUiState.storeMenuList.lastIndex) {
+                            Line(
+                                height = 1.dp, Gray_200
+                            )
+                        }
+                    }
+                }
             }
         }
     }

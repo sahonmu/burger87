@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import domain.sahonmu.burger87.usecase.store.StoreUseCase
 import domain.sahonmu.burger87.vo.store.Store
 import domain.sahonmu.burger87.vo.store.StoreImage
+import domain.sahonmu.burger87.vo.store.StoreMenu
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -31,6 +32,7 @@ data class MapViewModelUiState(
 data class StoreDetailUiState(
     val loadState: LoadState = LoadState.LOADING,
     var storeImageLst: MutableList<StoreImage> = mutableListOf(),
+    var storeMenuList: MutableList<StoreMenu> = mutableListOf(),
     var selectedTab: MutableState<StoreDetailTab> = mutableStateOf(StoreDetailTab.INFO)
 )
 
@@ -57,7 +59,7 @@ class MapViewModel @Inject constructor(
 
                 _mapViewUiState.update { state ->
                     state.copy(
-                        loadState = if(storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
+                        loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
                         storeList = storeList.sortedBy { it.id } as MutableList<Store>,
                         boundBuilder = boundBuilder
                     )
@@ -71,8 +73,21 @@ class MapViewModel @Inject constructor(
             storeUseCase.invoke(id).collect { list ->
                 _storeDetailUiState.update { state ->
                     state.copy(
-                        loadState = if(list.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
+                        loadState = if (list.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
                         storeImageLst = if (list.isEmpty()) list as MutableList<StoreImage> else list.sortedBy { it.id } as MutableList<StoreImage>
+                    )
+                }
+            }
+        }
+    }
+
+    fun requestStoreMenuList(id: Long) {
+        viewModelScope.launch {
+            Timber.i("list ==== ${storeUseCase.getStoreMenu(id)}")
+            storeUseCase.getStoreMenu(id).collect { list ->
+                _storeDetailUiState.update { state ->
+                    state.copy(
+                        storeMenuList = if (list.isEmpty()) list as MutableList<StoreMenu> else list.sortedBy { it.id } as MutableList<StoreMenu>
                     )
                 }
             }

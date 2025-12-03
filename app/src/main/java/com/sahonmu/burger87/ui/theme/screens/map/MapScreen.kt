@@ -2,7 +2,9 @@ package com.sahonmu.burger87.ui.theme.screens.map
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -71,6 +73,8 @@ fun MapScreen(
     var mapSize by remember { mutableStateOf(IntSize.Zero) }
 
     val uiState = rememberUiState()
+
+    var isOnFavorite by remember { mutableStateOf(false) }
 
     LaunchedEffect(mapViewUiState.storeList.size, mapSize) {
 
@@ -160,14 +164,39 @@ fun MapScreen(
                     }
 
 
-                    RoundButton(
+                    Column(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .padding(top = 20.dp, end = 20.dp)
-                            .size(56.dp),
-                        painter = painterResource(id = R.drawable.ic_44_search),
-                        onClick = { }
-                    )
+                            .padding(top = 20.dp, end = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        RoundButton(
+                            modifier = Modifier
+                                .size(36.dp),
+                            painter = painterResource(id = R.drawable.ic_44_search),
+                            onClick = { }
+                        )
+                        RoundButton(
+                            modifier = Modifier
+                                .size(36.dp),
+                            painter = painterResource(id = R.drawable.ic_44_search),
+                            onClick = { }
+                        )
+                        RoundButton(
+                            modifier = Modifier
+                                .size(36.dp),
+                            painter = painterResource(id = R.drawable.ic_info),
+                            onClick = { }
+                        )
+                        RoundButton(
+                            modifier = Modifier
+                                .size(36.dp),
+                            painter = painterResource(id = if (isOnFavorite) R.drawable.ic_favorite_on else R.drawable.ic_favorite_off),
+                            onClick = {
+                                isOnFavorite = !isOnFavorite
+                            }
+                        )
+                    }
                 }
             }
         }
