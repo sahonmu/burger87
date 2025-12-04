@@ -1,13 +1,13 @@
 package domain.sahonmu.burger87.enums
 
-enum class StoreState {
-    OPERATION,
-    CLOSED
+enum class StoreState(val state: String) {
+    OPERATION("operation"),
+    CLOSED("close")
 }
 
 fun String.storeState(): StoreState {
     return when(this) {
-        StoreState.OPERATION.toString() -> StoreState.OPERATION
+        StoreState.OPERATION.toString(), StoreState.OPERATION.state  -> StoreState.OPERATION
         else -> StoreState.CLOSED
     }
 }

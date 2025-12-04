@@ -16,6 +16,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,10 +35,12 @@ import com.sahonmu.burger87.extensions.copy
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.Gray_50
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
+import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.PagerIndicator
 import com.sahonmu.burger87.utils.log.IntentUtils
 import com.sahonmu.burger87.viewmodels.MapViewModel
+import domain.sahonmu.burger87.enums.storeState
 import domain.sahonmu.burger87.vo.store.Store
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -51,6 +57,9 @@ fun StoreDetailScreen(
     })
 
     val context = rememberUiState().context
+
+    var showAlert by remember { mutableStateOf(false) }
+    var showAlertMessage by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         mapViewModel.requestStoreImageList(store.id)
@@ -72,6 +81,7 @@ fun StoreDetailScreen(
             title = store.name,
             branch = store.branch,
             score = store.score,
+            state = store.state.storeState(),
             onBack = { navController.popBackStack() }
         )
         Line(
@@ -111,16 +121,18 @@ fun StoreDetailScreen(
                             }
                         }
 
-                        PagerIndicator(
-                            modifier = Modifier.constrainAs(dot) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                bottom.linkTo(parent.bottom, margin = 12.dp)
-                            },
-                            pagerState = pagerState,
-                            dotSize = 10.dp,
-                            padding = 4.dp
-                        )
+                        if(storeDetailUiState.storeImageLst.size >= 2) {
+                            PagerIndicator(
+                                modifier = Modifier.constrainAs(dot) {
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                    bottom.linkTo(parent.bottom, margin = 12.dp)
+                                },
+                                pagerState = pagerState,
+                                dotSize = 10.dp,
+                                padding = 4.dp
+                            )
+                        }
                     }
                 }
             }
@@ -160,12 +172,15 @@ fun StoreDetailScreen(
                         ) {
                             IntentUtils.startActivityForDialog(context, store.tel)
                         }
-                        StoreDetailInfoRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            painter = painterResource(R.drawable.ic_instagram),
-                            info = store.instagram,
-                        ) {
-                            IntentUtils.startActivityForInstagram(context, store.instagram)
+
+                        if(store.instagram.isNotEmpty()) {
+                            StoreDetailInfoRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                painter = painterResource(R.drawable.ic_instagram),
+                                info = store.instagram,
+                            ) {
+                                IntentUtils.startActivityForInstagram(context, store.instagram)
+                            }
                         }
 
                         if(store.onTheWay.isNotEmpty()) {
@@ -183,9 +198,12 @@ fun StoreDetailScreen(
                 if(storeDetailUiState.storeMenuList.isNotEmpty()) {
                     itemsIndexed(storeDetailUiState.storeMenuList) { index, item,  ->
                         StoreDetailMenuRow(
-                            modifier = Modifier.fillMaxWidth().height(90.dp),
+                            modifier = Modifier.fillMaxWidth().height(80.dp),
                             storeMenu = item
-                        )
+                        ) {
+                            showAlertMessage = item.description.ifEmpty { "정보 없음" }
+                            showAlert = true
+                        }
                         if(index != storeDetailUiState.storeMenuList.lastIndex) {
                             Line(
                                 height = 1.dp, Gray_200
@@ -194,6 +212,15 @@ fun StoreDetailScreen(
                     }
                 }
             }
+        }
+    }
+
+    if(showAlert) {
+        Alert(
+            message = showAlertMessage
+        ) {
+            showAlertMessage = ""
+            showAlert = false
         }
     }
 }

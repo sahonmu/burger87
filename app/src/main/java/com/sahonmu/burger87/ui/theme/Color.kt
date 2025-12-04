@@ -10,7 +10,7 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val SplashBackground = Color(0xFFB52427)
+val Base = Color(0xFFB52427)
 val Black = Color(0xFF000000)
 val White = Color(0xFFFFFFFF)
 val Score = Color(0xFFFFC107)

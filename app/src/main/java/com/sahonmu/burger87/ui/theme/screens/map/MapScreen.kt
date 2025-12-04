@@ -35,7 +35,6 @@ import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.gson.Gson
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -43,13 +42,10 @@ import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
-import com.sahonmu.burger87.ui.theme.SplashBackground
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
-import timber.log.Timber
-import java.net.URLEncoder
 
 @Composable
 fun MapScreen(
@@ -147,7 +143,7 @@ fun MapScreen(
                         SummaryPager(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(100.dp)
+                                .height(110.dp)
                                 .align(Alignment.BottomCenter),
                             storeList = mapViewUiState.storeList,
                             onSelectStore = { store ->

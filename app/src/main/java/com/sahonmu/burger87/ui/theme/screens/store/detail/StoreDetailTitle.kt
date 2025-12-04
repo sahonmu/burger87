@@ -4,8 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -19,8 +19,10 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.sahonmu.burger87.R
+import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.Score
+import domain.sahonmu.burger87.enums.StoreState
 
 @Composable
 fun StoreDetailTitle(
@@ -28,6 +30,7 @@ fun StoreDetailTitle(
     title: String,
     branch: String = "",
     score: Float,
+    state: StoreState = StoreState.OPERATION,
     onBack: () -> Unit = { }
 ) {
 
@@ -73,7 +76,7 @@ fun StoreDetailTitle(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = if(branch.isEmpty()) title else "${title}(${branch})",
+                text = if (branch.isEmpty()) title else "${title}(${branch})",
                 fontSize = 16.sp,
                 color = Gray_900
             )
@@ -84,7 +87,7 @@ fun StoreDetailTitle(
             )
         }
 
-        Spacer(
+        Box(
             modifier = Modifier
                 .constrainAs(
                     empty
@@ -95,7 +98,26 @@ fun StoreDetailTitle(
                     end.linkTo(parent.end)
                 }
                 .size(56.dp),
-        )
+            contentAlignment = Alignment.Center
+        ) {
+            if (state == StoreState.CLOSED) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+//                    Image(
+//                        modifier = Modifier.size(18.dp),
+//                        painter = painterResource(R.drawable.emoji_sad_selected),
+//                        contentDescription = null
+//                    )
+                    Text(
+                        color = Base,
+                        text = "폐점",
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        }
     }
 }
 

@@ -1,5 +1,8 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -23,10 +25,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,16 +35,28 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.sahonmu.burger87.R
+import com.sahonmu.burger87.common.DataManager
+import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Score
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.fontPadding
-import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
+import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
+import com.sahonmu.burger87.ui.theme.screens.components.Margin
+import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
+import domain.sahonmu.burger87.enums.StoreState
+import domain.sahonmu.burger87.enums.storeState
 import domain.sahonmu.burger87.vo.store.Store
 
-@Composable
-@Preview
-fun Preview() {
 
+@Preview(showBackground = true)
+@Composable
+fun SummaryCardPreview() {
+    SummaryCard(
+        modifier = Modifier
+            .height(100.dp)
+            .fillMaxWidth(),
+        store = DataManager.store()
+    )
 }
 
 @Composable
@@ -69,67 +81,104 @@ fun SummaryCard(
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Box(modifier = Modifier.size(110.dp)) {
+                    GlideImage(
+                        modifier = Modifier.fillMaxSize(),
+                        model = store.thumbImage,
+                        contentDescription = null
+                    ) {
+                        it.centerCrop()
+                    }
 
-                ) {
-                GlideImage(
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(100.dp),
-                    model = store.thumbImage,
-                    contentDescription = null
-                ) {
-                    it.centerCrop()
                 }
 
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(end = 12.dp, top = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.Bottom)
+                        .padding(end = 12.dp, top = 6.dp, bottom = 6.dp),
+
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(3.dp)
-                    ) {
-                        Text(
-                            text = if (store.branch.isEmpty()) store.name else "${store.name}(${store.branch}점)",
-                            fontSize = 17.sp,
-                            style = fontPadding
-                        )
-                        Text(
-                            text = "(★${store.score})",
-                            fontSize = 12.sp,
-                            color = Score,
-                            style = fontPadding
-                        )
-                    }
 
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(
-                            text = store.address,
-                            fontSize = 13.sp,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            style = fontPadding
-                        )
+                        Margin(modifier = Modifier.weight(1f))
+
+
+                        if(store.state.storeState() == StoreState.CLOSED) {
+                            Box(
+                                modifier = Modifier
+                                    .height(20.dp)
+                                    .background(color = White, shape = RoundedCornerShape(10.dp))
+                                    .border(
+                                        width = 1.dp,
+                                        color = Base,
+                                        shape = RoundedCornerShape(10.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.5.dp),
+                                    text = "폐점",
+                                    fontSize = 10.5.sp,
+                                    color = Base,
+                                    style = fontPadding,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            WidthMargin(8.dp)
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .height(20.dp)
+                                .background(color = White, shape = RoundedCornerShape(10.dp))
+                                .border(
+                                    width = 1.dp,
+                                    color = Score,
+                                    shape = RoundedCornerShape(10.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.5.dp),
+                                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    modifier = Modifier.size(9.dp),
+                                    painter = painterResource(R.drawable.ic_star),
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(Score)
+                                )
+                                Text(
+                                    text = "${store.score}",
+                                    fontSize = 10.5.sp,
+                                    color = Score,
+                                    style = fontPadding,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
                     }
+
+                    HeightMargin(3.dp)
+                    Text(
+                        text = if (store.branch.isEmpty()) store.name else "${store.name}(${store.branch})",
+                        fontSize = 14.5.sp,
+                        style = fontPadding
+                    )
+                    HeightMargin(5.dp)
+                    Text(
+                        text = store.address,
+                        fontSize = 11.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        style = fontPadding
+                    )
                 }
             }
-
-
-            RoundButton(
-                modifier = Modifier
-                    .size(30.dp)
-                    .align(Alignment.TopEnd)
-                    .padding(end = 20.dp, top = 20.dp),
-                painter = painterResource(R.drawable.splash_logo),
-                round = 15.dp,
-                onClick = { }
-            )
         }
     }
 }
@@ -163,5 +212,4 @@ fun SummaryPager(
             onSelectStore.invoke(storeList[position])
         }
     }
-
 }

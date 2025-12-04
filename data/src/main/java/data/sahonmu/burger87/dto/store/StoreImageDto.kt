@@ -8,7 +8,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StoreImageDto(
     @SerialName("id")val id: Long,
-    @SerialName("created_at")val createdAt: String,
     @SerialName("store_id")val storeId: Long,
     @SerialName("image")val image: String,
 )

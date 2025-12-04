@@ -3,8 +3,6 @@ package com.sahonmu.burger87.extensions
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.util.Base64
-import com.google.gson.Gson
 import java.text.DecimalFormat
 
 

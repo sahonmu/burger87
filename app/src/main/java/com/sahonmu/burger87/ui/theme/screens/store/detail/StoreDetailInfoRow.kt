@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.ui.theme.Gray_700
-import com.sahonmu.burger87.ui.theme.SplashBackground
+import com.sahonmu.burger87.ui.theme.Base
 
 @Composable
 fun StoreDetailInfoRow(
@@ -48,7 +48,7 @@ fun StoreDetailInfoRow(
             Image(
                 modifier = Modifier.size(24.dp),
                 painter = res,
-                colorFilter = ColorFilter.tint(SplashBackground),
+                colorFilter = ColorFilter.tint(Base),
                 contentDescription = null
             )
         }

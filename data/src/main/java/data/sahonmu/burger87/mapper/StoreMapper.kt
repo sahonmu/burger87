@@ -28,7 +28,6 @@ fun StoreDto.toDomain(): Store = Store(
 )
 fun StoreImageDto.toDomain(): StoreImage = StoreImage(
     id = this.id,
-    createdAt = this.createdAt,
     storeId = this.storeId,
     image = this.image,
 )

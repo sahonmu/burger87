@@ -24,7 +24,7 @@ import com.sahonmu.burger87.R
 import com.sahonmu.burger87.common.Constants
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.navigate
-import com.sahonmu.burger87.ui.theme.SplashBackground
+import com.sahonmu.burger87.ui.theme.Base
 import kotlinx.coroutines.delay
 
 @Composable
@@ -43,7 +43,7 @@ fun SplashScreen(
             .fillMaxSize()
 //            .systemBarsPadding()
 //            .navigationBarsPadding()
-            .background(color = SplashBackground),
+            .background(color = Base),
         contentAlignment = Alignment.Center
     ) {
         Column(

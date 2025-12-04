@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sahonmu.burger87.ui.theme.Dot_Un_Selected
-import com.sahonmu.burger87.ui.theme.SplashBackground
+import com.sahonmu.burger87.ui.theme.Base
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -33,7 +33,7 @@ fun PagerIndicator(
     ) {
         repeat(pagerState.pageCount) { iteration ->
             val color =
-                if (pagerState.currentPage == iteration) SplashBackground else Dot_Un_Selected
+                if (pagerState.currentPage == iteration) Base else Dot_Un_Selected
             Box(
                 modifier = Modifier
                     .padding(horizontal = padding)
