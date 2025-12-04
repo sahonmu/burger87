@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.sp
 
 val fontPadding = TextStyle(
     platformStyle = PlatformTextStyle(
-        includeFontPadding = false
+        includeFontPadding = true
     )
 )
 

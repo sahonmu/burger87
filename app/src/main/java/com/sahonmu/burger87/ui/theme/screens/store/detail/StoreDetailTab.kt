@@ -38,42 +38,52 @@ fun StoreDetailTab(
 ) {
 
     val isInfo = selectedTab == StoreDetailTab.INFO
-
     Box(
-        modifier = modifier
+        modifier = modifier,
+        contentAlignment = Alignment.Center
     ) {
-        Row(
-//            modifier = modifier
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
-                    .clickable { onTab(StoreDetailTab.INFO) },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "정보",
-                    fontSize = 17.sp,
-                    color = if (isInfo) Gray_700 else Dot_Un_Selected
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
-                    .clickable { onTab(StoreDetailTab.MENU) },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "메뉴",
-                    fontSize = 17.sp,
-                    color = if (isInfo) Dot_Un_Selected else Gray_700
-                )
-            }
-        }
+        Text(
+            text = "메뉴정보",
+            fontSize = 20.sp,
+            color = Gray_900
+        )
     }
+
+//    Box(
+//        modifier = modifier
+//    ) {
+//        Row(
+////            modifier = modifier
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxHeight()
+//                    .weight(1f)
+//                    .clickable { onTab(StoreDetailTab.INFO) },
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Text(
+//                    text = "정보",
+//                    fontSize = 17.sp,
+//                    color = if (isInfo) Gray_700 else Dot_Un_Selected
+//                )
+//            }
+//
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxHeight()
+//                    .weight(1f)
+//                    .clickable { onTab(StoreDetailTab.MENU) },
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Text(
+//                    text = "메뉴",
+//                    fontSize = 17.sp,
+//                    color = if (isInfo) Dot_Un_Selected else Gray_700
+//                )
+//            }
+//        }
+//    }
 }
 
 
