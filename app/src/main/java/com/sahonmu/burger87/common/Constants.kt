@@ -7,5 +7,4 @@ object Constants {
     object Permissions {
 
     }
-
 }

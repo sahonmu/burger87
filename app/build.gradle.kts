@@ -5,8 +5,12 @@ plugins {
 
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
+//    kotlin("plugin.serialization")
     kotlin("kapt")
+
+//    alias(libs.plugins.secrets.gradle.plugin)
 }
+
 
 android {
     namespace = "com.sahonmu.burger87"
@@ -37,11 +41,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     flavorDimensions += "version"
@@ -52,6 +58,7 @@ android {
 //            versionName = "1.0.0"
             manifestPlaceholders["appNameGradle"] = "@string/app_name"
             manifestPlaceholders["appLabel"] = "@string/app_name"
+            resValue("string", "google_maps_api_key", "AIzaSyDmcAQ5GqHyUR3zBH_sQgmeXTo3da8IV6o")
         }
 
         create("dev") {
@@ -62,11 +69,21 @@ android {
             manifestPlaceholders["appNameGradle"] = "@string/app_name"
             manifestPlaceholders["appLabel"] = "@string/app_name"
             resValue("string","app_name","버거87(DEV)")
+            resValue("string", "google_maps_api_key", "AIzaSyDmcAQ5GqHyUR3zBH_sQgmeXTo3da8IV6o")
         }
     }
+
+//    composeOptions {
+//        kotlinCompilerExtensionVersion = "1.5.3" // Match with Kotlin 1.9.20
+//    }
+
 }
 
 dependencies {
+
+    implementation(project(":data"))
+    implementation(project(":domain"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -76,6 +93,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout.compose)
+    implementation(libs.firebase.crashlytics.buildtools)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -85,6 +105,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.25.1")
+    // GoogleMap
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.maps.android:maps-compose:2.12.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
     // Compose
     implementation("androidx.navigation:navigation-compose:2.7.7")
@@ -93,16 +117,42 @@ dependencies {
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
 
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
     // Fiarbase
     implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
+//    implementation("com.google.firebase:firebase-analytics-ktx:21.3.0")
 
     // Dagger Hilt
-    implementation("com.google.dagger:hilt-android:2.52")
-    kapt("com.google.dagger:hilt-android-compiler:2.52")
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
     kapt("androidx.hilt:hilt-compiler:1.3.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // Log
     implementation("com.jakewharton.timber:timber:5.0.1")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
+    // Image Load
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    // Supabase
+//    implementation(platform("io.github.jan-tennert.supabase:bom:3.2.6"))
+//    implementation("io.github.jan-tennert.supabase:auth-kt")
+//    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+//    implementation("io.github.jan-tennert.supabase:storage-kt")
+
+//    implementation("io.github.jan-tennert.supabase:supabase-kt-client")
+//    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+
+//    implementation("io.ktor:ktor-client-android:3.3.2")
+//    implementation("io.ktor:ktor-utils:3.3.2")
+//    implementation("io.ktor:ktor-client-core:3.3.2")
+
 }

@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- 바깥 원 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"
+        android:pathData="M24,2
+            A22,22 0 1,1 23.99,2" />
+
+    <!-- 상단 빵 -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M14,20
+            a10,6 0 0,1 20,0
+            l0,2
+            l-20,0z" />
+
+    <!-- 패티 -->
+    <path
+        android:fillColor="#795548"
+        android:pathData="M14,26
+            l20,0
+            l0,4
+            l-20,0z" />
+
+    <!-- 하단 빵 -->
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="M14,32
+            l20,0
+            l0,3
+            a10,5 0 0,1 -20,0z" />
+
+</vector>
