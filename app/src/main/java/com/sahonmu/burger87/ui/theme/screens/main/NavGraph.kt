@@ -6,19 +6,19 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.google.firebase.firestore.auth.User
-import com.google.gson.Gson
 import com.sahonmu.burger87.common.BundleKey
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.decode
+import com.sahonmu.burger87.extensions.decodeList
 import com.sahonmu.burger87.ui.theme.base.BaseScreen
+import com.sahonmu.burger87.ui.theme.screens.info.main.InfoScreen
 import com.sahonmu.burger87.ui.theme.screens.map.MapScreen
 import com.sahonmu.burger87.ui.theme.screens.splash.SplashScreen
 import com.sahonmu.burger87.ui.theme.screens.store.detail.StoreDetailScreen
+import com.sahonmu.burger87.ui.theme.screens.store.list.StoreListScreen
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import domain.sahonmu.burger87.vo.store.Store
 import timber.log.Timber
-import java.net.URLDecoder
 
 
 //fun NavGraphBuilder.map(
@@ -109,6 +109,20 @@ fun NavGraphBuilder.store(
             }
         }
     }
+
+    composable("${Screens.STORE_LIST.route}/{${BundleKey.DATA}}") {
+        it.arguments?.getString(BundleKey.DATA)?.let { json ->
+            Timber.i("list = ${json.decodeList().toMutableList()}")
+                BaseScreen(
+                    content = {
+                        StoreListScreen(
+                            navController = navController,
+                            storeList = json.decodeList().toMutableList()
+                        )
+                    },
+                )
+        }
+    }
 }
 
 @Composable
@@ -136,5 +150,9 @@ fun NavGraph(
         }
 
         store(navController)
+
+        composable(Screens.INFO.route) {
+            BaseScreen(content = { InfoScreen(navController = navController) })
+        }
     }
 }

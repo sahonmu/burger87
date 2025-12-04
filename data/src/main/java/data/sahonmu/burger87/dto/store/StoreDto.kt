@@ -23,6 +23,7 @@ data class StoreDto(
     @SerialName("state")val state: String,
     @SerialName("thumb_image")val thumbImage: String,
     @SerialName("on_the_way")val onTheWay: String,
+    @SerialName("city_filter")val cityFilter: String,
 
 
 )

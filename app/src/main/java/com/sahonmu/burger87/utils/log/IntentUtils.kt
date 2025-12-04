@@ -29,4 +29,13 @@ object IntentUtils {
         context.startActivity(intent)
     }
 
+
+    fun startActivityForShare(context: Context, content: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, content)
+        }
+        context.startActivity(intent)
+    }
+
 }

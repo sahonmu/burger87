@@ -32,6 +32,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.sahonmu.burger87.R
@@ -69,7 +71,7 @@ fun SummaryCard(
 
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(
             containerColor = White
         ),
@@ -98,7 +100,7 @@ fun SummaryCard(
                         .fillMaxWidth()
                         .padding(end = 12.dp, top = 6.dp, bottom = 6.dp),
 
-                ) {
+                    ) {
 
                     Row(
                         modifier = Modifier.fillMaxWidth()

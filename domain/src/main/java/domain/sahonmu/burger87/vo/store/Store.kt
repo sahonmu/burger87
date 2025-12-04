@@ -19,7 +19,8 @@ data class Store(
     val state: String,
     val thumbImage: String,
     val score: Float,
-    val onTheWay: String
+    val onTheWay: String,
+    val cityFilter: String,
 ) {
-//    var storeState = state.storeState()
+    var storeState = state.storeState()
 }

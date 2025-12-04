@@ -42,17 +42,25 @@ import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
+import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
+
+
+@Preview
+@Composable
+fun MapScreenPreview() {
+    MapScreen(rememberNavController())
+}
+
 
 @Composable
 fun MapScreen(
     navController: NavHostController,
     mapViewModel: MapViewModel = hiltViewModel()
 ) {
-
 
     val mapViewUiState = mapViewModel.mapViewUiState.collectAsState().value
 
@@ -166,42 +174,29 @@ fun MapScreen(
                             .padding(top = 20.dp, end = 20.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
+
                         RoundButton(
                             modifier = Modifier
                                 .size(36.dp),
-                            painter = painterResource(id = R.drawable.ic_44_search),
-                            onClick = { }
-                        )
-                        RoundButton(
-                            modifier = Modifier
-                                .size(36.dp),
-                            painter = painterResource(id = R.drawable.ic_44_search),
-                            onClick = { }
-                        )
-                        RoundButton(
-                            modifier = Modifier
-                                .size(36.dp),
-                            painter = painterResource(id = R.drawable.ic_info),
-                            onClick = { }
-                        )
-                        RoundButton(
-                            modifier = Modifier
-                                .size(36.dp),
-                            painter = painterResource(id = if (isOnFavorite) R.drawable.ic_favorite_on else R.drawable.ic_favorite_off),
+                            painter = painterResource(id = R.drawable.ic_icon_store),
+                            imageSize = 24.dp,
                             onClick = {
-                                isOnFavorite = !isOnFavorite
+                                val encode = mapViewUiState.storeList.encode()
+                                navController.navigate("${Screens.STORE_LIST}/${encode}")
                             }
+                        )
+
+                        RoundButton(
+                            modifier = Modifier
+                                .size(36.dp),
+                            imageSize = 24.dp,
+                            painter = painterResource(id = R.drawable.ic_icon_profile),
+                            onClick = { navController.navigate(Screens.INFO.route) }
                         )
                     }
                 }
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun MapScreenPreview() {
-    MapScreen(rememberNavController())
 }
 

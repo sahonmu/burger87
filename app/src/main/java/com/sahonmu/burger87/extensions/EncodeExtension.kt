@@ -20,3 +20,11 @@ fun String.decode(): Any {
     val json = String(Base64.decode(this, Base64.URL_SAFE or Base64.NO_WRAP))
     return Gson().fromJson(json, Store::class.java)
 }
+
+//
+fun String.decodeList(): Array<Store> {
+//    val decodedJson = URLDecoder.decode(this, "UTF-8")
+//    return Gson().fromJson(decodedJson, Store::class.java)
+    val json = String(Base64.decode(this, Base64.URL_SAFE or Base64.NO_WRAP))
+    return Gson().fromJson(json, Array<Store>::class.java)
+}

@@ -1,15 +1,16 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.sahonmu.burger87.ui.theme.screens.store.detail
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -21,19 +22,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.sahonmu.burger87.R
-import com.sahonmu.burger87.enums.StoreDetailTab
-import com.sahonmu.burger87.extensions.copy
+import com.sahonmu.burger87.common.DataManager
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.Gray_50
+import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.Line
@@ -43,7 +43,7 @@ import com.sahonmu.burger87.viewmodels.MapViewModel
 import domain.sahonmu.burger87.enums.storeState
 import domain.sahonmu.burger87.vo.store.Store
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun StoreDetailScreen(
     navController: NavHostController,
@@ -121,7 +121,7 @@ fun StoreDetailScreen(
                             }
                         }
 
-                        if(storeDetailUiState.storeImageLst.size >= 2) {
+                        if (storeDetailUiState.storeImageLst.size >= 2) {
                             PagerIndicator(
                                 modifier = Modifier.constrainAs(dot) {
                                     start.linkTo(parent.start)
@@ -137,10 +137,28 @@ fun StoreDetailScreen(
                 }
             }
 
-            item {
+            stickyHeader {
+                StoreDetailInfoBox(
+                    modifier = Modifier.fillMaxWidth().background(White),
+                    store = store,
+                    onInstagram = { IntentUtils.startActivityForInstagram(context, store.instagram) },
+                    onCall = { IntentUtils.startActivityForDialog(context, store.tel) },
+                    onShare = {
+                        val name = if(store.branch.isEmpty()) store.name else "${store.name}(${store.branch})"
+                        val instagram = store.instagram.ifEmpty { "" }
+                        IntentUtils.startActivityForShare(context, "${name}\n${store.address}\n${store.tel}\n${instagram}")
+                    }
+                )
+
+                Line(
+                    height = 1.dp,
+                    color = Gray_200
+                )
 
                 StoreDetailTab(
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp).background(White),
                     selectedTab = storeDetailUiState.selectedTab.value
                 ) { tab ->
                     storeDetailUiState.selectedTab.value = tab
@@ -152,70 +170,29 @@ fun StoreDetailScreen(
                 )
             }
 
-            if(storeDetailUiState.selectedTab.value == StoreDetailTab.INFO) {
-                item {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+            if (storeDetailUiState.storeMenuList.isNotEmpty()) {
+                itemsIndexed(storeDetailUiState.storeMenuList) { index, item ->
+                    StoreDetailMenuRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp),
+                        storeMenu = item
                     ) {
-                        StoreDetailInfoRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            painter = painterResource(R.drawable.ic_address),
-                            info = store.address,
-                        ) {
-                            store.address.copy(context)
-                        }
-
-                        StoreDetailInfoRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            painter = painterResource(R.drawable.ic_call),
-                            info = store.tel,
-                        ) {
-                            IntentUtils.startActivityForDialog(context, store.tel)
-                        }
-
-                        if(store.instagram.isNotEmpty()) {
-                            StoreDetailInfoRow(
-                                modifier = Modifier.fillMaxWidth(),
-                                painter = painterResource(R.drawable.ic_instagram),
-                                info = store.instagram,
-                            ) {
-                                IntentUtils.startActivityForInstagram(context, store.instagram)
-                            }
-                        }
-
-                        if(store.onTheWay.isNotEmpty()) {
-                            StoreDetailInfoRow(
-                                modifier = Modifier.fillMaxWidth(),
-                                painter = painterResource(R.drawable.ic_instagram),
-                                info = store.onTheWay,
-                            ) {
-
-                            }
-                        }
+                        showAlertMessage = item.description.ifEmpty { "정보 없음" }
+                        showAlert = true
                     }
-                }
-            } else {
-                if(storeDetailUiState.storeMenuList.isNotEmpty()) {
-                    itemsIndexed(storeDetailUiState.storeMenuList) { index, item,  ->
-                        StoreDetailMenuRow(
-                            modifier = Modifier.fillMaxWidth().height(80.dp),
-                            storeMenu = item
-                        ) {
-                            showAlertMessage = item.description.ifEmpty { "정보 없음" }
-                            showAlert = true
-                        }
-                        if(index != storeDetailUiState.storeMenuList.lastIndex) {
-                            Line(
-                                height = 1.dp, Gray_200
-                            )
-                        }
+                    if (index != storeDetailUiState.storeMenuList.lastIndex) {
+                        Line(
+                            height = 1.dp, Gray_200
+                        )
                     }
                 }
             }
         }
+
     }
 
-    if(showAlert) {
+    if (showAlert) {
         Alert(
             message = showAlertMessage
         ) {
@@ -228,9 +205,9 @@ fun StoreDetailScreen(
 @Preview
 @Composable
 fun StoreDetailScreenPreview() {
-//    StoreDetailScreen(
-//        rememberNavController(),
-//
-//    )
+    StoreDetailScreen(
+        navController = rememberNavController(),
+        store = DataManager.store()
+    )
 }
 
