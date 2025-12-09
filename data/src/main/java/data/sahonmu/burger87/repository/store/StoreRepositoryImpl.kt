@@ -7,9 +7,7 @@ import data.sahonmu.burger87.dto.store.StoreMenuDto
 import data.sahonmu.burger87.mapper.toDomain
 import domain.sahonmu.burger87.repository.store.StoreRepository
 import domain.sahonmu.burger87.vo.store.Store
-import domain.sahonmu.burger87.vo.store.StoreMenu
 import io.github.jan.supabase.postgrest.Postgrest
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class StoreRepositoryImpl(

@@ -11,8 +11,11 @@ import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.decode
 import com.sahonmu.burger87.extensions.decodeList
 import com.sahonmu.burger87.ui.theme.base.BaseScreen
+import com.sahonmu.burger87.ui.theme.screens.announcement.AnnouncementListScreen
 import com.sahonmu.burger87.ui.theme.screens.info.main.InfoScreen
+import com.sahonmu.burger87.ui.theme.screens.info.version.AppVersionScreen
 import com.sahonmu.burger87.ui.theme.screens.map.MapScreen
+import com.sahonmu.burger87.ui.theme.screens.score.ScoreCriteriaScreen
 import com.sahonmu.burger87.ui.theme.screens.splash.SplashScreen
 import com.sahonmu.burger87.ui.theme.screens.store.detail.StoreDetailScreen
 import com.sahonmu.burger87.ui.theme.screens.store.list.StoreListScreen
@@ -153,6 +156,17 @@ fun NavGraph(
 
         composable(Screens.INFO.route) {
             BaseScreen(content = { InfoScreen(navController = navController) })
+        }
+
+        composable(Screens.ANNOUNCEMENT_LIST.route) {
+            BaseScreen(content = { AnnouncementListScreen(navController = navController) })
+        }
+
+        composable(Screens.APP_VERSION.route) {
+            BaseScreen(content = { AppVersionScreen(navController = navController) })
+        }
+        composable(Screens.SCORE_CRITERIA.route) {
+            BaseScreen(content = { ScoreCriteriaScreen(navController = navController) })
         }
     }
 }

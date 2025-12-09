@@ -5,6 +5,7 @@ plugins {
 
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
+    id("com.google.android.gms.oss-licenses-plugin")
 //    kotlin("plugin.serialization")
     kotlin("kapt")
 
@@ -64,7 +65,7 @@ android {
         create("dev") {
             dimension = "version"
             versionCode = 1
-            versionName = "1.3.0"
+            versionName = "1.0.0"
             applicationIdSuffix = ".dev"
             manifestPlaceholders["appNameGradle"] = "@string/app_name"
             manifestPlaceholders["appLabel"] = "@string/app_name"
@@ -141,6 +142,8 @@ dependencies {
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 
     implementation("com.google.code.gson:gson:2.10.1")
+
+    implementation("com.google.android.gms:play-services-oss-licenses:17.1.0")
 
     // Supabase
 //    implementation(platform("io.github.jan-tennert.supabase:bom:3.2.6"))

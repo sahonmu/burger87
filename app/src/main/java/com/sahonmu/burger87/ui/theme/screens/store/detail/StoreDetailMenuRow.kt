@@ -1,5 +1,8 @@
 package com.sahonmu.burger87.ui.theme.screens.store.detail
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +15,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +41,18 @@ fun StoreDetailMenuRow(
     storeMenu: StoreMenu,
     onClick: (String) -> Unit = { }
 ) {
+
+    var animate by remember { mutableStateOf(false) }
+    val animateScore by animateIntAsState(
+        targetValue = if(animate) storeMenu.price else 0,
+        animationSpec = tween(durationMillis = 1000),
+        label = ""
+    )
+
+    LaunchedEffect(Unit) {
+        animate = true
+    }
+
     Row(
         modifier = modifier.padding(horizontal = 4.dp).clickable { onClick(storeMenu.description) },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -58,7 +78,8 @@ fun StoreDetailMenuRow(
             )
 
             Text(
-                text = "₩${storeMenu.price.prettyCount()}",
+//                text = "₩${storeMenu.price.prettyCount()}",
+                text = "₩${animateScore.prettyCount()}",
                 fontSize = 15.sp,
                 color = Gray_700
             )

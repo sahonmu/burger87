@@ -23,4 +23,15 @@ object BitmapUtils {
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
+    fun vectorToBitmap(context: Context, drawableId: Int, width: Int, height: Int): BitmapDescriptor {
+        val drawable = ContextCompat.getDrawable(context, drawableId)!!
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
+
 }

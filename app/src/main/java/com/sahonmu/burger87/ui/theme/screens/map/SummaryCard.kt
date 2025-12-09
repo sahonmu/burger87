@@ -132,37 +132,10 @@ fun SummaryCard(
                             WidthMargin(8.dp)
                         }
 
-                        Box(
-                            modifier = Modifier
-                                .height(20.dp)
-                                .background(color = White, shape = RoundedCornerShape(10.dp))
-                                .border(
-                                    width = 1.dp,
-                                    color = Score,
-                                    shape = RoundedCornerShape(10.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.5.dp),
-                                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Image(
-                                    modifier = Modifier.size(9.dp),
-                                    painter = painterResource(R.drawable.ic_star),
-                                    contentDescription = null,
-                                    colorFilter = ColorFilter.tint(Score)
-                                )
-                                Text(
-                                    text = "${store.score}",
-                                    fontSize = 10.5.sp,
-                                    color = Score,
-                                    style = fontPadding,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }
+
+                        ScoreBox(
+                            score = store.score
+                        )
                     }
 
                     HeightMargin(3.dp)

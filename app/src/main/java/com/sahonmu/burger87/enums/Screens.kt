@@ -6,7 +6,11 @@ enum class Screens(var route: String) {
     MAP("MAP"),
     STORE_DETAIL("STORE_DETAIL"),
     STORE_LIST("STORE_LIST"),
-    INFO("INFO")
+    INFO("INFO"),
+    ANNOUNCEMENT_LIST("ANNOUNCEMENT_LIST"),
+    APP_VERSION("APP_VERSION"),
+    SCORE_CRITERIA("SCORE_CRITERIA"),
+
 }
 
 //fun screens(route: String, id: Int): String {

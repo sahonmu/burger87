@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -192,6 +193,16 @@ fun MapScreen(
                             imageSize = 24.dp,
                             painter = painterResource(id = R.drawable.ic_icon_profile),
                             onClick = { navController.navigate(Screens.INFO.route) }
+                        )
+
+
+                        RoundButton(
+                            modifier = Modifier
+                                .size(36.dp),
+                            imageSize = 24.dp,
+                            painter = painterResource(id = R.drawable.ic_star),
+                            borderColor = Color(0xFFFFD700),
+                            onClick = { navController.navigate(Screens.SCORE_CRITERIA.route) }
                         )
                     }
                 }

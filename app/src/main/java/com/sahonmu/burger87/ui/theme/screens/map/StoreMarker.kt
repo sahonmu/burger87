@@ -17,7 +17,7 @@ fun StoreMarker(
 ) {
 
     val context = LocalContext.current
-    val markerIcon = remember { BitmapUtils.vectorToBitmap(context, R.drawable.ic_44_search) }
+    val markerIcon = remember { BitmapUtils.vectorToBitmap(context, R.drawable.ic_icon_selected_burger) }
 
     val latLng = LatLng(store.latitude, store.longitude)
     Marker(

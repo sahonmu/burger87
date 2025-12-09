@@ -50,6 +50,7 @@ fun RoundButton(
     round: Dp = 28.dp,
     imageSize: Dp = 28.dp,
 //    colorFilter: Color = Black,
+    borderColor: Color = Black,
     onClick: (() -> Unit)? = null
 ) {
 
@@ -64,7 +65,7 @@ fun RoundButton(
 //            contentColor = color,
             containerColor = color
         ),
-        border = BorderStroke(width = 1.dp, color = Black)
+        border = BorderStroke(width = 1.dp, color = borderColor)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),

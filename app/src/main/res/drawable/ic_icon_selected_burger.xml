@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="30dp"
+    android:height="30dp"
+    android:viewportWidth="30"
+    android:viewportHeight="30">
+
+    <!-- 흰 원형 배경 -->
+    <path
+        android:pathData="
+            M15.0,0.33
+            A14.66,14.66 0 1 1 15.0,29.67
+            A14.66,14.66 0 1 1 15.0,0.33 Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- 외곽선 -->
+    <path
+        android:pathData="
+            M15.0,0.66
+            A14.34,14.34 0 1 1 15.0,29.34
+            A14.34,14.34 0 1 1 15.0,0.66 Z"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#B52427"
+        android:strokeWidth="1.32" />
+</vector>
