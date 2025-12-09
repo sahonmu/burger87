@@ -22,7 +22,7 @@ import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.Title
 import com.sahonmu.burger87.ui.theme.screens.info.main.InfoMenuRow
-import com.sahonmu.burger87.utils.log.IntentUtils
+import com.sahonmu.burger87.utils.IntentUtils
 
 @Preview(showBackground = true)
 @Composable

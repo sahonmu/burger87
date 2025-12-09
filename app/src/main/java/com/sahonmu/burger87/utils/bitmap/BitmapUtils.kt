@@ -1,4 +1,4 @@
-package com.sahonmu.burger87.utils.log.bitmap
+package com.sahonmu.burger87.utils.bitmap
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -31,6 +31,23 @@ object BitmapUtils {
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
 
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
+
+    fun vectorToBitmapDescriptor(context: Context, @DrawableRes id: Int, tintColor: Int? = null, widthPx: Int? = null, heightPx: Int? = null): BitmapDescriptor {
+        val drawable = ContextCompat.getDrawable(context, id)!!.mutate()
+        tintColor?.let { drawable.setTint(it) }
+
+        val intrinsicW = drawable.intrinsicWidth.takeIf { it > 0 } ?:  (widthPx ?: 100)
+        val intrinsicH = drawable.intrinsicHeight.takeIf { it > 0 } ?: (heightPx ?: 100)
+
+        val targetW = widthPx ?: intrinsicW
+        val targetH = heightPx ?: intrinsicH
+
+        val bitmap = Bitmap.createBitmap(targetW, targetH, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 

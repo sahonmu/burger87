@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -161,14 +162,10 @@ fun SummaryCard(
 @Composable
 fun SummaryPager(
     modifier: Modifier = Modifier,
+    pagerState: PagerState,
     storeList: MutableList<Store>,
-    onSelectStore: (Store) -> Unit = { },
     onClickStore: (Store) -> Unit = { },
 ) {
-    val pagerState = rememberPagerState(pageCount = {
-        storeList.size
-    })
-
     HorizontalPager(
         modifier = modifier,
         state = pagerState,
@@ -180,11 +177,5 @@ fun SummaryPager(
             store = storeList[page],
             onClick = { onClickStore(storeList[page]) }
         )
-    }
-
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { position ->
-            onSelectStore.invoke(storeList[position])
-        }
     }
 }

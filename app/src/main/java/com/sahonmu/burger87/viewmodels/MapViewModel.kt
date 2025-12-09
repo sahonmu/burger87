@@ -28,7 +28,8 @@ import kotlin.collections.toMutableList
 data class MapViewModelUiState(
     val loadState: LoadState = LoadState.LOADING,
     var storeList: MutableList<Store> = mutableListOf(),
-    var boundBuilder: LatLngBounds.Builder = LatLngBounds.builder()
+    var boundBuilder: LatLngBounds.Builder = LatLngBounds.builder(),
+    var selectedIndex: MutableState<Int> = mutableStateOf(0)
 )
 
 

@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,19 +29,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.sahonmu.burger87.R
-import com.sahonmu.burger87.enums.InfoMenu
-import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Line
-import com.sahonmu.burger87.ui.theme.screens.components.Margin
 import com.sahonmu.burger87.ui.theme.screens.components.Title
-import com.sahonmu.burger87.ui.theme.screens.info.main.InfoMenuRow
-import com.sahonmu.burger87.utils.log.AppUtils.getAppVersionName
-import com.sahonmu.burger87.utils.log.IntentUtils
+import com.sahonmu.burger87.utils.AppUtils.getAppVersionName
+import com.sahonmu.burger87.utils.IntentUtils
 import com.sahonmu.burger87.viewmodels.AppInfoViewModel
 
 @Preview(showBackground = true)

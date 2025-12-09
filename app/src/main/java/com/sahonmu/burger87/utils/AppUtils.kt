@@ -1,4 +1,4 @@
-package com.sahonmu.burger87.utils.log
+package com.sahonmu.burger87.utils
 
 import android.content.Context
 

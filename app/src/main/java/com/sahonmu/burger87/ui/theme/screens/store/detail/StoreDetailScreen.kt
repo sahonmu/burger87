@@ -38,7 +38,7 @@ import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.PagerIndicator
-import com.sahonmu.burger87.utils.log.IntentUtils
+import com.sahonmu.burger87.utils.IntentUtils
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import domain.sahonmu.burger87.enums.storeState
 import domain.sahonmu.burger87.vo.store.Store
