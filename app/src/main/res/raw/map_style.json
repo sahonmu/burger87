@@ -9,15 +9,14 @@
 //    ],
 //  },
 
+//
   {
-    featureType: "poi",
-    elementType: "labels.icon",
-    stylers: [
-      {
-        color: "#BDBDBD"
-      }
+    "featureType": "poi",
+    "elementType": "all",
+    "stylers": [
+      { "visibility": "off" }
     ]
-  },
+  }
 
 //  {
 //    "featureType": "all",

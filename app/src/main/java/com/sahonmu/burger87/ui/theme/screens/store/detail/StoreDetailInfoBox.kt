@@ -27,9 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.common.DataManager
+import com.sahonmu.burger87.extensions.toYearMonthDay
 import com.sahonmu.burger87.ui.theme.Gray_700
 import com.sahonmu.burger87.ui.theme.Base
+import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.White
+import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Margin
 import domain.sahonmu.burger87.vo.store.Store
 
@@ -73,8 +76,21 @@ fun StoreDetailInfoBox(
 //                onClick = { }
 //            )
         }
-    }
 
+        HeightMargin(10.dp)
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+
+            val text = if (store.updateDate == null) store.createdAt else store.updateDate
+            Text(
+                text ="마지막 업데이트 : ${text?.toYearMonthDay()}",
+                color = Gray_900,
+                fontSize = 14.sp
+            )
+        }
+    }
 }
 
 @Composable

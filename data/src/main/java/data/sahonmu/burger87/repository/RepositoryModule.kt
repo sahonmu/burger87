@@ -5,8 +5,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import data.sahonmu.burger87.repository.app.AppInfoRepositoryImpl
+import data.sahonmu.burger87.repository.score.ScoreInfoRepositoryImpl
 import data.sahonmu.burger87.repository.store.StoreRepositoryImpl
 import domain.sahonmu.burger87.repository.app.AppInfoRepository
+import domain.sahonmu.burger87.repository.score.ScoreInfoRepository
 import domain.sahonmu.burger87.repository.store.StoreRepository
 import io.github.jan.supabase.postgrest.Postgrest
 import javax.inject.Singleton
@@ -27,5 +29,12 @@ object RepositoryModule {
     fun provideAppInfoRepository(
         postgrest: Postgrest
     ): AppInfoRepository = AppInfoRepositoryImpl(postgrest)
+
+
+    @Provides
+    @Singleton
+    fun provideScoreInfoRepository(
+        postgrest: Postgrest
+    ): ScoreInfoRepository = ScoreInfoRepositoryImpl(postgrest)
 
 }

@@ -1,5 +1,7 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,11 +36,13 @@ import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
+import com.sahonmu.burger87.extensions.findActivity
 import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
+import com.sahonmu.burger87.viewmodels.ScoreInfoViewModel
 import timber.log.Timber
 
 
@@ -53,6 +61,7 @@ fun MapScreen(
 
     val uiState = rememberUiState()
     val scope = uiState.scope
+    val context = uiState.context
 
     val mapViewUiState = mapViewModel.mapViewUiState.collectAsState().value
 
@@ -153,7 +162,6 @@ fun MapScreen(
                             onClick = { navController.navigate(Screens.INFO.route) }
                         )
 
-
                         RoundButton(
                             modifier = Modifier
                                 .size(36.dp),
@@ -166,6 +174,19 @@ fun MapScreen(
                 }
             }
         }
+
     }
+
+    var backPressedTime by remember { mutableLongStateOf(0L) }
+    BackHandler {
+        if (System.currentTimeMillis() - backPressedTime <= 2000L) {
+            // 앱 종료
+            context.findActivity().finish()
+        } else {
+            Toast.makeText(context, "뒤로 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
+        }
+        backPressedTime = System.currentTimeMillis()
+    }
+
 }
 
