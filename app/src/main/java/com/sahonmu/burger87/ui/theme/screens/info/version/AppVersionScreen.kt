@@ -134,7 +134,7 @@ fun AppVersionScreen(
         }
 
         context.getAppVersionName()?.let {
-            if (appInfoUiState.appInfo.appVersion != context.getAppVersionName()) {
+            if (appInfoUiState.appInfo.appVersion != context.getAppVersionName() && appInfoUiState.appInfo.appVersionCode != 0) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

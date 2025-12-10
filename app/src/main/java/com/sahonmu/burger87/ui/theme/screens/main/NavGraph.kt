@@ -9,9 +9,11 @@ import androidx.navigation.compose.composable
 import com.sahonmu.burger87.common.BundleKey
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.decode
+import com.sahonmu.burger87.extensions.decodeAnnouncement
 import com.sahonmu.burger87.extensions.decodeList
 import com.sahonmu.burger87.ui.theme.base.BaseScreen
-import com.sahonmu.burger87.ui.theme.screens.announcement.AnnouncementListScreen
+import com.sahonmu.burger87.ui.theme.screens.announcement.detail.AnnouncementDetailScreen
+import com.sahonmu.burger87.ui.theme.screens.announcement.list.AnnouncementListScreen
 import com.sahonmu.burger87.ui.theme.screens.info.main.InfoScreen
 import com.sahonmu.burger87.ui.theme.screens.info.version.AppVersionScreen
 import com.sahonmu.burger87.ui.theme.screens.map.MapScreen
@@ -20,6 +22,7 @@ import com.sahonmu.burger87.ui.theme.screens.splash.SplashScreen
 import com.sahonmu.burger87.ui.theme.screens.store.detail.StoreDetailScreen
 import com.sahonmu.burger87.ui.theme.screens.store.list.StoreListScreen
 import com.sahonmu.burger87.viewmodels.MapViewModel
+import domain.sahonmu.burger87.vo.announcement.Announcement
 import domain.sahonmu.burger87.vo.store.Store
 import timber.log.Timber
 
@@ -94,6 +97,30 @@ import timber.log.Timber
 //    }
 //}
 
+fun NavGraphBuilder.announcement(
+    navController: NavHostController
+) {
+
+    composable(Screens.ANNOUNCEMENT_LIST.route) {
+        BaseScreen(content = { AnnouncementListScreen(navController = navController) })
+    }
+
+    composable("${Screens.ANNOUNCEMENT_DETAIL.route}/{${BundleKey.DATA}}") {
+        it.arguments?.getString(BundleKey.DATA)?.let { json ->
+            json.decodeAnnouncement().let { announcement ->
+                BaseScreen(
+                    content = {
+                        AnnouncementDetailScreen(
+                            navController = navController,
+                            announcement = announcement as Announcement
+                        )
+                    },
+                )
+            }
+        }
+    }
+}
+
 fun NavGraphBuilder.store(
     navController: NavHostController
 ) {
@@ -158,9 +185,7 @@ fun NavGraph(
             BaseScreen(content = { InfoScreen(navController = navController) })
         }
 
-        composable(Screens.ANNOUNCEMENT_LIST.route) {
-            BaseScreen(content = { AnnouncementListScreen(navController = navController) })
-        }
+        announcement(navController)
 
         composable(Screens.APP_VERSION.route) {
             BaseScreen(content = { AppVersionScreen(navController = navController) })

@@ -135,6 +135,20 @@ fun MapScreen(
                         )
                     }
 
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(top = 20.dp, start = 20.dp),
+                    ) {
+                        RoundButton(
+                            modifier = Modifier
+                                .size(36.dp),
+                            imageSize = 16.dp,
+                            painter = painterResource(id = R.drawable.ic_icon_list),
+                            onClick = { navController.navigate(Screens.INFO.route) }
+                        )
+                    }
+
 
                     Column(
                         modifier = Modifier
@@ -152,14 +166,6 @@ fun MapScreen(
                                 val encode = mapViewUiState.storeList.encode()
                                 navController.navigate("${Screens.STORE_LIST}/${encode}")
                             }
-                        )
-
-                        RoundButton(
-                            modifier = Modifier
-                                .size(36.dp),
-                            imageSize = 24.dp,
-                            painter = painterResource(id = R.drawable.ic_icon_profile),
-                            onClick = { navController.navigate(Screens.INFO.route) }
                         )
 
                         RoundButton(
