@@ -1,6 +1,10 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
 import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -13,22 +17,28 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterManager
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
+import com.sahonmu.burger87.utils.bitmap.BitmapUtils
 import com.sahonmu.burger87.utils.map.StoreClusterItem
 import com.sahonmu.burger87.utils.map.StoreClusterRenderer
 import com.sahonmu.burger87.viewmodels.MapViewModelUiState
+import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.vo.store.Store
 import timber.log.Timber
 
 @Composable
 fun ClusterMapView(
     mapViewUiState: MapViewModelUiState,
-    onMarkerClick: (Store) -> Unit = { }
+    onMarkerClick: (Store) -> Unit = { },
+    onMapClick: () -> Unit = { }
 ) {
 
     val context = rememberUiState().context
@@ -36,6 +46,10 @@ fun ClusterMapView(
 
     var googleMap by remember { mutableStateOf<GoogleMap?>(null) }
     var clusterManager by remember { mutableStateOf<ClusterManager<StoreClusterItem>?>(null) }
+
+    var selectedMarker by remember { mutableStateOf<Marker?>(null) }
+    val selectedIndex = mapViewUiState.selectedIndex.value
+
 
 
     AndroidView(
@@ -52,8 +66,6 @@ fun ClusterMapView(
                             context,
                             map,
                             this,
-                            R.drawable.ic_burger,
-                            R.drawable.splash
                         )
                         this.renderer = renderer
 
@@ -69,6 +81,15 @@ fun ClusterMapView(
                         this.setOnClusterItemClickListener { item ->
                             onMarkerClick(item.store)
                             map.animateCamera(CameraUpdateFactory.newLatLng(item.position))
+
+                            selectedMarker?.remove()
+                            val view = selectedMarker(context, item.store)
+                            val markerOption = MarkerOptions()
+                                .position(item.position)
+                                .anchor(0.5f, 0.5f)
+                                .zIndex(5f)
+                                .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
+                                selectedMarker = map.addMarker(markerOption)
                             true // false면 기본 마커 클릭 동작(InfoWindow 등) 계속
                         }
 
@@ -89,11 +110,24 @@ fun ClusterMapView(
                     // 클릭 리스너들을 ClusterManager에 연결
                     map.setOnCameraIdleListener(clusterManager)
                     map.setOnMarkerClickListener(clusterManager)
-//                            gMap.setOnInfoWindowClickListener(clusterManager)
+                    map.setOnMapClickListener {
+                        selectedMarker?.remove()
+                        onMapClick()
+                    }
                 }
+
+                selectedMarker?.remove()
+                val store = mapViewUiState.storeList[selectedIndex]
+                val view = selectedMarker(context, store)
+                val markerOption = MarkerOptions()
+                    .position(LatLng(store.latitude, store.longitude))
+                    .anchor(0.5f, 0.5f)
+                    .zIndex(5f)
+                    .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
+                selectedMarker = map.addMarker(markerOption)
+
             }
 
-            Timber.i("selectedIndex = ${mapViewUiState.selectedIndex.value}")
             if (mapViewUiState.storeList.isNotEmpty()) {
                 val store = mapViewUiState.storeList[mapViewUiState.selectedIndex.value]
                 val latLng = LatLng(store.latitude, store.longitude)
@@ -153,3 +187,16 @@ private fun mapSetting(context: Context, map: GoogleMap) {
         setMapStyle(MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style))
     }
 }
+
+private fun selectedMarker(context: Context, store: Store): View {
+    val markerView: View = LayoutInflater.from(context).inflate(R.layout.view_marker_selected, null)
+    val operationLayout: FrameLayout = markerView.findViewById(R.id.operationLayout)
+    val closedLayout: FrameLayout = markerView.findViewById(R.id.closedLayout)
+    val scoreTextView: TextView = markerView.findViewById(R.id.scoreTextView)
+
+    operationLayout.visibility = if (store.storeState.isOperation()) View.VISIBLE else View.GONE
+    closedLayout.visibility = if (store.storeState.isOperation()) View.GONE else View.VISIBLE
+    scoreTextView.text = store.score.toString()
+    return markerView
+}
+

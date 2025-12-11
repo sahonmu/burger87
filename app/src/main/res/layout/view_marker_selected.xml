@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--<layout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto">-->
+<?xml version="1.0" encoding="utf-8"?>
 
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,35 +10,35 @@
 
     <FrameLayout
         android:id="@+id/operationLayout"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
         android:background="@drawable/background_marker"
         android:visibility="visible">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_gravity="center"
             android:layout_marginBottom="1dp"
             android:src="@drawable/ic_burger" />
 
         <FrameLayout
-            android:background="@drawable/background_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
-            android:paddingHorizontal="3.5dp"
-            android:paddingVertical="2dp">
+            android:background="@drawable/background_score"
+            android:paddingHorizontal="4.5dp"
+            android:paddingVertical="3dp">
 
             <TextView
-                android:includeFontPadding="true"
                 android:id="@+id/scoreTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|end"
+                android:includeFontPadding="true"
                 android:textColor="#FFC107"
-                android:textSize="8dp"
+                android:textSize="10dp"
                 android:textStyle="bold" />
 
         </FrameLayout>
@@ -49,20 +48,11 @@
 
     <FrameLayout
         android:id="@+id/closedLayout"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
         android:background="@drawable/background_marker"
         android:visibility="gone">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="1dp"
-            android:src="@drawable/ic_burger"
-            android:visibility="gone" />
-
 
         <TextView
             android:layout_width="wrap_content"
@@ -70,11 +60,9 @@
             android:layout_gravity="center"
             android:text="폐업"
             android:textColor="#B52427"
-            android:textSize="11dp"
+            android:textSize="13dp"
             android:textStyle="bold" />
 
     </FrameLayout>
 
 </FrameLayout>
-
-    <!--</layout>-->

@@ -1,8 +1,6 @@
 package com.sahonmu.burger87.utils.map
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
@@ -12,11 +10,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
-import com.google.maps.android.ui.IconGenerator
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.utils.bitmap.BitmapUtils
 
@@ -24,34 +20,7 @@ class StoreClusterRenderer(
     context: Context,
     map: GoogleMap,
     clusterManager: ClusterManager<StoreClusterItem>,
-    @DrawableRes private val singleIconRes: Int,
-    @DrawableRes private val clusterIconRes: Int
 ) : DefaultClusterRenderer<StoreClusterItem>(context, map, clusterManager) {
-
-    private val singleIcon: BitmapDescriptor by lazy {
-        BitmapUtils.vectorToBitmapDescriptor(
-            context,
-            singleIconRes,
-            widthPx = dpToPx(context, 40),
-            heightPx = dpToPx(context, 40)
-        )
-    }
-    private val clusterIcon: BitmapDescriptor by lazy {
-        BitmapUtils.vectorToBitmapDescriptor(
-            context,
-            clusterIconRes,
-            widthPx = dpToPx(context, 48),
-            heightPx = dpToPx(context, 48)
-        )
-    }
-
-//    private val iconGenerator = IconGenerator(context)
-//    private val clusterGenerator = IconGenerator(context)
-
-    //    private val markerView: ViewMarkerBinding = ViewMarkerBinding.inflate(LayoutInflater.from(context))
-//    private var markerView: ViewMarkerBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.view_marker, null, false)
-//    private val closedLayout: FrameLayout = markerView.operationLayout
-//    private val closedLayout: FrameLayout = markerView.closedLayout
     private val markerView: View =
         LayoutInflater.from(context).inflate(R.layout.view_marker, null)
     private val operationLayout: FrameLayout = markerView.findViewById(R.id.operationLayout)
@@ -65,11 +34,7 @@ class StoreClusterRenderer(
 
 
     init {
-//        iconGenerator.setContentView(markerView)
-//        iconGenerator.setBackground(null)
-//
-//        clusterGenerator.setContentView(clusterView)
-//        clusterGenerator.setBackground(null)
+
     }
 
     override fun onClusterItemRendered(
@@ -81,6 +46,7 @@ class StoreClusterRenderer(
         closedLayout.visibility = if (item.store.state == "operation") View.GONE else View.VISIBLE
         scoreTextView.text = item.store.score.toString()
         marker.setIcon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(markerView.rootView)))
+        marker.setAnchor(0.5f, 0.5f)
     }
 
     // 개별 마커 설정
@@ -97,6 +63,7 @@ class StoreClusterRenderer(
         val size = convertRangeLabel(cluster.size)
         clusterTextView.text = size
         marker.setIcon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(clusterView.rootView)))
+        marker.setAnchor(0.5f, 0.5f)
     }
 
 //    override fun onBeforeClusterRendered(

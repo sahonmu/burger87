@@ -1,7 +1,14 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -20,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -32,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.maps.model.Marker
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
@@ -43,6 +53,8 @@ import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.ScoreInfoViewModel
+import domain.sahonmu.burger87.enums.isOperation
+import domain.sahonmu.burger87.vo.store.Store
 import timber.log.Timber
 
 
@@ -69,6 +81,12 @@ fun MapScreen(
         mapViewUiState.storeList.size
     })
 
+    var isCardVisible by remember { mutableStateOf(true) }
+    val cardHeight = 125.dp
+    val offsetY by animateDpAsState(
+        targetValue = if (isCardVisible) 0.dp else cardHeight,
+        animationSpec = tween(durationMillis = 400)
+    )
 
     LaunchedEffect(Unit) {
         mapViewModel.requestStoreList()
@@ -77,7 +95,6 @@ fun MapScreen(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { position ->
             mapViewUiState.selectedIndex.value = position
-            Timber.i("selectedIndex pagerState = ${mapViewUiState.selectedIndex.value}")
         }
     }
 
@@ -112,7 +129,10 @@ fun MapScreen(
                                 animate = false,
                                 page = mapViewUiState.selectedIndex.value
                             )
-                            Timber.i("selectedIndex onMarkerClick = ${mapViewUiState.selectedIndex.value}")
+                            isCardVisible = true
+                        },
+                        onMapClick = {
+                            isCardVisible = false
                         }
                     )
 
@@ -126,6 +146,7 @@ fun MapScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(110.dp)
+                                .offset(y = offsetY)
                                 .align(Alignment.BottomCenter),
                             pagerState = pagerState,
                             storeList = mapViewUiState.storeList,
@@ -195,4 +216,7 @@ fun MapScreen(
     }
 
 }
+
+
+
 
