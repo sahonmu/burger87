@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,6 +45,7 @@ import com.sahonmu.burger87.ui.theme.Black
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.White
+import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.Title
@@ -52,6 +54,10 @@ import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import com.sahonmu.burger87.ui.theme.screens.map.StoreListRow
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import domain.sahonmu.burger87.vo.store.Store
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 
 @Preview
@@ -69,6 +75,10 @@ fun StoreListScreen(
     navController: NavHostController,
     storeList: MutableList<Store>,
 ) {
+
+    val uiState = rememberUiState()
+    val scope = uiState.scope
+
     val mapViewModel: MapViewModel = hiltViewModel()
     val storeListUiState = mapViewModel.storeListUiState.collectAsState().value
 
@@ -94,19 +104,34 @@ fun StoreListScreen(
 
     val sortMenuList = SortMenu.entries.toMutableList()
 
+
+    val listState = rememberLazyListState()
+
     LaunchedEffect(Unit) {
         mapViewModel.addAllStore(storeList)
     }
 
-    val listState = rememberLazyListState()
-    val currentHeader by remember {
-        derivedStateOf {
-            val visible = listState.layoutInfo.visibleItemsInfo
-            val headers = visible.filter { it.key is String && (it.key as String).startsWith("header_") }
 
-            // 화면에서 제일 위에 있는 header 찾기
-            headers.minByOrNull { it.index }?.key as? String
+    val flatScoreList = remember(storeListUiState.scoreGroup) {
+        storeListUiState.scoreGroup.flatMap { (key, list) ->
+            list.map { item -> key to item }
         }
+    }
+
+    LaunchedEffect(listState, flatScoreList) {
+        snapshotFlow { listState.firstVisibleItemIndex }
+            .collect { index ->
+                if (selectedSortMenu == SortMenu.CITY) {
+
+                } else if (selectedSortMenu == SortMenu.SCORE) {
+                    val stickyIndex = storeListUiState.scoreGroup.keys.toList().indexOf(flatScoreList[index].second.score)
+                    flatScoreList.getOrNull(index - stickyIndex)?.let { displayItem ->
+                        selectedScore = displayItem.first
+                    }
+                } else if (selectedSortMenu == SortMenu.CHAR) {
+
+                }
+            }
     }
 
     Column(
@@ -199,7 +224,12 @@ fun StoreListScreen(
                         text = "${key}점(${value.size})",
                         isSelect = selectedScore == key,
                         onClick = {
+                            val stickyIndex = storeListUiState.scoreGroup.keys.toList().indexOf(key)
                             selectedScore = key
+                            val index = flatScoreList.indexOfFirst { it.first == key } + stickyIndex
+                            scope.launch {
+                                listState.scrollToItem(index)
+                            }
                         }
                     )
                 }
@@ -269,7 +299,7 @@ fun StoreListScreen(
                     }
                 }
             } else if(selectedSortMenu == SortMenu.SCORE) {
-                storeListUiState.scoreGroup.toList().sortedByDescending { it.first }.forEach { (score, list) ->
+                storeListUiState.scoreGroup.forEach { (score, list) ->
                     stickyHeader {
                         Column(
                             modifier = Modifier.fillMaxWidth()
@@ -347,6 +377,44 @@ fun StoreListScreen(
             }
         }
     }
+}
+
+private fun findHeaderForIndex(
+    items: List<Pair<Float?, String>>,
+    sortedKeys: List<Float>,
+    index: Int
+): Float? {
+    var lastHeader: Float? = null
+
+    for (i in 0..index) {
+        val value = items[i]
+        if (value.second == "__HEADER__") {
+            lastHeader = value.first
+        }
+    }
+    return lastHeader
+}
+
+private fun findHeaderForIndex(
+    data: Map<Char, List<String>>,
+    targetIndex: Int
+): Char {
+    var currentIndex = 0
+    var currentHeader: Char = 'A'
+
+    for ((header, items) in data) {
+        // 헤더 1개 + 아이템 개수
+        val sectionSize = 1 + items.size
+
+        // 현재 섹션 범위 안에 targetIndex가 포함되면 이 헤더가 정답
+        if (targetIndex < currentIndex + sectionSize) {
+            return header
+        }
+
+        currentIndex += sectionSize
+        currentHeader = header
+    }
+    return currentHeader
 }
 
 

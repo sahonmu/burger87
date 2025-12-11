@@ -48,7 +48,7 @@ data class StoreSortListUiState(
     var storeList: MutableList<Store> = mutableListOf(),
     var sortList: MutableList<Store> = mutableListOf(),
     var cityGroup: Map<String, List<Store>> = linkedMapOf(),
-    var scoreGroup: Map<Float, List<Store>> = linkedMapOf(),
+    var scoreGroup: Map<Float, MutableList<Store>> = linkedMapOf(),
     var charGroup: Map<Char, List<Store>> = linkedMapOf(),
     var includeClosed: Boolean = true
 )
@@ -79,7 +79,6 @@ class MapViewModel @Inject constructor(
                 }
 
                 _mapViewUiState.update { state ->
-
                     state.copy(
                         loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
                         originList = storeList.sortedBy { it.id } as MutableList<Store>,
@@ -119,11 +118,15 @@ class MapViewModel @Inject constructor(
 
     fun addAllStore(storeList: MutableList<Store>) {
         _storeListUiState.update { state ->
+            val scoreGroup = storeList.groupBy { it.score }.toSortedMap( compareByDescending { it })
             state.copy(
                 storeList = storeList,
                 sortList = storeList,
                 cityGroup = storeList.groupBy { it.cityFilter },
-                scoreGroup = storeList.groupBy { it.score },
+                scoreGroup = scoreGroup as Map<Float, MutableList<Store>>,
+//                flatScoreList = scoreGroup.flatMap { (key, list) ->
+//                    list.map { item -> key to item }
+//                } as MutableList<Store>,
                 charGroup = storeList.groupBy { getChosung(it.name.first().uppercaseChar()) }
             )
         }
@@ -169,11 +172,19 @@ class MapViewModel @Inject constructor(
                 list = list.filterNot { it.storeState == StoreState.CLOSED }.toMutableList()
             }
 
+            val scoreGroup = list.groupBy { it.score }.toSortedMap( compareByDescending { it })
+
             state.copy(
                 sortList = list,
                 includeClosed = include,
                 cityGroup = list.groupBy { it.cityFilter },
-                scoreGroup = list.groupBy { it.score },
+                scoreGroup = scoreGroup as Map<Float, MutableList<Store>>,
+//                flatScoreList = scoreGroup.flatMap { (key, list) ->
+//                    list.map { item -> key to item }
+//                } as MutableList<Store>,
+//                flatScoreList = list.groupBy { it.score }.toList().sortedBy { it.first }.flatMap { (header, items) ->
+//                    listOf(header) + items
+//                } as MutableList<Store>,
                 charGroup = list.groupBy { getChosung(it.name.first().uppercaseChar()) }
             )
         }
