@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,7 +69,7 @@ fun StoreDetailInfoBox(
                 onClick = { onCall() }
             )
             IconBorderBox(
-                painter = painterResource(R.drawable.ic_icon_share),
+                painter = painterResource(R.drawable.ic_share),
                 onClick = { onShare() }
             )
 //            IconBorderBox(
@@ -85,9 +86,10 @@ fun StoreDetailInfoBox(
 
             val text = if (store.updateDate == null) store.createdAt else store.updateDate
             Text(
-                text ="마지막 업데이트 : ${text?.toYearMonthDay()}",
+                text = "업데이트 : ${text?.toYearMonthDay()}\n최근 방문 : ${store.lastVisitDate.toYearMonthDay()}\n방문 횟수 : ${store.visitCount}회",
                 color = Gray_900,
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                textAlign = TextAlign.End
             )
         }
     }

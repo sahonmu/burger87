@@ -22,8 +22,9 @@ object DataManager {
             state = "OPERATION",
             thumbImage = "",
             score = 4.0f,
-            onTheWay = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Bucheoncityhall2025.jpg/960px-Bucheoncityhall2025.jpg",
-            cityFilter = "전체"
+            cityFilter = "전체",
+            lastVisitDate = "",
+            visitCount = 1
         )
     }
 }

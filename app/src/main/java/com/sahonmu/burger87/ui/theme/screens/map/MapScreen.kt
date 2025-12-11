@@ -1,10 +1,5 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
-import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.FrameLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
@@ -21,6 +16,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.maps.model.Marker
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
@@ -52,10 +47,6 @@ import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
-import com.sahonmu.burger87.viewmodels.ScoreInfoViewModel
-import domain.sahonmu.burger87.enums.isOperation
-import domain.sahonmu.burger87.vo.store.Store
-import timber.log.Timber
 
 
 @Preview
@@ -156,16 +147,16 @@ fun MapScreen(
                         )
                     }
 
-                    Column(
+                    Box(
                         modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(top = 20.dp, start = 20.dp),
+                            .size(36.dp + 40.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         RoundButton(
                             modifier = Modifier
                                 .size(36.dp),
                             imageSize = 16.dp,
-                            painter = painterResource(id = R.drawable.ic_icon_list),
+                            painter = painterResource(id = R.drawable.ic_menu),
                             onClick = { navController.navigate(Screens.INFO.route) }
                         )
                     }
@@ -173,9 +164,11 @@ fun MapScreen(
 
                     Column(
                         modifier = Modifier
+                            .width(80.dp)
                             .align(Alignment.TopEnd)
-                            .padding(top = 20.dp, end = 20.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                            .padding(top = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
                         RoundButton(
@@ -187,6 +180,15 @@ fun MapScreen(
                                 val encode = mapViewUiState.storeList.encode()
                                 navController.navigate("${Screens.STORE_LIST}/${encode}")
                             }
+                        )
+
+                        RoundButton(
+                            modifier = Modifier
+                                .size(36.dp),
+                            imageSize = 24.dp,
+                            painter = painterResource(id = R.drawable.ic_star),
+                            borderColor = Color(0xFFFFD700),
+                            onClick = { navController.navigate(Screens.SCORE_CRITERIA.route) }
                         )
 
                         RoundButton(

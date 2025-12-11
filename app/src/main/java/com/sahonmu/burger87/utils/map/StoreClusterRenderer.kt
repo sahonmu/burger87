@@ -15,6 +15,7 @@ import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.utils.bitmap.BitmapUtils
+import domain.sahonmu.burger87.enums.isOperation
 
 class StoreClusterRenderer(
     context: Context,
@@ -42,11 +43,12 @@ class StoreClusterRenderer(
         marker: Marker
     ) {
         super.onClusterItemRendered(item, marker)
-        operationLayout.visibility = if (item.store.state == "operation") View.VISIBLE else View.GONE
-        closedLayout.visibility = if (item.store.state == "operation") View.GONE else View.VISIBLE
+        operationLayout.visibility = if (item.store.storeState.isOperation()) View.VISIBLE else View.GONE
+        closedLayout.visibility = if (item.store.storeState.isOperation()) View.GONE else View.VISIBLE
         scoreTextView.text = item.store.score.toString()
         marker.setIcon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(markerView.rootView)))
         marker.setAnchor(0.5f, 0.5f)
+        marker.zIndex = if(item.store.storeState.isOperation()) 2f else 1f
     }
 
     // 개별 마커 설정

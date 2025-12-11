@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -31,7 +27,6 @@ import kotlinx.coroutines.delay
 fun SplashScreen(
     navController: NavHostController,
 ) {
-    var visibilityPermissionNotice by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         delay(Constants.SPLASH_DURATION)
@@ -41,8 +36,6 @@ fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-//            .systemBarsPadding()
-//            .navigationBarsPadding()
             .background(color = Base),
         contentAlignment = Alignment.Center
     ) {

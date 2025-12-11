@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.sahonmu.burger87.common.DataManager
+import com.sahonmu.burger87.extensions.toYearMonthDay
 import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.White
@@ -80,6 +81,7 @@ fun SummaryCard(
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(modifier = Modifier.size(110.dp)) {
                     GlideImage(
@@ -96,61 +98,38 @@ fun SummaryCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(end = 12.dp, top = 6.dp, bottom = 6.dp),
-
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Margin(modifier = Modifier.weight(1f))
-
-
-                        if(!store.state.storeState().isOperation()) {
-                            Box(
-                                modifier = Modifier
-                                    .height(20.dp)
-                                    .background(color = White, shape = RoundedCornerShape(10.dp))
-                                    .border(
-                                        width = 1.dp,
-                                        color = Base,
-                                        shape = RoundedCornerShape(10.dp)
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.5.dp),
-                                    text = "폐점",
-                                    fontSize = 10.5.sp,
-                                    color = Base,
-                                    style = fontPadding,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                            WidthMargin(8.dp)
-                        }
-
-
-                        ScoreBox(
-                            score = store.score
-                        )
-                    }
-
-                    HeightMargin(3.dp)
                     Text(
                         text = if (store.branch.isEmpty()) store.name else "${store.name}(${store.branch})",
-                        fontSize = 14.5.sp,
+                        fontSize = 15.sp,
                         style = fontPadding
                     )
-                    HeightMargin(5.dp)
-                    if(store.storeState.isOperation()) {
+//                    HeightMargin(5.dp)
+//                    if(store.storeState.isOperation()) {
+//                        Text(
+//                            text = store.address,
+//                            fontSize = 10.5.sp,
+//                            maxLines = 2,
+//                            overflow = TextOverflow.Ellipsis,
+//                            style = fontPadding
+//                        )
+//                    }
+//                    Margin(modifier = Modifier.weight(1f))
+//                    Box(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        contentAlignment = Alignment.BottomEnd
+//                    ) {
                         Text(
-                            text = store.address,
-                            fontSize = 11.sp,
+                            text = "방문횟수 : ${store.visitCount}회\n최근 방문 날짜 : ${store.lastVisitDate.toYearMonthDay()}",
+                            fontSize = 9.5.sp,
                             maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
                             style = fontPadding
                         )
-                    }
+//                    }
+//                    HeightMargin(5.dp)
+
                 }
             }
             

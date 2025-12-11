@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
@@ -23,6 +24,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.ui.theme.Black
+import com.sahonmu.burger87.ui.theme.Gray_100
+import com.sahonmu.burger87.ui.theme.Gray_50
+import com.sahonmu.burger87.ui.theme.White
 
 
 @Composable
@@ -45,7 +49,7 @@ fun RoundButtonPreview() {
 @Composable
 fun RoundButton(
     modifier: Modifier = Modifier,
-    color: Color = Color.White,
+    color: Color = White,
     painter: Painter,
     round: Dp = 28.dp,
     imageSize: Dp = 28.dp,
@@ -57,15 +61,21 @@ fun RoundButton(
     Card(
         modifier = modifier
             .clip(shape = RoundedCornerShape(round))
+//            .shadow(
+//                elevation = 12.dp,
+//                shape = RoundedCornerShape(round),
+//                clip = false
+//            )
             .clickable {
                 onClick?.invoke()
             },
         shape = RoundedCornerShape(round),
         colors = CardDefaults.cardColors(
-//            contentColor = color,
-            containerColor = color
+            containerColor = color,
         ),
-        border = BorderStroke(width = 1.dp, color = borderColor)
+        elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 10.dp
+        )
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
