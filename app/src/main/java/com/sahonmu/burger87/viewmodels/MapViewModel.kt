@@ -14,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import domain.sahonmu.burger87.enums.StoreState
 import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.usecase.store.StoreUseCase
+import domain.sahonmu.burger87.vo.score.ScoreInfo
 import domain.sahonmu.burger87.vo.store.Store
 import domain.sahonmu.burger87.vo.store.StoreImage
 import domain.sahonmu.burger87.vo.store.StoreMenu
@@ -46,8 +47,10 @@ data class StoreDetailUiState(
 data class StoreSortListUiState(
     var storeList: MutableList<Store> = mutableListOf(),
     var sortList: MutableList<Store> = mutableListOf(),
-    var cityList: MutableList<Store> = mutableListOf(),
-    var cityGroup: Map<String, List<Store>> = linkedMapOf()
+    var cityGroup: Map<String, List<Store>> = linkedMapOf(),
+    var scoreGroup: Map<Float, List<Store>> = linkedMapOf(),
+    var charGroup: Map<Char, List<Store>> = linkedMapOf(),
+    var includeClosed: Boolean = true
 )
 
 @HiltViewModel
@@ -116,15 +119,12 @@ class MapViewModel @Inject constructor(
 
     fun addAllStore(storeList: MutableList<Store>) {
         _storeListUiState.update { state ->
-
-//            val cityList = mutableListOf<Store>()
-//            cityList.add(DataManager.store())
-//            cityList.addAll(storeList.distinctBy { it.cityFilter }.toMutableList())
             state.copy(
                 storeList = storeList,
                 sortList = storeList,
-//                cityList = cityList,
-                cityGroup = storeList.groupBy { it.cityFilter }
+                cityGroup = storeList.groupBy { it.cityFilter },
+                scoreGroup = storeList.groupBy { it.score },
+                charGroup = storeList.groupBy { getChosung(it.name.first().uppercaseChar()) }
             )
         }
     }
@@ -133,15 +133,6 @@ class MapViewModel @Inject constructor(
         _storeListUiState.update { state ->
             state.copy(
                 sortList = storeList
-            )
-        }
-    }
-
-    fun filterCity(selectedCity: String) {
-        _storeListUiState.update { state ->
-            state.copy(
-                sortList = if (selectedCity == "전체") state.storeList else state.storeList.filter { it.cityFilter == selectedCity }
-                    .toMutableList()
             )
         }
     }
@@ -173,12 +164,27 @@ class MapViewModel @Inject constructor(
 
     fun includeClosedStore(include: Boolean) {
         _storeListUiState.update { state ->
+            var list = state.storeList
+            if(!include) {
+                list = list.filterNot { it.storeState == StoreState.CLOSED }.toMutableList()
+            }
+
             state.copy(
-                sortList = if (include)
-                    state.sortList.filterNot { it.storeState == StoreState.CLOSED }.toMutableList()
-                else
-                    state.sortList
+                sortList = list,
+                includeClosed = include,
+                cityGroup = list.groupBy { it.cityFilter },
+                scoreGroup = list.groupBy { it.score },
+                charGroup = list.groupBy { getChosung(it.name.first().uppercaseChar()) }
             )
         }
+    }
+
+    fun getChosung(c: Char): Char {
+        val base = 0xAC00
+        val last = 0xD7A3
+        if (c.code < base || c.code > last) return c
+
+        val index = (c.code - base) / (21 * 28)
+        return "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ"[index]
     }
 }

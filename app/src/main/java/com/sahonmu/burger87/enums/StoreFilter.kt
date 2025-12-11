@@ -16,3 +16,10 @@ enum class ClosedFilter {
     OPERATION,
     CLOSED
 }
+
+enum class SortMenu(var sortName: String) {
+    BASIC(sortName = "기본 정렬"),
+    CITY(sortName = "지역 정렬"),
+    SCORE(sortName = "점수 정렬"),
+    CHAR(sortName = "ABC 정렬")
+}

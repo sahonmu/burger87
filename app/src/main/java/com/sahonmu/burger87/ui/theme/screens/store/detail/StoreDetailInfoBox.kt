@@ -56,42 +56,47 @@ fun StoreDetailInfoBox(
             color = Gray_700
         )
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
+        HeightMargin(24.dp)
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                contentAlignment = Alignment.BottomStart
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    IconBorderBox(
+                        painter = painterResource(R.drawable.ic_instagram),
+                        onClick = { onInstagram() }
+                    )
+                    IconBorderBox(
+                        painter = painterResource(R.drawable.ic_call),
+                        onClick = { onCall() }
+                    )
+                    IconBorderBox(
+                        painter = painterResource(R.drawable.ic_share),
+                        onClick = { onShare() }
+                    )
+
+                }
+            }
             Margin(modifier = Modifier.weight(1f))
-            IconBorderBox(
-                painter = painterResource(R.drawable.ic_instagram),
-                onClick = { onInstagram() }
-            )
-            IconBorderBox(
-                painter = painterResource(R.drawable.ic_call),
-                onClick = { onCall() }
-            )
-            IconBorderBox(
-                painter = painterResource(R.drawable.ic_share),
-                onClick = { onShare() }
-            )
-//            IconBorderBox(
-//                painter = painterResource(R.drawable.ic_icon_location),
-//                onClick = { }
-//            )
+            Box(
+                modifier = Modifier,
+                contentAlignment = Alignment.CenterEnd
+            ) {
+
+                val text = if (store.updateDate == null) store.createdAt else store.updateDate
+                Text(
+                    text = "업데이트 : ${text?.toYearMonthDay()}\n최근 방문 : ${store.lastVisitDate.toYearMonthDay()}\n방문 횟수 : ${store.visitCount}회",
+                    color = Gray_900,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.End,
+                )
+            }
         }
 
-        HeightMargin(10.dp)
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd
-        ) {
 
-            val text = if (store.updateDate == null) store.createdAt else store.updateDate
-            Text(
-                text = "업데이트 : ${text?.toYearMonthDay()}\n최근 방문 : ${store.lastVisitDate.toYearMonthDay()}\n방문 횟수 : ${store.visitCount}회",
-                color = Gray_900,
-                fontSize = 14.sp,
-                textAlign = TextAlign.End
-            )
-        }
     }
 }
 

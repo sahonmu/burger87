@@ -42,8 +42,10 @@ import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Score
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.fontPadding
+import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import domain.sahonmu.burger87.enums.StoreState
+import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.enums.storeState
 import domain.sahonmu.burger87.vo.store.Store
 
@@ -73,7 +75,11 @@ fun StoreListRow(
         colors = CardDefaults.cardColors(
             containerColor = White,
         ),
-        onClick = { onClick(store) }
+        onClick = {
+            if(store.storeState.isOperation()) {
+                onClick(store)
+            }
+        }
     ) {
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
@@ -106,23 +112,25 @@ fun StoreListRow(
                     start.linkTo(left.end, margin = 10.dp)
                     end.linkTo(right.start, margin = 8.dp)
                     bottom.linkTo(parent.bottom)
-                },
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
+                }
+            ) {
 
                 Text(
                     text = if (store.branch.isEmpty()) store.name else "${store.name}(${store.branch})",
                     fontSize = 14.5.sp,
                     style = fontPadding
                 )
-                Text(
-                    text = store.address,
-                    fontSize = 11.sp,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    style = fontPadding
-                )
 
+                if (store.storeState.isOperation()) {
+                    HeightMargin(height = 4.dp)
+                    Text(
+                        text = store.address,
+                        fontSize = 11.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        style = fontPadding
+                    )
+                }
             }
 
             Column(
