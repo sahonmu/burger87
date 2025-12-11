@@ -49,6 +49,9 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+//        viewBinding = true
+//        dataBinding = true
+
     }
 
     flavorDimensions += "version"
@@ -97,6 +100,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.ui)
+    implementation(libs.androidx.databinding.runtime)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

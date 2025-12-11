@@ -11,3 +11,10 @@ fun String.storeState(): StoreState {
         else -> StoreState.CLOSED
     }
 }
+
+fun StoreState.isOperation(): Boolean {
+    return when(this) {
+        StoreState.OPERATION -> true
+        else -> false
+    }
+}

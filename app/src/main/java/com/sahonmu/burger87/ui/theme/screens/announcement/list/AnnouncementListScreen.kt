@@ -16,11 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.sahonmu.burger87.enums.InfoMenu
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
 import com.sahonmu.burger87.ui.theme.Gray_200
-import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.Title
 import com.sahonmu.burger87.viewmodels.AnnouncementViewModel

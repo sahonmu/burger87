@@ -1,6 +1,5 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -13,40 +12,33 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.sahonmu.burger87.R
 import com.sahonmu.burger87.common.DataManager
 import com.sahonmu.burger87.ui.theme.Base
-import com.sahonmu.burger87.ui.theme.Score
+import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.fontPadding
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Margin
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
-import domain.sahonmu.burger87.enums.StoreState
+import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.enums.storeState
 import domain.sahonmu.burger87.vo.store.Store
 
@@ -76,7 +68,11 @@ fun SummaryCard(
         colors = CardDefaults.cardColors(
             containerColor = White
         ),
-        onClick = { onClick(store) }
+        onClick = {
+            if(store.storeState.isOperation()) {
+                onClick(store)
+            }
+        }
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -104,12 +100,12 @@ fun SummaryCard(
                     ) {
 
                     Row(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Margin(modifier = Modifier.weight(1f))
 
 
-                        if(store.state.storeState() == StoreState.CLOSED) {
+                        if(!store.state.storeState().isOperation()) {
                             Box(
                                 modifier = Modifier
                                     .height(20.dp)
@@ -146,18 +142,25 @@ fun SummaryCard(
                         style = fontPadding
                     )
                     HeightMargin(5.dp)
-                    Text(
-                        text = store.address,
-                        fontSize = 11.sp,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        style = fontPadding
-                    )
+                    if(store.storeState.isOperation()) {
+                        Text(
+                            text = store.address,
+                            fontSize = 11.sp,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            style = fontPadding
+                        )
+                    }
                 }
+            }
+            
+            if(!store.storeState.isOperation()) {
+                Box(modifier = Modifier.fillMaxSize().background(Color(0x77E7E7ED)))
             }
         }
     }
 }
+
 
 @Composable
 fun SummaryPager(
@@ -172,10 +175,12 @@ fun SummaryPager(
         pageSpacing = 10.dp,
         contentPadding = PaddingValues(horizontal = 15.dp)
     ) { page ->
-        SummaryCard(
-            modifier = Modifier.fillMaxSize(),
-            store = storeList[page],
-            onClick = { onClickStore(storeList[page]) }
-        )
+
+        val store = storeList[page]
+            SummaryCard(
+                modifier = Modifier.fillMaxSize(),
+                store = storeList[page],
+                onClick = { onClickStore(store) }
+            )
     }
 }

@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.Placeholder
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.extensions.prettyCount
 import com.sahonmu.burger87.ui.theme.Gray_700
@@ -79,7 +78,7 @@ fun StoreDetailMenuRow(
             Box(modifier = Modifier.size(80.dp), contentAlignment = Alignment.Center) {
                 Image(
                     modifier = Modifier.size(40.dp),
-                    painter = painterResource(R.drawable.ic_icon_selected_burger),
+                    painter = painterResource(R.drawable.ic_burger),
                     contentDescription = null
                 )
             }

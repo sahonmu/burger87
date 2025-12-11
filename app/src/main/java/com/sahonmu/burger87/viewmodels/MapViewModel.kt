@@ -12,6 +12,7 @@ import com.sahonmu.burger87.enums.StoreDetailTab
 import com.sahonmu.burger87.viewmodels.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import domain.sahonmu.burger87.enums.StoreState
+import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.usecase.store.StoreUseCase
 import domain.sahonmu.burger87.vo.store.Store
 import domain.sahonmu.burger87.vo.store.StoreImage
@@ -27,6 +28,7 @@ import kotlin.collections.toMutableList
 
 data class MapViewModelUiState(
     val loadState: LoadState = LoadState.LOADING,
+    var originList: MutableList<Store> = mutableListOf(),
     var storeList: MutableList<Store> = mutableListOf(),
     var boundBuilder: LatLngBounds.Builder = LatLngBounds.builder(),
     var selectedIndex: MutableState<Int> = mutableStateOf(0)
@@ -74,9 +76,11 @@ class MapViewModel @Inject constructor(
                 }
 
                 _mapViewUiState.update { state ->
+
                     state.copy(
                         loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
-                        storeList = storeList.sortedBy { it.id } as MutableList<Store>,
+                        originList = storeList.sortedBy { it.id } as MutableList<Store>,
+                        storeList = storeList.sortedByDescending { it.storeState.isOperation() } as MutableList<Store>,
                         boundBuilder = boundBuilder
                     )
                 }

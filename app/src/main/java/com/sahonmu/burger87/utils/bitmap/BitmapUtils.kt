@@ -3,6 +3,8 @@ package com.sahonmu.burger87.utils.bitmap
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.view.View
+import android.view.View.MeasureSpec
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -49,6 +51,18 @@ object BitmapUtils {
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
+
+    fun viewToBitmap(view: View): Bitmap {
+        view.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
+        val bitmap = Bitmap.createBitmap(
+            view.measuredWidth, view.measuredHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
+        view.draw(canvas)
+        return bitmap
     }
 
 }

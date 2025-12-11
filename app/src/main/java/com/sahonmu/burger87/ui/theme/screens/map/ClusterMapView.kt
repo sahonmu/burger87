@@ -52,7 +52,7 @@ fun ClusterMapView(
                             context,
                             map,
                             this,
-                            R.drawable.ic_icon_selected_burger,
+                            R.drawable.ic_burger,
                             R.drawable.splash
                         )
                         this.renderer = renderer
