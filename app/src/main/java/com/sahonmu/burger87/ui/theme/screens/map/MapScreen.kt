@@ -5,18 +5,14 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,14 +27,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
@@ -47,17 +40,14 @@ import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
-import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import domain.sahonmu.burger87.enums.isOperation
-
 
 @Preview
 @Composable
 fun MapScreenPreview() {
     MapScreen(rememberNavController())
 }
-
 
 @Composable
 fun MapScreen(
@@ -114,11 +104,11 @@ fun MapScreen(
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
-
                     ClusterMapView(
                         mapViewUiState = mapViewUiState,
                         onMarkerClick = { store ->
-                            mapViewUiState.selectedIndex.value = mapViewUiState.storeList.indexOfFirst { it.id == store.id }
+                            mapViewUiState.selectedIndex.value =
+                                mapViewUiState.storeList.indexOfFirst { it.id == store.id }
                             pagerState.moveItem(
                                 scope = scope,
                                 animate = false,
@@ -146,67 +136,26 @@ fun MapScreen(
                             pagerState = pagerState,
                             storeList = mapViewUiState.storeList,
                             onClickStore = { store ->
-                                if(store.storeState.isOperation()) {
+                                if (store.storeState.isOperation()) {
                                     navController.navigate("${Screens.STORE_DETAIL}/${store.encode()}")
                                 } else {
                                     showAlert = true
                                 }
-
                             }
                         )
                     }
 
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp + 40.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        RoundButton(
-                            modifier = Modifier
-                                .size(36.dp),
-                            imageSize = 16.dp,
-                            painter = painterResource(id = R.drawable.ic_menu),
-                            onClick = { navController.navigate(Screens.INFO.route) }
-                        )
-                    }
-
-
-                    Column(
-                        modifier = Modifier
-                            .width(80.dp)
-                            .align(Alignment.TopEnd)
-                            .padding(top = 20.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        RoundButton(
-                            modifier = Modifier
-                                .size(36.dp),
-                            painter = painterResource(id = R.drawable.ic_icon_store),
-                            imageSize = 24.dp,
-                            onClick = {
+                    Box(modifier = Modifier.fillMaxWidth().height(80.dp),
+                        contentAlignment = Alignment.Center) {
+                        MapAppBar(
+                            modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 12.dp),
+                            onMenu = { navController.navigate(Screens.INFO.route) },
+                            onStoreList = {
                                 val encode = mapViewUiState.storeList.encode()
                                 navController.navigate("${Screens.STORE_LIST}/${encode}")
-                            }
-                        )
-
-                        RoundButton(
-                            modifier = Modifier
-                                .size(36.dp),
-                            imageSize = 24.dp,
-                            painter = painterResource(id = R.drawable.ic_star),
-                            borderColor = Color(0xFFFFD700),
-                            onClick = { navController.navigate(Screens.SCORE_CRITERIA.route) }
-                        )
-
-                        RoundButton(
-                            modifier = Modifier
-                                .size(36.dp),
-                            imageSize = 24.dp,
-                            painter = painterResource(id = R.drawable.ic_star),
-                            borderColor = Color(0xFFFFD700),
-                            onClick = { navController.navigate(Screens.SCORE_CRITERIA.route) }
+                            },
+                            onScoreInfo = { navController.navigate(Screens.SCORE_CRITERIA.route) },
+                            onSearch = { }
                         )
                     }
                 }

@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalFoundationApi::class)
 
 package com.sahonmu.burger87.ui.theme.screens.announcement.detail
 
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -35,11 +35,15 @@ fun AnnouncementDetailScreen(
             onBack = { navController.popBackStack() }
         )
         Line(height = 1.dp, color = Gray_200)
-        AnnouncementDetailBox(
-            modifier = Modifier.fillMaxWidth(),
-            announcement = announcement
-        )
 
+        LazyColumn {
+            item {
+                AnnouncementDetailBox(
+                    modifier = Modifier.fillMaxWidth(),
+                    announcement = announcement
+                )
+            }
+        }
     }
 }
 

@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
@@ -32,7 +33,6 @@ import com.sahonmu.burger87.utils.map.StoreClusterRenderer
 import com.sahonmu.burger87.viewmodels.MapViewModelUiState
 import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.vo.store.Store
-import timber.log.Timber
 
 @Composable
 fun ClusterMapView(
@@ -72,14 +72,28 @@ fun ClusterMapView(
                         // (선택) 클러스터 클릭 리스너
                         this.setOnClusterClickListener { cluster ->
                             // 예: 클러스터에 줌인
-                            val position = cluster.position
-                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 11f))
+//                            val position = cluster.position
+//                                map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, if(map.cameraPosition.zoom >= 11f) map.cameraPosition.zoom else 11f))
+                            val boundBuilder = LatLngBounds.builder()
+                            cluster.items.forEach { item ->
+                                item?.store?.let { store ->
+                                    val point = LatLng(store.latitude, store.longitude)
+                                    boundBuilder.include(point)
+                                }
+                            }
+                            map.animateCamera(
+                                CameraUpdateFactory.newLatLngBounds(
+                                    boundBuilder.build(),
+                                    100,
+                                )
+                            )
                             true
                         }
 
                         // (선택) 클러스터 아이템 클릭
                         this.setOnClusterItemClickListener { item ->
                             onMarkerClick(item.store)
+//                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(item.store.latitude, item.store.longitude)))
                             map.animateCamera(CameraUpdateFactory.newLatLng(item.position))
 
                             selectedMarker?.remove()
@@ -99,13 +113,6 @@ fun ClusterMapView(
                         }
                         this.cluster()
                     }
-
-//                    map.moveCamera(
-//                        CameraUpdateFactory.newLatLngBounds(
-//                            mapViewUiState.boundBuilder.build(),
-//                            100,
-//                        )
-//                    )
 
                     // 클릭 리스너들을 ClusterManager에 연결
                     map.setOnCameraIdleListener(clusterManager)
