@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
@@ -31,6 +33,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.sahonmu.burger87.enums.Screens
+import com.sahonmu.burger87.extensions.encode
 import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
@@ -81,36 +85,28 @@ fun StoreSearchScreen(
 
         Line(height = 1.dp, Gray_200)
 
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "폐점 포함",
-                    fontSize = 13.sp,
-                    color = Base
-                )
-                Checkbox(
-                    modifier = Modifier.size(30.dp),
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Base
-                    ),
-                    checked = includeClosedStore,
-                    onCheckedChange = {
-                        includeClosedStore = it
-                    }
-                )
-                WidthMargin(10.dp)
-            }
-        }
+        StoreSearchResultRow(
+            modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 16.dp),
+            resultCount = storeSearchUiState.searchList.size,
+        )
+
+        Line(height = 1.dp, Gray_200)
+
 
         LazyColumn(
             modifier = Modifier.fillMaxSize()
-        ) { }
-
+        ) {
+            itemsIndexed(storeList) { index, item ->
+                StoreSearchRow(
+                    modifier = Modifier.fillMaxWidth().height(44.dp).padding(horizontal = 10.dp),
+                    store = item,
+                    onClick = { navController.navigate("${Screens.STORE_DETAIL}/${item.encode()}") }
+                )
+                if(index != storeList.lastIndex) {
+                    Line(height = 1.dp, Gray_200)
+                }
+            }
+        }
 
     }
 }

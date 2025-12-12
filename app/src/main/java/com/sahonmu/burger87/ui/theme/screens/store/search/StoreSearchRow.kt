@@ -3,72 +3,108 @@
 package com.sahonmu.burger87.ui.theme.screens.store.search
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.sahonmu.burger87.ui.theme.Gray_200
-import com.sahonmu.burger87.ui.theme.base.rememberUiState
-import com.sahonmu.burger87.ui.theme.screens.components.Line
-import com.sahonmu.burger87.ui.theme.screens.components.TitleWithIncludeClosed
-import com.sahonmu.burger87.viewmodels.StoreViewModel
+import com.sahonmu.burger87.R
+import com.sahonmu.burger87.common.DataManager
+import com.sahonmu.burger87.ui.theme.Base
+import com.sahonmu.burger87.ui.theme.Gray_900
+import com.sahonmu.burger87.ui.theme.screens.map.ScoreBox
+import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.vo.store.Store
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun StoreSearchRowPreview() {
     StoreSearchRow(
-        navController = rememberNavController(),
-        storeList = mutableListOf()
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp),
+        store = DataManager.store()
     )
 }
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun StoreSearchRow(
-    navController: NavHostController,
-    storeList: MutableList<Store>,
+    modifier: Modifier = Modifier,
+    store: Store,
+    onClick: () -> Unit = { }
 ) {
 
-    val uiState = rememberUiState()
-    val scope = uiState.scope
-
-    val storeViewModel: StoreViewModel = hiltViewModel()
-    val storeSearchUiState = storeViewModel.storeSearchUiState.collectAsState().value
-
-    var includeClosedStore by rememberSaveable { mutableStateOf(storeSearchUiState.includeClosed) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .systemBarsPadding()
-            .statusBarsPadding()
+    ConstraintLayout(
+        modifier = modifier.clickable { onClick() }
     ) {
-        TitleWithIncludeClosed(
-            title = "버거 목록",
-            onBack = { navController.popBackStack() },
-            onCheck = { checked ->
-                includeClosedStore = checked
-                storeViewModel.includeClosedStore(includeClosedStore)
-            }
+        val (image, name, score) = createRefs()
+
+        Image(
+            modifier = Modifier
+                .size(21.dp)
+                .constrainAs(image) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(name.start)
+                    bottom.linkTo(parent.bottom)
+                },
+            painter = painterResource(R.drawable.ic_burger),
+            contentDescription = null
         )
-        Line(height = 1.dp, Gray_200)
 
-        
+        Row(
+            modifier = Modifier.constrainAs(name) {
+                width = Dimension.fillToConstraints
+                top.linkTo(parent.top)
+                start.linkTo(image.end, margin = 10.dp)
+                end.linkTo(score.start, margin = 10.dp)
+                bottom.linkTo(parent.bottom)
+            }
+        ) {
+            if(!store.storeState.isOperation()) {
+                Text(
+                    text = "(폐점)",
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSize = 14.sp,
+                    color = Base
+                )
+            }
+            Text(
+                text = if (store.branch.isEmpty()) store.name else "${store.name}(${store.branch})",
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 14.sp,
+                color = Gray_900
+            )
 
+        }
+
+
+        ScoreBox(
+            modifier = Modifier.constrainAs(score) {
+                top.linkTo(parent.top)
+                start.linkTo(name.end)
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom)
+            },
+            score = store.score
+        )
     }
+
+
 }
