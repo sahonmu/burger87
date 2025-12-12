@@ -5,13 +5,16 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
@@ -27,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
+import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
@@ -44,6 +49,7 @@ import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
+import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.enums.isOperation
@@ -162,24 +168,22 @@ fun MapScreen(
                         )
                     }
 
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp),
-                        contentAlignment = Alignment.Center) {
-                        MapAppBar(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .padding(horizontal = 12.dp),
+
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(top = 20.dp, end = 20.dp),
+                    ) {
+                        MapFloatingButtonBox(
+                            modifier = Modifier,
                             onMenu = { navController.navigate(Screens.INFO.route) },
-                            onStoreList = {
-                                val encode = storeMapUiState.storeList.encode()
-                                navController.navigate("${Screens.STORE_LIST}/${encode}")
-                            },
-                            onScoreInfo = { navController.navigate(Screens.SCORE_CRITERIA.route) },
                             onSearch = {
                                 val encode = storeMapUiState.storeList.filter { it.storeState.isOperation() }.encode()
                                 navController.navigate("${Screens.STORE_SEARCH}/${encode}")
+                            },
+                            onStoreList = {
+                                val encode = storeMapUiState.storeList.encode()
+                                navController.navigate("${Screens.STORE_LIST}/${encode}")
                             }
                         )
                     }

@@ -80,7 +80,7 @@ fun MapAppBar(
                 WidthMargin(10.dp)
                 RoundButton(
                     modifier = Modifier
-                        .size(36.dp),
+                        .size(40.dp),
                     imageSize = 16.dp,
                     painter = painterResource(id = R.drawable.ic_menu),
                     onClick = { onMenu() }
@@ -93,19 +93,6 @@ fun MapAppBar(
                         color = Gray_900
                     )
                 }
-
-                Margin(modifier = Modifier.weight(1f))
-
-                WidthMargin(10.dp)
-                RoundButton(
-                    modifier = Modifier
-                        .size(36.dp),
-                    imageSize = 36.dp,
-                    painter = painterResource(id = R.drawable.ic_info),
-                    borderColor = Color(0xFFFFD700),
-                    onClick = { onScoreInfo() }
-                )
-                WidthMargin(10.dp)
             }
         }
 
@@ -123,7 +110,6 @@ fun MapAppBar(
             color = White,
             onClick = {
                 onStoreList()
-
             }
         )
     }

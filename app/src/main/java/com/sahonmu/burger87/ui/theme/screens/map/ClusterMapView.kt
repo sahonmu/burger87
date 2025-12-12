@@ -137,20 +137,28 @@ fun ClusterMapView(
                         googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5f))
                         mapViewModel.latLng = latLng
                         mapViewModel.zoom = 14.5f
+                        selectedMarker?.remove()
+                        val view = selectedMarker(context, store)
+                        val markerOption = MarkerOptions()
+                            .position(LatLng(store.latitude, store.longitude))
+                            .anchor(0.5f, 0.5f)
+                            .zIndex(5f)
+                            .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
+                        selectedMarker = map.addMarker(markerOption)
                     } else {
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapViewModel.latLng, mapViewModel.zoom))
                     }
                 }
 
-                selectedMarker?.remove()
-                val store = storeMapUiState.storeList[selectedIndex]
-                val view = selectedMarker(context, store)
-                val markerOption = MarkerOptions()
-                    .position(LatLng(store.latitude, store.longitude))
-                    .anchor(0.5f, 0.5f)
-                    .zIndex(5f)
-                    .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
-                selectedMarker = map.addMarker(markerOption)
+//                selectedMarker?.remove()
+//                val store = storeMapUiState.storeList[selectedIndex]
+//                val view = selectedMarker(context, store)
+//                val markerOption = MarkerOptions()
+//                    .position(LatLng(store.latitude, store.longitude))
+//                    .anchor(0.5f, 0.5f)
+//                    .zIndex(5f)
+//                    .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
+//                selectedMarker = map.addMarker(markerOption)
 
             }
         }

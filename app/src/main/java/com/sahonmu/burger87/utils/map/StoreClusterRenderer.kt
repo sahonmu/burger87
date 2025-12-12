@@ -83,9 +83,6 @@ class StoreClusterRenderer(
 //    }
 
 
-    fun dpToPx(context: Context, dp: Int): Int =
-        (dp * context.resources.displayMetrics.density).toInt()
-
     fun convertRangeLabel(value: Int): String {
 
         if (value <= 10) return value.toString()

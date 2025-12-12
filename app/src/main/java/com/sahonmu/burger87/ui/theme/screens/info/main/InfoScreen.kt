@@ -64,7 +64,6 @@ fun InfoScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
-                    painter = painterResource(id = menuList[index].menuResource),
                     menu = menuList[index].menuName,
                     onClick = {
                         if (item == InfoMenu.INSTAGRAM) {
@@ -72,6 +71,12 @@ fun InfoScreen(
                                 context,
                                 "https://www.instagram.com/_burger87_"
                             )
+                        } else if (item == InfoMenu.BASED_ON_SCORE) {
+                            navController.navigate(Screens.BASED_ON_SCORE.route)
+                        } else if (item == InfoMenu.PROVIDING_INFO) {
+                            navController.navigate(Screens.PROVIDING_INFO.route)
+                        } else if (item == InfoMenu.SHARING_EVENT_INFO) {
+                            navController.navigate(Screens.SHARING_EVENT_INFO.route)
                         } else if (item == InfoMenu.ANNOUNCEMENT) {
                             navController.navigate(Screens.ANNOUNCEMENT_LIST.route)
                         } else if (item == InfoMenu.REPORT) {

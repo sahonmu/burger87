@@ -1,6 +1,5 @@
-package com.sahonmu.burger87.ui.theme.screens.score
+package com.sahonmu.burger87.ui.theme.screens.info.score
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,13 +32,13 @@ import com.sahonmu.burger87.viewmodels.ScoreInfoViewModel
 
 @Preview(showBackground = true)
 @Composable
-fun ScoreCriteriaScreenPreview() {
-    ScoreCriteriaScreen(rememberNavController())
+fun BasedOnScoreScreenPreview() {
+    BasedOnScoreScreen(rememberNavController())
 }
 
 
 @Composable
-fun ScoreCriteriaScreen(
+fun BasedOnScoreScreen(
     navController: NavHostController,
 ) {
 

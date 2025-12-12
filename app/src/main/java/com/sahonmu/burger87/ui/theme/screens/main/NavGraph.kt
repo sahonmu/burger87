@@ -14,10 +14,12 @@ import com.sahonmu.burger87.extensions.decodeList
 import com.sahonmu.burger87.ui.theme.base.BaseScreen
 import com.sahonmu.burger87.ui.theme.screens.announcement.detail.AnnouncementDetailScreen
 import com.sahonmu.burger87.ui.theme.screens.announcement.list.AnnouncementListScreen
+import com.sahonmu.burger87.ui.theme.screens.info.data.ProvidingInfoScreen
+import com.sahonmu.burger87.ui.theme.screens.info.event.SharingEventInfoScreen
 import com.sahonmu.burger87.ui.theme.screens.info.main.InfoScreen
+import com.sahonmu.burger87.ui.theme.screens.info.score.BasedOnScoreScreen
 import com.sahonmu.burger87.ui.theme.screens.info.version.AppVersionScreen
 import com.sahonmu.burger87.ui.theme.screens.map.MapScreen
-import com.sahonmu.burger87.ui.theme.screens.score.ScoreCriteriaScreen
 import com.sahonmu.burger87.ui.theme.screens.splash.SplashScreen
 import com.sahonmu.burger87.ui.theme.screens.store.detail.StoreDetailScreen
 import com.sahonmu.burger87.ui.theme.screens.store.list.StoreListScreen
@@ -98,30 +100,6 @@ import timber.log.Timber
 //    }
 //}
 
-fun NavGraphBuilder.announcement(
-    navController: NavHostController
-) {
-
-    composable(Screens.ANNOUNCEMENT_LIST.route) {
-        BaseScreen(content = { AnnouncementListScreen(navController = navController) })
-    }
-
-    composable("${Screens.ANNOUNCEMENT_DETAIL.route}/{${BundleKey.DATA}}") {
-        it.arguments?.getString(BundleKey.DATA)?.let { json ->
-            json.decodeAnnouncement().let { announcement ->
-                BaseScreen(
-                    content = {
-                        AnnouncementDetailScreen(
-                            navController = navController,
-                            announcement = announcement as Announcement
-                        )
-                    },
-                )
-            }
-        }
-    }
-}
-
 fun NavGraphBuilder.store(
     navController: NavHostController
 ) {
@@ -171,6 +149,31 @@ fun NavGraphBuilder.store(
     }
 }
 
+fun NavGraphBuilder.info(
+    navController: NavHostController
+) {
+    composable(Screens.INFO.route) { BaseScreen(content = { InfoScreen(navController = navController) })}
+    composable(Screens.APP_VERSION.route) { BaseScreen(content = { AppVersionScreen(navController = navController) })}
+    composable(Screens.BASED_ON_SCORE.route) { BaseScreen(content = { BasedOnScoreScreen(navController = navController) })}
+    composable(Screens.PROVIDING_INFO.route) { BaseScreen(content = { ProvidingInfoScreen(navController = navController) })}
+    composable(Screens.SHARING_EVENT_INFO.route) { BaseScreen(content = { SharingEventInfoScreen(navController = navController) })}
+    composable(Screens.ANNOUNCEMENT_LIST.route) { BaseScreen(content = { AnnouncementListScreen(navController = navController) })}
+    composable("${Screens.ANNOUNCEMENT_DETAIL.route}/{${BundleKey.DATA}}") {
+        it.arguments?.getString(BundleKey.DATA)?.let { json ->
+            json.decodeAnnouncement().let { announcement ->
+                BaseScreen(
+                    content = {
+                        AnnouncementDetailScreen(
+                            navController = navController,
+                            announcement = announcement as Announcement
+                        )
+                    },
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -194,20 +197,7 @@ fun NavGraph(
                 }
             )
         }
-
-        store(navController)
-
-        composable(Screens.INFO.route) {
-            BaseScreen(content = { InfoScreen(navController = navController) })
-        }
-
-        announcement(navController)
-
-        composable(Screens.APP_VERSION.route) {
-            BaseScreen(content = { AppVersionScreen(navController = navController) })
-        }
-        composable(Screens.SCORE_CRITERIA.route) {
-            BaseScreen(content = { ScoreCriteriaScreen(navController = navController) })
-        }
+        store(navController= navController)
+        info(navController = navController)
     }
 }
