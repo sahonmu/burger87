@@ -2,6 +2,8 @@
 
 package com.sahonmu.burger87.ui.theme.screens.store.search
 
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -12,7 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +32,7 @@ import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.screens.map.ScoreBox
 import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.vo.store.Store
+import timber.log.Timber
 
 
 @Preview(showBackground = true)
@@ -36,6 +42,7 @@ fun StoreSearchRowPreview() {
         modifier = Modifier
             .fillMaxWidth()
             .height(40.dp),
+        keyword = "버거",
         store = DataManager.store()
     )
 }
@@ -45,6 +52,7 @@ fun StoreSearchRowPreview() {
 fun StoreSearchRow(
     modifier: Modifier = Modifier,
     store: Store,
+    keyword: String,
     onClick: () -> Unit = { }
 ) {
 
@@ -75,25 +83,35 @@ fun StoreSearchRow(
                 bottom.linkTo(parent.bottom)
             }
         ) {
-            if(!store.storeState.isOperation()) {
+
+            store.startIndex = store.fullName.indexOf(keyword)
+            store.endIndex = store.startIndex + keyword.length
+            if(store.isKeywordMatch()) {
                 Text(
-                    text = "(폐점)",
+                    buildAnnotatedString {
+                        append(store.fullName)
+                        addStyle(
+                            SpanStyle(color = Base),
+                            store.startIndex,
+                            store.endIndex
+                        )
+                    },
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 14.sp,
-                    color = Base
+                    color = Gray_900
+                )
+            } else {
+                Text(
+                    text = store.fullName,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSize = 14.sp,
+                    color = Gray_900
                 )
             }
-            Text(
-                text = if (store.branch.isEmpty()) store.name else "${store.name}(${store.branch})",
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                fontSize = 14.sp,
-                color = Gray_900
-            )
 
         }
-
 
         ScoreBox(
             modifier = Modifier.constrainAs(score) {

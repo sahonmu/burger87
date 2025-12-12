@@ -164,4 +164,21 @@ class StoreViewModel @Inject constructor(
         val index = (c.code - base) / (21 * 28)
         return "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ"[index]
     }
+
+    fun searchByKeyword(keyword: String, storeList: MutableList<Store>) {
+        val searchList = storeList.filter { it.fullName.contains(keyword, ignoreCase = true) }
+        _storeSearchUiState.update { state ->
+            state.copy(
+                searchList = searchList.toMutableList(),
+            )
+        }
+    }
+
+    fun searchByReset(storeList: MutableList<Store>) {
+        _storeSearchUiState.update { state ->
+            state.copy(
+                searchList = storeList
+            )
+        }
+    }
 }

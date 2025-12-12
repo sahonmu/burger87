@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -30,6 +31,7 @@ import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.utils.bitmap.BitmapUtils
 import com.sahonmu.burger87.utils.map.StoreClusterItem
 import com.sahonmu.burger87.utils.map.StoreClusterRenderer
+import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreMapUiState
 import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.vo.store.Store
@@ -37,8 +39,10 @@ import domain.sahonmu.burger87.vo.store.Store
 @Composable
 fun ClusterMapView(
     storeMapUiState: StoreMapUiState,
+    mapViewModel: MapViewModel,
     onMarkerClick: (Store) -> Unit = { },
-    onMapClick: () -> Unit = { }
+    onMapClick: () -> Unit = { },
+    onGoogleMap: (GoogleMap) -> Unit = { },
 ) {
 
     val context = rememberUiState().context
@@ -50,8 +54,6 @@ fun ClusterMapView(
     var selectedMarker by remember { mutableStateOf<Marker?>(null) }
     val selectedIndex = storeMapUiState.selectedIndex.value
 
-
-
     AndroidView(
         factory = { mapView },
         update = { mv ->
@@ -59,6 +61,7 @@ fun ClusterMapView(
                 if (googleMap == null) {
                     googleMap = map
                     mapSetting(context, map)
+                    onGoogleMap(map)
 
                     // ClusterManager 생성 및 렌더러 등록
                     clusterManager = ClusterManager<StoreClusterItem>(context, googleMap).apply {
@@ -121,6 +124,22 @@ fun ClusterMapView(
                         selectedMarker?.remove()
                         onMapClick()
                     }
+
+                    map.setOnCameraIdleListener {
+                        val position = map.cameraPosition
+                        mapViewModel.latLng = position.target        // LatLng
+                        mapViewModel.zoom = position.zoom            // Float
+                    }
+
+                    if(mapViewModel.isEmptyLatLng()) {
+                        val store = storeMapUiState.storeList[storeMapUiState.selectedIndex.value]
+                        val latLng = LatLng(store.latitude, store.longitude)
+                        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5f))
+                        mapViewModel.latLng = latLng
+                        mapViewModel.zoom = 14.5f
+                    } else {
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapViewModel.latLng, mapViewModel.zoom))
+                    }
                 }
 
                 selectedMarker?.remove()
@@ -133,12 +152,6 @@ fun ClusterMapView(
                     .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
                 selectedMarker = map.addMarker(markerOption)
 
-            }
-
-            if (storeMapUiState.storeList.isNotEmpty()) {
-                val store = storeMapUiState.storeList[storeMapUiState.selectedIndex.value]
-                val latLng = LatLng(store.latitude, store.longitude)
-                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5f))
             }
         }
     )

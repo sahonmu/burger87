@@ -50,47 +50,51 @@ fun StoreSearchResultRow(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            "검색 결과 ",
-            fontSize = 14.sp,
-            color = Gray_900
-        )
-        Text(
-            resultCount.prettyCount(),
-            fontSize = 14.sp,
-            color = Base
-        )
-        Text(
-            "개",
-            fontSize = 14.sp,
-            color = Gray_900
-        )
+
+        if(resultCount > 0) {
+            Text(
+                "검색 결과 ",
+                fontSize = 14.sp,
+                color = Gray_900
+            )
+            Text(
+                resultCount.prettyCount(),
+                fontSize = 14.sp,
+                color = Base
+            )
+            Text(
+                "개",
+                fontSize = 14.sp,
+                color = Gray_900
+            )
+        }
+
         Margin(modifier = Modifier.weight(1f))
 
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "폐점 포함",
-                    fontSize = 13.sp,
-                    color = Base
-                )
-                Checkbox(
-                    modifier = Modifier.size(30.dp),
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Base
-                    ),
-                    checked = checked,
-                    onCheckedChange = {
-                        checked = it
-                        onCheck(checked)
-                    }
-                )
-            }
-        }
+//        Box(
+//            modifier = Modifier.fillMaxWidth(),
+//            contentAlignment = Alignment.CenterEnd
+//        ) {
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically,
+//            ) {
+//                Text(
+//                    text = "폐점 포함",
+//                    fontSize = 13.sp,
+//                    color = Base
+//                )
+//                Checkbox(
+//                    modifier = Modifier.size(30.dp),
+//                    colors = CheckboxDefaults.colors(
+//                        checkedColor = Base
+//                    ),
+//                    checked = checked,
+//                    onCheckedChange = {
+//                        checked = it
+//                        onCheck(checked)
+//                    }
+//                )
+//            }
+//        }
     }
 }

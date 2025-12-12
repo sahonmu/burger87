@@ -24,4 +24,17 @@ data class Store(
     val lastVisitDate: String
 ) {
     var storeState = state.storeState()
+    var startIndex = 0
+    var endIndex = 0
+    var fullName = if(branch.isEmpty()) name else "${name}(${branch})"
+    var isMatch = startIndex + endIndex != 0
+
+    fun isKeywordMatch(startIndex: Int, endIndex: Int): Boolean {
+        return startIndex + endIndex != 0
+    }
+
+    fun isKeywordMatch(): Boolean {
+        return startIndex + endIndex != 0
+    }
+
 }

@@ -30,8 +30,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
@@ -40,6 +44,7 @@ import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
+import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.enums.isOperation
 
@@ -59,6 +64,7 @@ fun MapScreen(
     val scope = uiState.scope
     val context = uiState.context
 
+    val mapViewModel: MapViewModel = viewModel()
     val storeMapUiState = storeViewModel.storeMapUiState.collectAsState().value
 
     val pagerState = rememberPagerState(pageCount = {
@@ -73,13 +79,20 @@ fun MapScreen(
         animationSpec = tween(durationMillis = 400)
     )
 
+    var googleMap by remember { mutableStateOf<GoogleMap?>(null) }
+
     LaunchedEffect(Unit) {
         storeViewModel.requestStoreList()
     }
 
-    LaunchedEffect(pagerState) {
+    LaunchedEffect(pagerState, storeMapUiState.storeList) {
         snapshotFlow { pagerState.currentPage }.collect { position ->
             storeMapUiState.selectedIndex.value = position
+            googleMap?.let {
+                val store = storeMapUiState.storeList[position]
+                val latLng = LatLng(store.latitude, store.longitude)
+                it.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
+            }
         }
     }
 
@@ -106,6 +119,7 @@ fun MapScreen(
                 ) {
                     ClusterMapView(
                         storeMapUiState = storeMapUiState,
+                        mapViewModel = mapViewModel,
                         onMarkerClick = { store ->
                             storeMapUiState.selectedIndex.value =
                                 storeMapUiState.storeList.indexOfFirst { it.id == store.id }
@@ -118,6 +132,9 @@ fun MapScreen(
                         },
                         onMapClick = {
                             isCardVisible = false
+                        },
+                        onGoogleMap = {
+                            googleMap = it
                         }
                     )
 
@@ -145,10 +162,15 @@ fun MapScreen(
                         )
                     }
 
-                    Box(modifier = Modifier.fillMaxWidth().height(80.dp),
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp),
                         contentAlignment = Alignment.Center) {
                         MapAppBar(
-                            modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 12.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .padding(horizontal = 12.dp),
                             onMenu = { navController.navigate(Screens.INFO.route) },
                             onStoreList = {
                                 val encode = storeMapUiState.storeList.encode()
@@ -156,7 +178,7 @@ fun MapScreen(
                             },
                             onScoreInfo = { navController.navigate(Screens.SCORE_CRITERIA.route) },
                             onSearch = {
-                                val encode = storeMapUiState.storeList.encode()
+                                val encode = storeMapUiState.storeList.filter { it.storeState.isOperation() }.encode()
                                 navController.navigate("${Screens.STORE_SEARCH}/${encode}")
                             }
                         )

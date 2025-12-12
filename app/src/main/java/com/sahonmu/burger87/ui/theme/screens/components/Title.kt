@@ -1,17 +1,35 @@
 package com.sahonmu.burger87.ui.theme.screens.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,7 +38,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,7 +50,25 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.ui.theme.Base
+import com.sahonmu.burger87.ui.theme.Gray_200
+import com.sahonmu.burger87.ui.theme.Gray_50
 import com.sahonmu.burger87.ui.theme.Gray_900
+import com.sahonmu.burger87.ui.theme.White
+
+@Preview(showBackground = true)
+@Composable
+fun TitlePreview() {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        SearchTitle(
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+
+}
+
 
 @Composable
 fun Title(
@@ -203,14 +243,16 @@ fun TitleWithIncludeClosed(
 fun SearchTitle(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = { },
-    onClear: () -> Unit = { },
+    onKeyword: (String) -> Unit = { },
 ) {
 
+    var keyword by rememberSaveable { mutableStateOf("") }
+
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp)
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
     ) {
+
         Box(
             modifier = Modifier
                 .size(56.dp)
@@ -223,6 +265,70 @@ fun SearchTitle(
                 painter = painterResource(R.drawable.ic_44_back),
                 contentDescription = null
             )
+        }
+
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Gray_50
+            )
+        ) {
+            ConstraintLayout(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = 20.dp, top = 6.dp, bottom = 6.dp)
+                    .border(width = 1.dp, color = Gray_200, shape = RoundedCornerShape(24.dp))
+                    .background(color = White, shape = RoundedCornerShape(24.dp))
+            ) {
+                val (left, right) = createRefs()
+
+                BasicTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 1.5.dp, horizontal = 13.dp)
+                        .constrainAs(left) {
+                            width = Dimension.fillToConstraints
+                            top.linkTo(anchor = parent.top)
+                            start.linkTo(anchor = parent.start)
+                            end.linkTo(anchor = right.start)
+                            bottom.linkTo(anchor = parent.bottom)
+                        },
+                    value = keyword,
+                    onValueChange = {
+                        keyword = it
+                        onKeyword(keyword)
+                    },
+                    singleLine = true,
+                    decorationBox = { innerTextField ->
+                        innerTextField()
+                    }
+                )
+
+
+                Box(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .constrainAs(right) {
+                            top.linkTo(anchor = parent.top)
+                            start.linkTo(anchor = left.end)
+                            end.linkTo(anchor = parent.end, margin = 10.dp)
+                            bottom.linkTo(anchor = parent.bottom)
+                        }) {
+
+                    if (keyword.isNotEmpty()) {
+                        Image(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable {
+                                    keyword = ""
+                                    onKeyword(keyword)
+                                },
+                            painter = painterResource(R.drawable.ic_24_input_field_close),
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
         }
     }
 }
