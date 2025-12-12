@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -45,8 +46,10 @@ import com.sahonmu.burger87.extensions.findActivity
 import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
+import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
+import domain.sahonmu.burger87.enums.isOperation
 
 
 @Preview
@@ -72,7 +75,8 @@ fun MapScreen(
         mapViewUiState.storeList.size
     })
 
-    var isCardVisible by remember { mutableStateOf(true) }
+    var showAlert by rememberSaveable { mutableStateOf(false) }
+    var isCardVisible by rememberSaveable { mutableStateOf(true) }
     val cardHeight = 125.dp
     val offsetY by animateDpAsState(
         targetValue = if (isCardVisible) 0.dp else cardHeight,
@@ -142,7 +146,12 @@ fun MapScreen(
                             pagerState = pagerState,
                             storeList = mapViewUiState.storeList,
                             onClickStore = { store ->
-                                navController.navigate("${Screens.STORE_DETAIL}/${store.encode()}")
+                                if(store.storeState.isOperation()) {
+                                    navController.navigate("${Screens.STORE_DETAIL}/${store.encode()}")
+                                } else {
+                                    showAlert = true
+                                }
+
                             }
                         )
                     }
@@ -203,7 +212,13 @@ fun MapScreen(
                 }
             }
         }
+    }
 
+    if (showAlert) {
+        Alert(
+            message = "폐업된 점포입니다.",
+            onDismissRequest = { showAlert = false }
+        )
     }
 
     var backPressedTime by remember { mutableLongStateOf(0L) }

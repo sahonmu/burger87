@@ -88,7 +88,7 @@ fun StoreDetailInfoBox(
 
                 val text = if (store.updateDate == null) store.createdAt else store.updateDate
                 Text(
-                    text = "업데이트 : ${text?.toYearMonthDay()}\n최근 방문 : ${store.lastVisitDate.toYearMonthDay()}\n방문 횟수 : ${store.visitCount}회",
+                    text = "업데이트 : ${text?.toYearMonthDay()}\n최근방문 : ${store.lastVisitDate.toYearMonthDay()}\n방문 횟수 : ${store.visitCount}회",
                     color = Gray_900,
                     fontSize = 14.sp,
                     textAlign = TextAlign.End,

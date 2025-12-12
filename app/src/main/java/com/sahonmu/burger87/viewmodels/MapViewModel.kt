@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.collections.toList
 import kotlin.collections.toMutableList
 
 
@@ -48,9 +49,9 @@ data class StoreSortListUiState(
     var storeList: MutableList<Store> = mutableListOf(),
     var sortList: MutableList<Store> = mutableListOf(),
     var cityGroup: Map<String, List<Store>> = linkedMapOf(),
-    var scoreGroup: Map<Float, MutableList<Store>> = linkedMapOf(),
+    var scoreGroup: Map<Float, List<Store>> = linkedMapOf(),
     var charGroup: Map<Char, List<Store>> = linkedMapOf(),
-    var includeClosed: Boolean = true
+    var includeClosed: Boolean = true,
 )
 
 @HiltViewModel
@@ -122,45 +123,9 @@ class MapViewModel @Inject constructor(
             state.copy(
                 storeList = storeList,
                 sortList = storeList,
-                cityGroup = storeList.groupBy { it.cityFilter },
-                scoreGroup = scoreGroup as Map<Float, MutableList<Store>>,
-//                flatScoreList = scoreGroup.flatMap { (key, list) ->
-//                    list.map { item -> key to item }
-//                } as MutableList<Store>,
-                charGroup = storeList.groupBy { getChosung(it.name.first().uppercaseChar()) }
-            )
-        }
-    }
-
-    fun sortStore(storeList: MutableList<Store>) {
-        _storeListUiState.update { state ->
-            state.copy(
-                sortList = storeList
-            )
-        }
-    }
-
-    fun sortDefault(selectedCity: String) {
-        _storeListUiState.update { state ->
-            state.copy(
-                sortList = if (selectedCity == "전체") state.storeList else state.storeList.filter { it.cityFilter == selectedCity }
-                    .toMutableList()
-            )
-        }
-    }
-
-    fun sortAbc() {
-        _storeListUiState.update { state ->
-            state.copy(
-                sortList = state.sortList.sortedBy { it.name }.toMutableList()
-            )
-        }
-    }
-
-    fun sortScore() {
-        _storeListUiState.update { state ->
-            state.copy(
-                sortList = state.sortList.sortedByDescending { it.score }.toMutableList()
+                cityGroup = storeList.groupBy { it.cityFilter }.toList().sortedByDescending { it.second.size }.toMap(),
+                scoreGroup = scoreGroup,
+                charGroup = storeList.groupBy { getChosung(it.name.first().uppercaseChar()) }.toList().sortedBy { it.first }.toMap(),
             )
         }
     }
@@ -177,15 +142,9 @@ class MapViewModel @Inject constructor(
             state.copy(
                 sortList = list,
                 includeClosed = include,
-                cityGroup = list.groupBy { it.cityFilter },
-                scoreGroup = scoreGroup as Map<Float, MutableList<Store>>,
-//                flatScoreList = scoreGroup.flatMap { (key, list) ->
-//                    list.map { item -> key to item }
-//                } as MutableList<Store>,
-//                flatScoreList = list.groupBy { it.score }.toList().sortedBy { it.first }.flatMap { (header, items) ->
-//                    listOf(header) + items
-//                } as MutableList<Store>,
-                charGroup = list.groupBy { getChosung(it.name.first().uppercaseChar()) }
+                cityGroup = list.groupBy { it.cityFilter }.toList().sortedByDescending { it.second.size }.toMap(),
+                scoreGroup = scoreGroup,
+                charGroup = list.groupBy { getChosung(it.name.first().uppercaseChar()) }.toList().sortedBy { it.first }.toMap(),
             )
         }
     }

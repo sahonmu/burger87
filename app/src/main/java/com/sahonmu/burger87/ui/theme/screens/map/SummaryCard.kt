@@ -1,7 +1,6 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,10 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,15 +28,9 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.sahonmu.burger87.common.DataManager
 import com.sahonmu.burger87.extensions.toYearMonthDay
-import com.sahonmu.burger87.ui.theme.Base
-import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.fontPadding
-import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
-import com.sahonmu.burger87.ui.theme.screens.components.Margin
-import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import domain.sahonmu.burger87.enums.isOperation
-import domain.sahonmu.burger87.enums.storeState
 import domain.sahonmu.burger87.vo.store.Store
 
 
@@ -70,9 +60,7 @@ fun SummaryCard(
             containerColor = White
         ),
         onClick = {
-            if(store.storeState.isOperation()) {
-                onClick(store)
-            }
+            onClick(store)
         }
     ) {
         Box(
@@ -98,43 +86,28 @@ fun SummaryCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(end = 12.dp, top = 6.dp, bottom = 6.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
 
                     Text(
                         text = if (store.branch.isEmpty()) store.name else "${store.name}(${store.branch})",
                         fontSize = 15.sp,
                         style = fontPadding
                     )
-//                    HeightMargin(5.dp)
-//                    if(store.storeState.isOperation()) {
-//                        Text(
-//                            text = store.address,
-//                            fontSize = 10.5.sp,
-//                            maxLines = 2,
-//                            overflow = TextOverflow.Ellipsis,
-//                            style = fontPadding
-//                        )
-//                    }
-//                    Margin(modifier = Modifier.weight(1f))
-//                    Box(
-//                        modifier = Modifier.fillMaxWidth(),
-//                        contentAlignment = Alignment.BottomEnd
-//                    ) {
-                        Text(
-                            text = "방문횟수 : ${store.visitCount}회\n최근 방문 날짜 : ${store.lastVisitDate.toYearMonthDay()}",
-                            fontSize = 9.5.sp,
-                            maxLines = 2,
-                            style = fontPadding
-                        )
-//                    }
-//                    HeightMargin(5.dp)
+                    Text(
+                        text = "방문횟수 : ${store.visitCount}회\n최근방문 : ${store.lastVisitDate.toYearMonthDay()}",
+                        fontSize = 10.5.sp,
+                        maxLines = 2,
+                        style = fontPadding
+                    )
 
                 }
             }
-            
-            if(!store.storeState.isOperation()) {
-                Box(modifier = Modifier.fillMaxSize().background(Color(0x77E7E7ED)))
+
+            if (!store.storeState.isOperation()) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0x77E7E7ED)))
             }
         }
     }
@@ -156,10 +129,10 @@ fun SummaryPager(
     ) { page ->
 
         val store = storeList[page]
-            SummaryCard(
-                modifier = Modifier.fillMaxSize(),
-                store = storeList[page],
-                onClick = { onClickStore(store) }
-            )
+        SummaryCard(
+            modifier = Modifier.fillMaxSize(),
+            store = storeList[page],
+            onClick = { onClickStore(store) }
+        )
     }
 }

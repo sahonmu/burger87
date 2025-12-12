@@ -22,9 +22,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -42,6 +48,7 @@ import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Score
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.fontPadding
+import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import domain.sahonmu.burger87.enums.StoreState
@@ -69,8 +76,17 @@ fun StoreListRow(
     onClick: (Store) -> Unit = { }
 ) {
 
+    var showAlert by rememberSaveable { mutableStateOf(false) }
+
+    if (showAlert) {
+        Alert(
+            message = "폐업된 점포입니다.",
+            onDismissRequest = { showAlert = false }
+        )
+    }
+
     Card(
-        modifier = modifier,
+        modifier = modifier.height(110.dp),
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(
             containerColor = White,
@@ -78,6 +94,8 @@ fun StoreListRow(
         onClick = {
             if(store.storeState.isOperation()) {
                 onClick(store)
+            } else {
+                showAlert = true
             }
         }
     ) {
@@ -198,6 +216,12 @@ fun StoreListRow(
                     }
                     WidthMargin(8.dp)
                 }
+            }
+
+            if (!store.storeState.isOperation()) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0x77E7E7ED)))
             }
         }
     }

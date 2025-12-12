@@ -26,6 +26,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -83,23 +84,27 @@ fun StoreListScreen(
     val storeListUiState = mapViewModel.storeListUiState.collectAsState().value
 
     var selectedCity by remember { mutableStateOf("") }
-    var selectedScore by remember { mutableStateOf(5.0f) }
-    var selectedChar by remember { mutableStateOf('a') }
+    var selectedScore by rememberSaveable { mutableStateOf(5.0f) }
+    var selectedChar by rememberSaveable { mutableStateOf('a') }
 
-    var includeClosedStore by remember { mutableStateOf(true) }
+    var includeClosedStore by rememberSaveable { mutableStateOf(true) }
 
-    var selectedSortMenu by remember { mutableStateOf(SortMenu.BASIC) }
+    var selectedSortMenu by rememberSaveable { mutableStateOf(SortMenu.BASIC) }
 
-    if(storeListUiState.sortList.isNotEmpty()) {
-        selectedScore = storeListUiState.sortList.maxBy { it.score }.score
-    }
+    var scoreGroup by rememberSaveable { mutableStateOf(storeListUiState.scoreGroup) }
 
-    if(storeListUiState.sortList.isNotEmpty()) {
-        selectedCity = storeListUiState.sortList.groupBy { it.cityFilter }.toList().maxBy { it.second.size }.first
-    }
+    LaunchedEffect(Unit) {
+        if(storeListUiState.sortList.isNotEmpty()) {
+            selectedScore = storeListUiState.sortList.maxBy { it.score }.score
+        }
 
-    if(storeListUiState.sortList.isNotEmpty()) {
-        selectedChar = storeListUiState.sortList.groupBy { it.name.first().uppercaseChar() }.toSortedMap().firstKey()
+        if(storeListUiState.sortList.isNotEmpty()) {
+            selectedCity = storeListUiState.sortList.groupBy { it.cityFilter }.toList().maxBy { it.second.size }.first
+        }
+
+        if(storeListUiState.sortList.isNotEmpty()) {
+            selectedChar = storeListUiState.sortList.groupBy { it.name.first().uppercaseChar() }.toSortedMap().firstKey()
+        }
     }
 
     val sortMenuList = SortMenu.entries.toMutableList()
@@ -118,18 +123,49 @@ fun StoreListScreen(
         }
     }
 
-    LaunchedEffect(listState, flatScoreList) {
+    val flatCityList = remember(storeListUiState.cityGroup) {
+        storeListUiState.cityGroup.flatMap { (key, list) ->
+            list.map { item -> key to item }
+        }
+    }
+
+    val flatCharList = remember(storeListUiState.charGroup) {
+        storeListUiState.charGroup.flatMap { (key, list) ->
+            list.map { item -> key to item }
+        }
+    }
+
+    LaunchedEffect(listState, flatScoreList, flatCityList, flatCharList) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
                 if (selectedSortMenu == SortMenu.CITY) {
-
+                    val stickyIndex = storeListUiState.cityGroup.keys.toList().indexOf(flatCityList[index].second.cityFilter)
+                    flatCityList.getOrNull(index - stickyIndex)?.let { item ->
+                        selectedCity = item.first
+                    }
                 } else if (selectedSortMenu == SortMenu.SCORE) {
                     val stickyIndex = storeListUiState.scoreGroup.keys.toList().indexOf(flatScoreList[index].second.score)
-                    flatScoreList.getOrNull(index - stickyIndex)?.let { displayItem ->
-                        selectedScore = displayItem.first
+                    flatScoreList.getOrNull(index - stickyIndex)?.let { item ->
+//                        Timber.i(
+//                            "이런시팔 ${item.first} / ${item.second.name} / $index - $stickyIndex /${index - stickyIndex}"
+//                        )
+                        selectedScore = item.first
                     }
-                } else if (selectedSortMenu == SortMenu.CHAR) {
 
+                } else if (selectedSortMenu == SortMenu.CHAR) {
+                    var name = flatCharList[index].second.name
+                    val firstText = name.first().uppercaseChar()
+                    val firstChar = mapViewModel.getChosung(firstText)
+                    val stickyIndex = storeListUiState.charGroup.keys.toList().indexOf(firstChar)
+//                    selectedChar = firstChar
+//                    Timber.i("char = ${name} / ${firstText} / ${stickyIndex} / ${index}")
+                    flatCharList.getOrNull(index - stickyIndex)?.let { item ->
+//                        Timber.i("char char = $index - $stickyIndex = ${index-stickyIndex}")
+//                        Timber.i("char char = ${item.first} / ${item.second.name}")
+//                        Timber.i("char char = ${mapViewModel.getChosung(item.second.name.first().uppercaseChar())}")
+                        Timber.i("이런시팔 ${mapViewModel.getChosung(item.second.name.first().uppercaseChar())} / ${item.second.name} / $index - $stickyIndex /${index - stickyIndex}")
+                        selectedChar = mapViewModel.getChosung(item.second.name.first().uppercaseChar())
+                    }
                 }
             }
     }
@@ -168,6 +204,9 @@ fun StoreListScreen(
                     text = item.sortName,
                     isSelect = selectedSortMenu.sortName == item.sortName,
                     onClick = {
+                        scope.launch {
+                            listState.scrollToItem(0)
+                        }
                         selectedSortMenu = when (item.sortName) {
                             SortMenu.BASIC.sortName -> {
                                 SortMenu.BASIC
@@ -203,7 +242,12 @@ fun StoreListScreen(
                         text = "${key}(${value.size})",
                         isSelect = selectedCity == key,
                         onClick = {
+                            val stickyIndex = storeListUiState.cityGroup.keys.toList().indexOf(key)
                             selectedCity = key
+                            val index = flatCityList.indexOfFirst { it.first == key } + stickyIndex
+                            scope.launch {
+                                listState.scrollToItem(index)
+                            }
                         }
                     )
                 }
@@ -378,47 +422,3 @@ fun StoreListScreen(
         }
     }
 }
-
-private fun findHeaderForIndex(
-    items: List<Pair<Float?, String>>,
-    sortedKeys: List<Float>,
-    index: Int
-): Float? {
-    var lastHeader: Float? = null
-
-    for (i in 0..index) {
-        val value = items[i]
-        if (value.second == "__HEADER__") {
-            lastHeader = value.first
-        }
-    }
-    return lastHeader
-}
-
-private fun findHeaderForIndex(
-    data: Map<Char, List<String>>,
-    targetIndex: Int
-): Char {
-    var currentIndex = 0
-    var currentHeader: Char = 'A'
-
-    for ((header, items) in data) {
-        // 헤더 1개 + 아이템 개수
-        val sectionSize = 1 + items.size
-
-        // 현재 섹션 범위 안에 targetIndex가 포함되면 이 헤더가 정답
-        if (targetIndex < currentIndex + sectionSize) {
-            return header
-        }
-
-        currentIndex += sectionSize
-        currentHeader = header
-    }
-    return currentHeader
-}
-
-
-
-
-
-

@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,8 +59,8 @@ fun StoreDetailScreen(
 
     val context = rememberUiState().context
 
-    var showAlert by remember { mutableStateOf(false) }
-    var showAlertMessage by remember { mutableStateOf("") }
+    var showAlert by rememberSaveable { mutableStateOf(false) }
+    var showAlertMessage by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         mapViewModel.requestStoreImageList(store.id)
