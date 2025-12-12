@@ -40,7 +40,7 @@ import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
-import com.sahonmu.burger87.viewmodels.MapViewModel
+import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.enums.isOperation
 
 @Preview
@@ -52,17 +52,17 @@ fun MapScreenPreview() {
 @Composable
 fun MapScreen(
     navController: NavHostController,
-    mapViewModel: MapViewModel = hiltViewModel()
+    storeViewModel: StoreViewModel = hiltViewModel()
 ) {
 
     val uiState = rememberUiState()
     val scope = uiState.scope
     val context = uiState.context
 
-    val mapViewUiState = mapViewModel.mapViewUiState.collectAsState().value
+    val storeMapUiState = storeViewModel.storeMapUiState.collectAsState().value
 
     val pagerState = rememberPagerState(pageCount = {
-        mapViewUiState.storeList.size
+        storeMapUiState.storeList.size
     })
 
     var showAlert by rememberSaveable { mutableStateOf(false) }
@@ -74,12 +74,12 @@ fun MapScreen(
     )
 
     LaunchedEffect(Unit) {
-        mapViewModel.requestStoreList()
+        storeViewModel.requestStoreList()
     }
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { position ->
-            mapViewUiState.selectedIndex.value = position
+            storeMapUiState.selectedIndex.value = position
         }
     }
 
@@ -95,7 +95,7 @@ fun MapScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            if (mapViewUiState.loadState == LoadState.LOADING) {
+            if (storeMapUiState.loadState == LoadState.LOADING) {
                 Text(
                     text = "로딩중"
                 )
@@ -105,14 +105,14 @@ fun MapScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     ClusterMapView(
-                        mapViewUiState = mapViewUiState,
+                        storeMapUiState = storeMapUiState,
                         onMarkerClick = { store ->
-                            mapViewUiState.selectedIndex.value =
-                                mapViewUiState.storeList.indexOfFirst { it.id == store.id }
+                            storeMapUiState.selectedIndex.value =
+                                storeMapUiState.storeList.indexOfFirst { it.id == store.id }
                             pagerState.moveItem(
                                 scope = scope,
                                 animate = false,
-                                page = mapViewUiState.selectedIndex.value
+                                page = storeMapUiState.selectedIndex.value
                             )
                             isCardVisible = true
                         },
@@ -134,7 +134,7 @@ fun MapScreen(
                                 .offset(y = offsetY)
                                 .align(Alignment.BottomCenter),
                             pagerState = pagerState,
-                            storeList = mapViewUiState.storeList,
+                            storeList = storeMapUiState.storeList,
                             onClickStore = { store ->
                                 if (store.storeState.isOperation()) {
                                     navController.navigate("${Screens.STORE_DETAIL}/${store.encode()}")
@@ -151,11 +151,14 @@ fun MapScreen(
                             modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 12.dp),
                             onMenu = { navController.navigate(Screens.INFO.route) },
                             onStoreList = {
-                                val encode = mapViewUiState.storeList.encode()
+                                val encode = storeMapUiState.storeList.encode()
                                 navController.navigate("${Screens.STORE_LIST}/${encode}")
                             },
                             onScoreInfo = { navController.navigate(Screens.SCORE_CRITERIA.route) },
-                            onSearch = { }
+                            onSearch = {
+                                val encode = storeMapUiState.storeList.encode()
+                                navController.navigate("${Screens.STORE_SEARCH}/${encode}")
+                            }
                         )
                     }
                 }

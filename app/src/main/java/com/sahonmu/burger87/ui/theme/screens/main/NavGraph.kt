@@ -21,7 +21,8 @@ import com.sahonmu.burger87.ui.theme.screens.score.ScoreCriteriaScreen
 import com.sahonmu.burger87.ui.theme.screens.splash.SplashScreen
 import com.sahonmu.burger87.ui.theme.screens.store.detail.StoreDetailScreen
 import com.sahonmu.burger87.ui.theme.screens.store.list.StoreListScreen
-import com.sahonmu.burger87.viewmodels.MapViewModel
+import com.sahonmu.burger87.ui.theme.screens.store.search.StoreSearchScreen
+import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.vo.announcement.Announcement
 import domain.sahonmu.burger87.vo.store.Store
 import timber.log.Timber
@@ -153,6 +154,21 @@ fun NavGraphBuilder.store(
                 )
         }
     }
+
+
+    composable("${Screens.STORE_SEARCH.route}/{${BundleKey.DATA}}") {
+        it.arguments?.getString(BundleKey.DATA)?.let { json ->
+            Timber.i("list = ${json.decodeList().toMutableList()}")
+            BaseScreen(
+                content = {
+                    StoreSearchScreen(
+                        navController = navController,
+                        storeList = json.decodeList().toMutableList()
+                    )
+                },
+            )
+        }
+    }
 }
 
 @Composable
@@ -168,12 +184,12 @@ fun NavGraph(
 
         // 지도
         composable(Screens.MAP.route) {
-            val mapViewModel: MapViewModel = hiltViewModel()
+            val storeViewModel: StoreViewModel = hiltViewModel()
             BaseScreen(
                 content = {
                     MapScreen(
                         navController = navController,
-                        mapViewModel = mapViewModel
+                        storeViewModel = storeViewModel
                     )
                 }
             )

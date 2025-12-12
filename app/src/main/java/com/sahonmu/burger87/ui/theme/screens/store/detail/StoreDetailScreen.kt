@@ -40,7 +40,7 @@ import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.PagerIndicator
 import com.sahonmu.burger87.utils.IntentUtils
-import com.sahonmu.burger87.viewmodels.MapViewModel
+import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.enums.storeState
 import domain.sahonmu.burger87.vo.store.Store
 
@@ -50,8 +50,8 @@ fun StoreDetailScreen(
     navController: NavHostController,
     store: Store,
 ) {
-    val mapViewModel: MapViewModel = hiltViewModel()
-    val storeDetailUiState = mapViewModel.storeDetailUiState.collectAsState().value
+    val storeViewModel: StoreViewModel = hiltViewModel()
+    val storeDetailUiState = storeViewModel.storeDetailUiState.collectAsState().value
 
     val pagerState = rememberPagerState(pageCount = {
         storeDetailUiState.storeImageLst.size
@@ -63,8 +63,8 @@ fun StoreDetailScreen(
     var showAlertMessage by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        mapViewModel.requestStoreImageList(store.id)
-        mapViewModel.requestStoreMenuList(store.id)
+        storeViewModel.requestStoreImageList(store.id)
+        storeViewModel.requestStoreMenuList(store.id)
     }
 
     Column(

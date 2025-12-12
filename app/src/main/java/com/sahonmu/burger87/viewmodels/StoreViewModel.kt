@@ -3,10 +3,8 @@ package com.sahonmu.burger87.viewmodels
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.sahonmu.burger87.common.DataManager
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.StoreDetailTab
 import com.sahonmu.burger87.viewmodels.base.BaseViewModel
@@ -14,7 +12,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import domain.sahonmu.burger87.enums.StoreState
 import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.usecase.store.StoreUseCase
-import domain.sahonmu.burger87.vo.score.ScoreInfo
 import domain.sahonmu.burger87.vo.store.Store
 import domain.sahonmu.burger87.vo.store.StoreImage
 import domain.sahonmu.burger87.vo.store.StoreMenu
@@ -28,7 +25,7 @@ import kotlin.collections.toList
 import kotlin.collections.toMutableList
 
 
-data class MapViewModelUiState(
+data class StoreMapUiState(
     val loadState: LoadState = LoadState.LOADING,
     var originList: MutableList<Store> = mutableListOf(),
     var storeList: MutableList<Store> = mutableListOf(),
@@ -54,13 +51,19 @@ data class StoreSortListUiState(
     var includeClosed: Boolean = true,
 )
 
+
+data class StoreSearchUiState(
+    var includeClosed: Boolean = true,
+    var searchList: MutableList<Store> = mutableListOf(),
+)
+
 @HiltViewModel
-class MapViewModel @Inject constructor(
+class StoreViewModel @Inject constructor(
     private val storeUseCase: StoreUseCase,
 ) : BaseViewModel() {
 
-    private val _mapViewUiState = MutableStateFlow(MapViewModelUiState())
-    val mapViewUiState = _mapViewUiState.asStateFlow()
+    private val _storeMapUiState = MutableStateFlow(StoreMapUiState())
+    val storeMapUiState = _storeMapUiState.asStateFlow()
 
     private val _storeDetailUiState = MutableStateFlow(StoreDetailUiState())
     val storeDetailUiState = _storeDetailUiState.asStateFlow()
@@ -68,6 +71,10 @@ class MapViewModel @Inject constructor(
 
     private val _storeListUiState = MutableStateFlow(StoreSortListUiState())
     val storeListUiState = _storeListUiState.asStateFlow()
+
+
+    private val _storeSearchUiState = MutableStateFlow(StoreSearchUiState())
+    val storeSearchUiState = _storeSearchUiState.asStateFlow()
 
     fun requestStoreList() {
         viewModelScope.launch {
@@ -79,7 +86,7 @@ class MapViewModel @Inject constructor(
                     boundBuilder.include(point)
                 }
 
-                _mapViewUiState.update { state ->
+                _storeMapUiState.update { state ->
                     state.copy(
                         loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
                         originList = storeList.sortedBy { it.id } as MutableList<Store>,

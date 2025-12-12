@@ -30,13 +30,13 @@ import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.utils.bitmap.BitmapUtils
 import com.sahonmu.burger87.utils.map.StoreClusterItem
 import com.sahonmu.burger87.utils.map.StoreClusterRenderer
-import com.sahonmu.burger87.viewmodels.MapViewModelUiState
+import com.sahonmu.burger87.viewmodels.StoreMapUiState
 import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.vo.store.Store
 
 @Composable
 fun ClusterMapView(
-    mapViewUiState: MapViewModelUiState,
+    storeMapUiState: StoreMapUiState,
     onMarkerClick: (Store) -> Unit = { },
     onMapClick: () -> Unit = { }
 ) {
@@ -48,7 +48,7 @@ fun ClusterMapView(
     var clusterManager by remember { mutableStateOf<ClusterManager<StoreClusterItem>?>(null) }
 
     var selectedMarker by remember { mutableStateOf<Marker?>(null) }
-    val selectedIndex = mapViewUiState.selectedIndex.value
+    val selectedIndex = storeMapUiState.selectedIndex.value
 
 
 
@@ -108,7 +108,7 @@ fun ClusterMapView(
                         }
 
                         this.clearItems()
-                        mapViewUiState.storeList.forEach { store ->
+                        storeMapUiState.storeList.forEach { store ->
                             this.addItem(StoreClusterItem(store))
                         }
                         this.cluster()
@@ -124,7 +124,7 @@ fun ClusterMapView(
                 }
 
                 selectedMarker?.remove()
-                val store = mapViewUiState.storeList[selectedIndex]
+                val store = storeMapUiState.storeList[selectedIndex]
                 val view = selectedMarker(context, store)
                 val markerOption = MarkerOptions()
                     .position(LatLng(store.latitude, store.longitude))
@@ -135,8 +135,8 @@ fun ClusterMapView(
 
             }
 
-            if (mapViewUiState.storeList.isNotEmpty()) {
-                val store = mapViewUiState.storeList[mapViewUiState.selectedIndex.value]
+            if (storeMapUiState.storeList.isNotEmpty()) {
+                val store = storeMapUiState.storeList[storeMapUiState.selectedIndex.value]
                 val latLng = LatLng(store.latitude, store.longitude)
                 googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5f))
             }

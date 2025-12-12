@@ -42,18 +42,15 @@ import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.enums.SortMenu
 import com.sahonmu.burger87.extensions.encode
 import com.sahonmu.burger87.ui.theme.Base
-import com.sahonmu.burger87.ui.theme.Black
 import com.sahonmu.burger87.ui.theme.Gray_200
-import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Line
-import com.sahonmu.burger87.ui.theme.screens.components.Title
 import com.sahonmu.burger87.ui.theme.screens.components.TitleWithIncludeClosed
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import com.sahonmu.burger87.ui.theme.screens.map.StoreListRow
-import com.sahonmu.burger87.viewmodels.MapViewModel
+import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.vo.store.Store
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -80,8 +77,8 @@ fun StoreListScreen(
     val uiState = rememberUiState()
     val scope = uiState.scope
 
-    val mapViewModel: MapViewModel = hiltViewModel()
-    val storeListUiState = mapViewModel.storeListUiState.collectAsState().value
+    val storeViewModel: StoreViewModel = hiltViewModel()
+    val storeListUiState = storeViewModel.storeListUiState.collectAsState().value
 
     var selectedCity by remember { mutableStateOf("") }
     var selectedScore by rememberSaveable { mutableStateOf(5.0f) }
@@ -113,7 +110,7 @@ fun StoreListScreen(
     val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
-        mapViewModel.addAllStore(storeList)
+        storeViewModel.addAllStore(storeList)
     }
 
 
@@ -146,25 +143,17 @@ fun StoreListScreen(
                 } else if (selectedSortMenu == SortMenu.SCORE) {
                     val stickyIndex = storeListUiState.scoreGroup.keys.toList().indexOf(flatScoreList[index].second.score)
                     flatScoreList.getOrNull(index - stickyIndex)?.let { item ->
-//                        Timber.i(
-//                            "이런시팔 ${item.first} / ${item.second.name} / $index - $stickyIndex /${index - stickyIndex}"
-//                        )
                         selectedScore = item.first
                     }
 
                 } else if (selectedSortMenu == SortMenu.CHAR) {
                     var name = flatCharList[index].second.name
                     val firstText = name.first().uppercaseChar()
-                    val firstChar = mapViewModel.getChosung(firstText)
+                    val firstChar = storeViewModel.getChosung(firstText)
                     val stickyIndex = storeListUiState.charGroup.keys.toList().indexOf(firstChar)
-//                    selectedChar = firstChar
-//                    Timber.i("char = ${name} / ${firstText} / ${stickyIndex} / ${index}")
                     flatCharList.getOrNull(index - stickyIndex)?.let { item ->
-//                        Timber.i("char char = $index - $stickyIndex = ${index-stickyIndex}")
-//                        Timber.i("char char = ${item.first} / ${item.second.name}")
-//                        Timber.i("char char = ${mapViewModel.getChosung(item.second.name.first().uppercaseChar())}")
-                        Timber.i("이런시팔 ${mapViewModel.getChosung(item.second.name.first().uppercaseChar())} / ${item.second.name} / $index - $stickyIndex /${index - stickyIndex}")
-                        selectedChar = mapViewModel.getChosung(item.second.name.first().uppercaseChar())
+                        Timber.i("이런시팔 ${storeViewModel.getChosung(item.second.name.first().uppercaseChar())} / ${item.second.name} / $index - $stickyIndex /${index - stickyIndex}")
+                        selectedChar = storeViewModel.getChosung(item.second.name.first().uppercaseChar())
                     }
                 }
             }
@@ -181,7 +170,7 @@ fun StoreListScreen(
             onBack = { navController.popBackStack() },
             onCheck = { checked ->
                 includeClosedStore = checked
-                mapViewModel.includeClosedStore(includeClosedStore)
+                storeViewModel.includeClosedStore(includeClosedStore)
             }
         )
 

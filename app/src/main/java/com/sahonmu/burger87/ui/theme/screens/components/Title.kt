@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -36,7 +37,9 @@ fun Title(
 ) {
 
     ConstraintLayout(
-        modifier = modifier.fillMaxWidth().size(56.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .size(56.dp),
     ) {
         val (back, text, empty) = createRefs()
 
@@ -112,7 +115,9 @@ fun TitleWithIncludeClosed(
     var checked by remember { mutableStateOf(true) }
 
     ConstraintLayout(
-        modifier = modifier.fillMaxWidth().size(56.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .size(56.dp),
     ) {
         val (back, text, empty) = createRefs()
 
@@ -193,10 +198,32 @@ fun TitleWithIncludeClosed(
 
 }
 
-
-@Preview
 @Composable
-fun StoreDetailTitlePreview() {
-//    StoreDetailScreen(rememberNavController())
+fun SearchTitle(
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit = { },
+    onClear: () -> Unit = { },
+) {
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(56.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .clickable(
+                    onClick = { onBack() }
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_44_back),
+                contentDescription = null
+            )
+        }
+    }
 }
+
 
