@@ -76,7 +76,7 @@ fun InfoScreen(
                         } else if (item == InfoMenu.PROVIDING_INFO) {
                             navController.navigate(Screens.PROVIDING_INFO.route)
                         } else if (item == InfoMenu.SHARING_EVENT_INFO) {
-                            navController.navigate(Screens.SHARING_EVENT_INFO.route)
+                            navController.navigate(Screens.EVENT_LIST.route)
                         } else if (item == InfoMenu.ANNOUNCEMENT) {
                             navController.navigate(Screens.ANNOUNCEMENT_LIST.route)
                         } else if (item == InfoMenu.REPORT) {

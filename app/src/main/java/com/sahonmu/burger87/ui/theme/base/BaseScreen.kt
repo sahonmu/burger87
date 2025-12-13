@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahonmu.burger87.ui.theme.White
+import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
 import com.sahonmu.burger87.viewmodels.MainViewModel
 import com.sahonmu.burger87.viewmodels.base.BaseViewModel
@@ -34,8 +35,6 @@ fun BaseScreenPreview() {
 fun BaseScreen(
     content: @Composable () -> Unit,
     viewModel: BaseViewModel = hiltViewModel(),
-    viewDescription: String = "",
-    route: String = "",
     statusColor: Color = White,
 ) {
 
@@ -44,14 +43,8 @@ fun BaseScreen(
 
     val mainViewModel = composableActivityViewModel<MainViewModel>()
 
-    var postLog by rememberSaveable { mutableStateOf(true) }
-
     var showAlert by rememberSaveable { mutableStateOf(false) }
     var alertMessage by rememberSaveable { mutableStateOf("") }
-
-    var showAlertAppForceUpdate by rememberSaveable { mutableStateOf(false) }
-    var showConfirmSystemMaintenance by rememberSaveable { mutableStateOf(false) }
-    var showInvalidJwt by rememberSaveable { mutableStateOf(false) }
 
     val systemUiController = rememberSystemUiController()
 
@@ -68,13 +61,13 @@ fun BaseScreen(
     }
 
     if (showAlert && alertMessage.isNotEmpty()) {
-//        Alert(
-//            message = alertMessage,
-//            onDismissRequest = {
-//                showAlert = false
-//                alertMessage = ""
-//            }
-//        )
+        Alert(
+            message = alertMessage,
+            onDismissRequest = {
+                showAlert = false
+                alertMessage = ""
+            }
+        )
     }
 
 
