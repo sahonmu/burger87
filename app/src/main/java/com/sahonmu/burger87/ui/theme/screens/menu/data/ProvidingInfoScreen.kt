@@ -1,4 +1,4 @@
-package com.sahonmu.burger87.ui.theme.screens.info.data
+package com.sahonmu.burger87.ui.theme.screens.menu.data
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,14 +14,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.sahonmu.burger87.enums.InfoMenu
 import com.sahonmu.burger87.ui.theme.Gray_200
-import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
-import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.Title
 import com.sahonmu.burger87.utils.IntentUtils

@@ -38,10 +38,9 @@ fun AnnouncementListRowPreview() {
 fun AnnouncementListRow(
     modifier: Modifier = Modifier,
     announcement: Announcement,
-    onClick: () -> Unit = { }
 ) {
     Column(
-        modifier = modifier.padding(horizontal = 20.dp, vertical = 10.dp).clickable { onClick() },
+        modifier = modifier.padding(horizontal = 20.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(

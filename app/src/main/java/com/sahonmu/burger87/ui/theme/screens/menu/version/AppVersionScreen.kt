@@ -1,4 +1,4 @@
-package com.sahonmu.burger87.ui.theme.screens.info.version
+package com.sahonmu.burger87.ui.theme.screens.menu.version
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

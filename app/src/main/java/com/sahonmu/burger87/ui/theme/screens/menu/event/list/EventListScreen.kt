@@ -1,4 +1,4 @@
-package com.sahonmu.burger87.ui.theme.screens.info.event.list
+package com.sahonmu.burger87.ui.theme.screens.menu.event.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,47 +50,42 @@ fun EventListScreen(
         eventViewModel.requestEventList()
     }
 
-    Surface {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .systemBarsPadding()
-                .navigationBarsPadding()
-        ) {
-            Title(
-                title = InfoMenu.SHARING_EVENT_INFO.menuName,
-                onBack = { navController.popBackStack() }
-            )
-            Line(height = 1.dp, color = Gray_200)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+            .navigationBarsPadding()
+    ) {
+        Title(
+            title = InfoMenu.SHARING_EVENT_INFO.menuName,
+            onBack = { navController.popBackStack() }
+        )
+        Line(height = 1.dp, color = Gray_200)
 
-            if (eventUiState.loadState == LoadState.FINISHED) {
+        if (eventUiState.loadState == LoadState.FINISHED) {
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    itemsIndexed(eventUiState.eventList) { index, item ->
-                        EventListRow(
-                            modifier = Modifier.clickable { navController.navigate("${Screens.EVENT_DETAIL}/${item.encode()}")},
-                            event = item,
-                        )
-
-                        if (index != eventUiState.eventList.lastIndex) {
-                            Line(height = 1.dp, color = Gray_200)
-                        }
-                    }
-                }
-
-            } else if (eventUiState.loadState == LoadState.EMPTY) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "이벤트 정보가 없습니다.",
-                        fontSize = 17.sp,
-                        color = Gray_900
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                itemsIndexed(eventUiState.eventList) { index, item ->
+                    EventListRow(
+                        modifier = Modifier.clickable { navController.navigate("${Screens.EVENT_DETAIL}/${item.encode()}") },
+                        event = item,
                     )
+                    Line(height = 1.dp, color = Gray_200)
                 }
+            }
+
+        } else if (eventUiState.loadState == LoadState.EMPTY) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "이벤트 정보가 없습니다.",
+                    fontSize = 17.sp,
+                    color = Gray_900
+                )
             }
         }
     }

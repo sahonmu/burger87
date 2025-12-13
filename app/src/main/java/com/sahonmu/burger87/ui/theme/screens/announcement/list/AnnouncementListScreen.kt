@@ -1,5 +1,6 @@
 package com.sahonmu.burger87.ui.theme.screens.announcement.list
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -62,15 +63,12 @@ fun AnnouncementListScreen(
         ) {
             itemsIndexed(announcementUiState.announcementList) { index, item ->
                 AnnouncementListRow(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { navController.navigate("${Screens.ANNOUNCEMENT_DETAIL}/${item.encode()}") },
                     announcement = item,
-                    onClick = {
-                        navController.navigate("${Screens.ANNOUNCEMENT_DETAIL}/${item.encode()}")
-                    }
                 )
-                if(index != announcementUiState.announcementList.lastIndex) {
-                    Line(height = 1.dp, color = Gray_200)
-                }
+                Line(height = 1.dp, color = Gray_200)
             }
         }
     }

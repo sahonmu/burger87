@@ -1,4 +1,4 @@
-package com.sahonmu.burger87.ui.theme.screens.info.score
+package com.sahonmu.burger87.ui.theme.screens.menu.score
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

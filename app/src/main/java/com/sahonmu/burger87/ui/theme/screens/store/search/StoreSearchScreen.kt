@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -83,57 +82,55 @@ fun StoreSearchScreen(
             }
     }
 
-    Surface {
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+            .statusBarsPadding()
+    ) {
+        SearchTitle(
             modifier = Modifier
-                .fillMaxSize()
-                .systemBarsPadding()
-                .statusBarsPadding()
-        ) {
-            SearchTitle(
+                .fillMaxWidth()
+                .height(56.dp),
+            onBack = { navController.popBackStack() },
+            onKeyword = { keyword ->
+                input = keyword
+                if (keyword.isNotEmpty()) {
+                    storeViewModel.searchByKeyword(keyword = keyword, storeList = storeList)
+                } else {
+                    storeViewModel.searchByReset(storeList = storeList)
+                }
+            }
+        )
+
+        Line(height = 1.dp, Gray_200)
+
+        if (input.isNotEmpty() && storeSearchUiState.searchList.isNotEmpty()) {
+            StoreSearchResultRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
-                onBack = { navController.popBackStack() },
-                onKeyword = { keyword ->
-                    input = keyword
-                    if (keyword.isNotEmpty()) {
-                        storeViewModel.searchByKeyword(keyword = keyword, storeList = storeList)
-                    } else {
-                        storeViewModel.searchByReset(storeList = storeList)
-                    }
-                }
+                    .height(44.dp)
+                    .padding(horizontal = 16.dp),
+                resultCount = if (input.isEmpty()) 0 else storeSearchUiState.searchList.size,
             )
 
             Line(height = 1.dp, Gray_200)
+        }
 
-            if (input.isNotEmpty() && storeSearchUiState.searchList.isNotEmpty()) {
-                StoreSearchResultRow(
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            itemsIndexed(storeSearchUiState.searchList) { index, item ->
+                StoreSearchRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(44.dp)
-                        .padding(horizontal = 16.dp),
-                    resultCount = if (input.isEmpty()) 0 else storeSearchUiState.searchList.size,
+                        .clickable { navController.navigate("${Screens.STORE_DETAIL}/${item.encode()}") },
+                    store = item,
+                    keyword = input,
                 )
-
-                Line(height = 1.dp, Gray_200)
-            }
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                itemsIndexed(storeSearchUiState.searchList) { index, item ->
-                    StoreSearchRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(44.dp)
-                            .clickable { navController.navigate("${Screens.STORE_DETAIL}/${item.encode()}") },
-                        store = item,
-                        keyword = input,
-                    )
-                    if (index != storeList.lastIndex) {
-                        Line(height = 1.dp, Gray_200)
-                    }
+                if (index != storeList.lastIndex) {
+                    Line(height = 1.dp, Gray_200)
                 }
             }
         }

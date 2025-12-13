@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -22,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -91,16 +89,19 @@ fun StoreListScreen(
     var scoreGroup by rememberSaveable { mutableStateOf(storeListUiState.scoreGroup) }
 
     LaunchedEffect(Unit) {
-        if(storeListUiState.sortList.isNotEmpty()) {
+        if (storeListUiState.sortList.isNotEmpty()) {
             selectedScore = storeListUiState.sortList.maxBy { it.score }.score
         }
 
-        if(storeListUiState.sortList.isNotEmpty()) {
-            selectedCity = storeListUiState.sortList.groupBy { it.cityFilter }.toList().maxBy { it.second.size }.first
+        if (storeListUiState.sortList.isNotEmpty()) {
+            selectedCity = storeListUiState.sortList.groupBy { it.cityFilter }.toList()
+                .maxBy { it.second.size }.first
         }
 
-        if(storeListUiState.sortList.isNotEmpty()) {
-            selectedChar = storeListUiState.sortList.groupBy { it.name.first().uppercaseChar() }.toSortedMap().firstKey()
+        if (storeListUiState.sortList.isNotEmpty()) {
+            selectedChar =
+                storeListUiState.sortList.groupBy { it.name.first().uppercaseChar() }.toSortedMap()
+                    .firstKey()
         }
     }
 
@@ -136,12 +137,14 @@ fun StoreListScreen(
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
                 if (selectedSortMenu == SortMenu.CITY) {
-                    val stickyIndex = storeListUiState.cityGroup.keys.toList().indexOf(flatCityList[index].second.cityFilter)
+                    val stickyIndex = storeListUiState.cityGroup.keys.toList()
+                        .indexOf(flatCityList[index].second.cityFilter)
                     flatCityList.getOrNull(index - stickyIndex)?.let { item ->
                         selectedCity = item.first
                     }
                 } else if (selectedSortMenu == SortMenu.SCORE) {
-                    val stickyIndex = storeListUiState.scoreGroup.keys.toList().indexOf(flatScoreList[index].second.score)
+                    val stickyIndex = storeListUiState.scoreGroup.keys.toList()
+                        .indexOf(flatScoreList[index].second.score)
                     flatScoreList.getOrNull(index - stickyIndex)?.let { item ->
                         selectedScore = item.first
                     }
@@ -152,8 +155,15 @@ fun StoreListScreen(
                     val firstChar = storeViewModel.getChosung(firstText)
                     val stickyIndex = storeListUiState.charGroup.keys.toList().indexOf(firstChar)
                     flatCharList.getOrNull(index - stickyIndex)?.let { item ->
-                        Timber.i("이런시팔 ${storeViewModel.getChosung(item.second.name.first().uppercaseChar())} / ${item.second.name} / $index - $stickyIndex /${index - stickyIndex}")
-                        selectedChar = storeViewModel.getChosung(item.second.name.first().uppercaseChar())
+                        Timber.i(
+                            "이런시팔 ${
+                                storeViewModel.getChosung(
+                                    item.second.name.first().uppercaseChar()
+                                )
+                            } / ${item.second.name} / $index - $stickyIndex /${index - stickyIndex}"
+                        )
+                        selectedChar =
+                            storeViewModel.getChosung(item.second.name.first().uppercaseChar())
                     }
                 }
             }
@@ -200,12 +210,15 @@ fun StoreListScreen(
                             SortMenu.BASIC.sortName -> {
                                 SortMenu.BASIC
                             }
+
                             SortMenu.CITY.sortName -> {
                                 SortMenu.CITY
                             }
+
                             SortMenu.SCORE.sortName -> {
                                 SortMenu.SCORE
                             }
+
                             else -> {
                                 SortMenu.CHAR
                             }
@@ -226,14 +239,18 @@ fun StoreListScreen(
                     WidthMargin(width = 10.dp)
                 }
 
-                items(storeListUiState.cityGroup.toList().sortedByDescending { it.second.size }) { (key, value) ->
+                items(
+                    storeListUiState.cityGroup.toList()
+                        .sortedByDescending { it.second.size }) { (key, value) ->
                     StoreListRoundBox(
                         text = "${key}(${value.size})",
                         isSelect = selectedCity == key,
                         onClick = {
-                            val stickyIndex = storeListUiState.cityGroup.keys.toList().indexOf(key)
+                            val stickyIndex =
+                                storeListUiState.cityGroup.keys.toList().indexOf(key)
                             selectedCity = key
-                            val index = flatCityList.indexOfFirst { it.first == key } + stickyIndex
+                            val index =
+                                flatCityList.indexOfFirst { it.first == key } + stickyIndex
                             scope.launch {
                                 listState.scrollToItem(index)
                             }
@@ -241,7 +258,7 @@ fun StoreListScreen(
                     )
                 }
             }
-        } else if(selectedSortMenu == SortMenu.SCORE) {
+        } else if (selectedSortMenu == SortMenu.SCORE) {
             HeightMargin(height = 10.dp)
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
@@ -252,14 +269,18 @@ fun StoreListScreen(
                     WidthMargin(width = 10.dp)
                 }
 
-                items(storeListUiState.scoreGroup.toList().sortedByDescending { it.first }) { (key, value) ->
+                items(
+                    storeListUiState.scoreGroup.toList()
+                        .sortedByDescending { it.first }) { (key, value) ->
                     StoreListRoundBox(
                         text = "${key}점(${value.size})",
                         isSelect = selectedScore == key,
                         onClick = {
-                            val stickyIndex = storeListUiState.scoreGroup.keys.toList().indexOf(key)
+                            val stickyIndex =
+                                storeListUiState.scoreGroup.keys.toList().indexOf(key)
                             selectedScore = key
-                            val index = flatScoreList.indexOfFirst { it.first == key } + stickyIndex
+                            val index =
+                                flatScoreList.indexOfFirst { it.first == key } + stickyIndex
                             scope.launch {
                                 listState.scrollToItem(index)
                             }
@@ -267,7 +288,7 @@ fun StoreListScreen(
                     )
                 }
             }
-        } else if(selectedSortMenu == SortMenu.CHAR) {
+        } else if (selectedSortMenu == SortMenu.CHAR) {
             HeightMargin(height = 10.dp)
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
@@ -278,7 +299,8 @@ fun StoreListScreen(
                     WidthMargin(width = 10.dp)
                 }
 
-                items(storeListUiState.charGroup.toList().sortedBy { it.first }) { (key, value) ->
+                items(
+                    storeListUiState.charGroup.toList().sortedBy { it.first }) { (key, value) ->
                     StoreListRoundBox(
                         text = "${key}(${value.size})",
                         isSelect = selectedChar == key,
@@ -298,7 +320,7 @@ fun StoreListScreen(
             modifier = Modifier.fillMaxSize()
         ) {
 
-            if(selectedSortMenu == SortMenu.CITY) {
+            if (selectedSortMenu == SortMenu.CITY) {
                 storeListUiState.cityGroup.forEach { (cityName, list) ->
                     stickyHeader {
                         Column(
@@ -331,7 +353,7 @@ fun StoreListScreen(
                         }
                     }
                 }
-            } else if(selectedSortMenu == SortMenu.SCORE) {
+            } else if (selectedSortMenu == SortMenu.SCORE) {
                 storeListUiState.scoreGroup.forEach { (score, list) ->
                     stickyHeader {
                         Column(
@@ -364,39 +386,40 @@ fun StoreListScreen(
                         }
                     }
                 }
-            } else if(selectedSortMenu == SortMenu.CHAR) {
-                storeListUiState.charGroup.toList().sortedBy { it.first }.forEach { (char, list) ->
-                    stickyHeader {
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(48.dp)
-                                    .background(White),
-                                contentAlignment = Alignment.Center
+            } else if (selectedSortMenu == SortMenu.CHAR) {
+                storeListUiState.charGroup.toList().sortedBy { it.first }
+                    .forEach { (char, list) ->
+                        stickyHeader {
+                            Column(
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text(
-                                    text = char.toString(),
-                                    fontSize = 19.sp,
-                                    color = Base
-                                )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(48.dp)
+                                        .background(White),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = char.toString(),
+                                        fontSize = 19.sp,
+                                        color = Base
+                                    )
+                                }
+                                Line(height = 1.dp, color = Gray_200)
                             }
-                            Line(height = 1.dp, color = Gray_200)
                         }
-                    }
 
-                    itemsIndexed(list) { index, item ->
-                        StoreListRow(
-                            store = item,
-                            onClick = { navController.navigate("${Screens.STORE_DETAIL}/${item.encode()}") }
-                        )
-                        if (index != storeList.lastIndex) {
-                            Line(height = 1.dp, color = Gray_200)
+                        itemsIndexed(list) { index, item ->
+                            StoreListRow(
+                                store = item,
+                                onClick = { navController.navigate("${Screens.STORE_DETAIL}/${item.encode()}") }
+                            )
+                            if (index != storeList.lastIndex) {
+                                Line(height = 1.dp, color = Gray_200)
+                            }
                         }
                     }
-                }
             } else {
                 itemsIndexed(storeListUiState.sortList) { index, item ->
                     StoreListRow(

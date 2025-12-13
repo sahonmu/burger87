@@ -1,4 +1,4 @@
-package com.sahonmu.burger87.ui.theme.screens.info.event.list
+package com.sahonmu.burger87.ui.theme.screens.menu.event.list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

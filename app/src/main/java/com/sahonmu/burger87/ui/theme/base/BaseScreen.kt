@@ -2,6 +2,7 @@ package com.sahonmu.burger87.ui.theme.base
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,7 +58,9 @@ fun BaseScreen(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        content()
+        Surface {
+            content()
+        }
     }
 
     if (showAlert && alertMessage.isNotEmpty()) {

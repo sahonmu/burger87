@@ -5,19 +5,15 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,8 +43,6 @@ import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
-import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
-import com.sahonmu.burger87.viewmodels.MainViewModel
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.enums.isOperation
@@ -113,12 +107,7 @@ fun MapScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            if (storeMapUiState.loadState == LoadState.LOADING) {
-                Text(
-                    text = "로딩중"
-                )
-            } else {
-
+            if (storeMapUiState.loadState == LoadState.FINISHED) {
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -175,9 +164,11 @@ fun MapScreen(
                     ) {
                         MapFloatingButtonBox(
                             modifier = Modifier,
-                            onMenu = { navController.navigate(Screens.INFO.route) },
+                            onMenu = { navController.navigate(Screens.MENU.route) },
                             onSearch = {
-                                val encode = storeMapUiState.storeList.filter { it.storeState.isOperation() }.encode()
+                                val encode =
+                                    storeMapUiState.storeList.filter { it.storeState.isOperation() }
+                                        .encode()
                                 navController.navigate("${Screens.STORE_SEARCH}/${encode}")
                             },
                             onStoreList = {

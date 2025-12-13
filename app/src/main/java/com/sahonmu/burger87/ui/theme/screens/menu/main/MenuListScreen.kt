@@ -1,4 +1,4 @@
-package com.sahonmu.burger87.ui.theme.screens.info.main
+package com.sahonmu.burger87.ui.theme.screens.menu.main
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -28,14 +27,14 @@ import com.sahonmu.burger87.utils.IntentUtils
 
 @Preview(showBackground = true)
 @Composable
-fun InfoScreenPreview() {
-    InfoScreen(
+fun MenuListScreenPreview() {
+    MenuListScreen(
         navController = rememberNavController(),
     )
 }
 
 @Composable
-fun InfoScreen(
+fun MenuListScreen(
     navController: NavHostController
 ) {
 
@@ -60,7 +59,7 @@ fun InfoScreen(
         ) {
 
             itemsIndexed(menuList) { index, item ->
-                InfoMenuRow(
+                MenuRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
@@ -94,8 +93,6 @@ fun InfoScreen(
                     Line(height = 1.dp, color = Gray_200)
                 }
             }
-
-
         }
     }
 }

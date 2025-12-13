@@ -7,7 +7,7 @@ enum class Screens(var route: String) {
     STORE_DETAIL("STORE_DETAIL"),
     STORE_LIST("STORE_LIST"),
     STORE_SEARCH("STORE_SEARCH"),
-    INFO("INFO"),
+    MENU("MENU"),
     BASED_ON_SCORE("INFO_BASED_ON_SCORE"),
     EVENT_LIST("EVENT_LIST"),
     EVENT_DETAIL("EVENT_DETAIL"),
