@@ -5,15 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.annotation.DrawableRes
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.sahonmu.burger87.R
+import com.sahonmu.burger87.common.Constants
 import com.sahonmu.burger87.utils.bitmap.BitmapUtils
 import domain.sahonmu.burger87.enums.isOperation
 
@@ -48,7 +47,7 @@ class StoreClusterRenderer(
         scoreTextView.text = item.store.score.toString()
         marker.setIcon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(markerView.rootView)))
         marker.setAnchor(0.5f, 0.5f)
-        marker.zIndex = if(item.store.storeState.isOperation()) 2f else 1f
+        marker.zIndex = if(item.store.storeState.isOperation()) Constants.MarKerZIndex.STORE_OPRERATION else Constants.MarKerZIndex.STORE_CLOSED
     }
 
     // 개별 마커 설정

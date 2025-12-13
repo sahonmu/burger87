@@ -89,8 +89,9 @@ class StoreViewModel @Inject constructor(
                 _storeMapUiState.update { state ->
                     state.copy(
                         loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
-                        originList = storeList.sortedBy { it.id } as MutableList<Store>,
-                        storeList = storeList.sortedByDescending { it.storeState.isOperation() } as MutableList<Store>,
+                        originList = storeList.sortedBy { it.id }.toMutableList(),
+//                        storeList = storeList.sortedByDescending { it.storeState.isOperation() } as MutableList<Store>,
+                        storeList = storeList.sortedByDescending { it.id }.toMutableList(),
                         boundBuilder = boundBuilder
                     )
                 }
