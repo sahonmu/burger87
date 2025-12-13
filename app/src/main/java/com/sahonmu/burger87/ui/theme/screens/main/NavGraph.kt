@@ -24,6 +24,7 @@ import com.sahonmu.burger87.ui.theme.screens.splash.SplashScreen
 import com.sahonmu.burger87.ui.theme.screens.store.detail.StoreDetailScreen
 import com.sahonmu.burger87.ui.theme.screens.store.list.StoreListScreen
 import com.sahonmu.burger87.ui.theme.screens.store.search.StoreSearchScreen
+import com.sahonmu.burger87.viewmodels.AppInfoViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.vo.announcement.Announcement
 import domain.sahonmu.burger87.vo.store.Store
@@ -180,9 +181,15 @@ fun NavGraph(
     screen: Screens
 ) {
     NavHost(navController = navController, startDestination = screen.route) {
-        // 스플래쉬
         composable(Screens.SPLASH.route) {
-            BaseScreen(content = { SplashScreen(navController = navController) })
+            val appInfoViewModel: AppInfoViewModel = hiltViewModel()
+            BaseScreen(
+                content = {
+                    SplashScreen(navController = navController, appInfoViewModel = appInfoViewModel)
+                },
+                viewModel = appInfoViewModel
+            )
+
         }
 
         // 지도

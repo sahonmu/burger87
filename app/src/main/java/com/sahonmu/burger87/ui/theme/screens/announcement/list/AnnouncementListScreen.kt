@@ -22,6 +22,7 @@ import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.Title
 import com.sahonmu.burger87.viewmodels.AnnouncementViewModel
+import timber.log.Timber
 
 @Preview(showBackground = true)
 @Composable

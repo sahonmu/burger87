@@ -30,7 +30,6 @@ class StoreRepositoryImpl(
     override fun getStoreMenuList(id: Long) = flow {
         val response =
             postgrest["store_menu"].select { filter { eq("store_id", id) } }.decodeList<StoreMenuDto>()
-        Log.i("list =", "${response.size}")
         emit(response.map { it.toDomain() })
     }
 

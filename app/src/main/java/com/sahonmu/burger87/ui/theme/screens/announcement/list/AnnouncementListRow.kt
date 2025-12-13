@@ -47,13 +47,13 @@ fun AnnouncementListRow(
         Text(
             text = announcement.title,
             color = Gray_900,
-            fontSize = 17.sp
+            fontSize = 15.sp
         )
         Box(modifier = Modifier.fillMaxWidth(), Alignment.CenterEnd) {
             Text(
                 text = announcement.createdAt.toYearMonthDay(),
                 color = Gray_600,
-                fontSize = 15.sp
+                fontSize = 13.sp
             )
         }
     }

@@ -11,12 +11,7 @@ class AnnouncementRepositoryImpl(
 ) : AnnouncementRepository {
 
     override fun announcementList() = flow {
-//        try {
             val response = postgrest["announcement"].select().decodeList<AnnouncementDto>()
             emit(response.map { it.toDomain() })
-//        } catch (e: Exception) {
-//
-//        }
-
     }
 }

@@ -48,7 +48,18 @@ object IntentUtils {
         context.startActivity(intent)
     }
 
-    fun startActivityForGooglePlay(context: Context, pkg: String) {
+
+    fun startActivityReportData(context: Context) {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf("sahonmu@gmail.com"))
+            putExtra(Intent.EXTRA_SUBJECT, "정보변경 및 삭제 요청")
+            putExtra(Intent.EXTRA_TEXT, "정보변경 상점및 지점 :\n정보변경 내용 : ")
+        }
+        context.startActivity(intent)
+    }
+
+    fun startActivityForGooglePlay(context: Context) {
         val pkg = context.packageName
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$pkg"))
         context.startActivity(intent)

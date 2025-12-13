@@ -24,7 +24,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -73,10 +73,6 @@ android {
             resValue("string", "google_maps_api_key", "AIzaSyDmcAQ5GqHyUR3zBH_sQgmeXTo3da8IV6o")
         }
     }
-
-//    composeOptions {
-//        kotlinCompilerExtensionVersion = "1.5.3" // Match with Kotlin 1.9.20
-//    }
 
 }
 
@@ -128,7 +124,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
-//    implementation("com.google.firebase:firebase-analytics-ktx:21.3.0")
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
@@ -147,18 +142,5 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("com.google.android.gms:play-services-oss-licenses:17.1.0")
-
-    // Supabase
-//    implementation(platform("io.github.jan-tennert.supabase:bom:3.2.6"))
-//    implementation("io.github.jan-tennert.supabase:auth-kt")
-//    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-//    implementation("io.github.jan-tennert.supabase:storage-kt")
-
-//    implementation("io.github.jan-tennert.supabase:supabase-kt-client")
-//    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-
-//    implementation("io.ktor:ktor-client-android:3.3.2")
-//    implementation("io.ktor:ktor-utils:3.3.2")
-//    implementation("io.ktor:ktor-client-core:3.3.2")
 
 }

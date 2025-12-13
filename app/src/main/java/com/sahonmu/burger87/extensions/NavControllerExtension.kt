@@ -1,7 +1,14 @@
 package com.sahonmu.burger87.extensions
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.runtime.Stable
 import androidx.navigation.NavController
 import com.sahonmu.burger87.enums.Screens
+import com.sahonmu.burger87.enums.Transition
 
 
 fun NavController.navigate(
@@ -20,44 +27,44 @@ fun NavController.navigate(
     }
 }
 
-//@Stable
-//fun Transition.enterTransition(
-//    duration: Int = 300
-//): EnterTransition {
-//    return when (this) {
-//        Transition.SLIDE_IN_HORIZONTAL -> {
-//            slideInHorizontally(
-//                initialOffsetX = { fullWidth -> -fullWidth },
-//                animationSpec = tween(durationMillis = duration)
-//            )
-//        }
-//
-//        Transition.SLIDE_IN_VERTICAL -> {
-//            slideInVertically(
-//                initialOffsetY = { fullHeight ->
-//                    fullHeight
-//                },
-//                animationSpec = tween(
-//                    durationMillis = duration,
-//                )
-//            )
-//        }
-//
-//        Transition.SCALE_IN -> {
-//            scaleIn(
-//                initialScale = 0.0f,
-//                animationSpec = tween(
-//                    durationMillis = duration
-//                )
-//            )
-//        }
-//
-//        else -> {
-//            EnterTransition.None
-//        }
-//    }
-//}
-//
+@Stable
+fun Transition.enterTransition(
+    duration: Int = 300
+): EnterTransition {
+    return when (this) {
+        Transition.SLIDE_IN_HORIZONTAL -> {
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> -fullWidth },
+                animationSpec = tween(durationMillis = duration)
+            )
+        }
+
+        Transition.SLIDE_IN_VERTICAL -> {
+            slideInVertically(
+                initialOffsetY = { fullHeight ->
+                    fullHeight
+                },
+                animationSpec = tween(
+                    durationMillis = duration,
+                )
+            )
+        }
+
+        Transition.SCALE_IN -> {
+            scaleIn(
+                initialScale = 0.0f,
+                animationSpec = tween(
+                    durationMillis = duration
+                )
+            )
+        }
+
+        else -> {
+            EnterTransition.None
+        }
+    }
+}
+
 //@Stable
 //fun Transition.exitTransition(
 //    duration: Int = 300

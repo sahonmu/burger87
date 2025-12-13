@@ -57,7 +57,7 @@ fun AnnouncementDetailBox(
             Text(
                 text = announcement.title,
                 color = Gray_900,
-                fontSize = 17.5.sp
+                fontSize = 15.sp
             )
 
             HeightMargin(10.dp)
@@ -68,7 +68,7 @@ fun AnnouncementDetailBox(
                 Text(
                     text = announcement.createdAt.toYearMonthDay(),
                     color = Gray_600,
-                    fontSize = 14.sp
+                    fontSize = 13.sp
                 )
             }
             HeightMargin(10.dp)

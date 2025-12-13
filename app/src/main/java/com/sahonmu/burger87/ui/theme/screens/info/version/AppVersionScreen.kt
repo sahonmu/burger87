@@ -147,10 +147,7 @@ fun AppVersionScreen(
                         }
                         .background(color = Base)
                         .clickable {
-                            IntentUtils.startActivityForGooglePlay(
-                                context,
-                                "com.sahonmu.burger87"
-                            )
+                            IntentUtils.startActivityForGooglePlay(context)
                         },
                     contentAlignment = Alignment.Center
                 ) {

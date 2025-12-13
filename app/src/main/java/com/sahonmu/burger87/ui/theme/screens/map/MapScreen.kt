@@ -30,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,7 +39,6 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
-import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
@@ -49,7 +47,6 @@ import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
-import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.enums.isOperation
