@@ -1,6 +1,9 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,45 +12,47 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.rememberCameraPositionState
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
-import com.sahonmu.burger87.ui.theme.Base
+import com.sahonmu.burger87.extensions.findActivity
+import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
+import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.viewmodels.MapViewModel
-
+import com.sahonmu.burger87.viewmodels.StoreViewModel
+import domain.sahonmu.burger87.enums.isOperation
 
 @Preview
 @Composable
@@ -55,44 +60,46 @@ fun MapScreenPreview() {
     MapScreen(rememberNavController())
 }
 
-
 @Composable
 fun MapScreen(
     navController: NavHostController,
-    mapViewModel: MapViewModel = hiltViewModel()
+    storeViewModel: StoreViewModel = hiltViewModel()
 ) {
 
-    val mapViewUiState = mapViewModel.mapViewUiState.collectAsState().value
+    val uiState = rememberUiState()
+    val scope = uiState.scope
+    val context = uiState.context
 
-    val mapUiSettings = MapUiSettings(
-        compassEnabled = false,
-        zoomControlsEnabled = false,
-        mapToolbarEnabled = false,
-        indoorLevelPickerEnabled = false
+    val mapViewModel: MapViewModel = viewModel()
+    val storeMapUiState = storeViewModel.storeMapUiState.collectAsState().value
+
+    val pagerState = rememberPagerState(pageCount = {
+        storeMapUiState.storeList.size
+    })
+
+    var showAlert by rememberSaveable { mutableStateOf(false) }
+    var isCardVisible by rememberSaveable { mutableStateOf(true) }
+    val cardHeight = 125.dp
+    val offsetY by animateDpAsState(
+        targetValue = if (isCardVisible) 0.dp else cardHeight,
+        animationSpec = tween(durationMillis = 400)
     )
 
-    val cameraPositionState = rememberCameraPositionState()
-    val density = LocalDensity.current
-    val paddingPx = with(density) { 100.dp.roundToPx() }
-    var mapSize by remember { mutableStateOf(IntSize.Zero) }
+    var googleMap by remember { mutableStateOf<GoogleMap?>(null) }
 
-    val uiState = rememberUiState()
+    LaunchedEffect(Unit) {
+        storeViewModel.requestStoreList()
+    }
 
-    var isOnFavorite by remember { mutableStateOf(false) }
-
-    LaunchedEffect(mapViewUiState.storeList.size, mapSize) {
-
-        if (mapSize.width == 0 || mapViewUiState.storeList.isEmpty())
-            return@LaunchedEffect
-
-        val update: CameraUpdate = CameraUpdateFactory.newLatLngBounds(
-            mapViewUiState.boundBuilder.build(),
-            mapSize.width,
-            mapSize.height,
-            paddingPx
-        )
-
-        cameraPositionState.animate(update)
+    LaunchedEffect(pagerState, storeMapUiState.storeList) {
+        snapshotFlow { pagerState.currentPage }.collect { position ->
+            storeMapUiState.selectedIndex.value = position
+            googleMap?.let {
+                val store = storeMapUiState.storeList[position]
+                val latLng = LatLng(store.latitude, store.longitude)
+                it.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
+            }
+        }
     }
 
     Box(
@@ -100,21 +107,14 @@ fun MapScreen(
             .fillMaxSize()
             .systemBarsPadding()
             .navigationBarsPadding()
-            .onSizeChanged { size ->
-                mapSize = size
-            }
             .background(color = White),
         contentAlignment = Alignment.Center
     ) {
 
-        LaunchedEffect(Unit) {
-            mapViewModel.requestStoreList()
-        }
-
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            if (mapViewUiState.loadState == LoadState.LOADING) {
+            if (storeMapUiState.loadState == LoadState.LOADING) {
                 Text(
                     text = "로딩중"
                 )
@@ -123,24 +123,26 @@ fun MapScreen(
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
-
-                    GoogleMap(
-                        modifier = Modifier.fillMaxSize(),
-                        cameraPositionState = cameraPositionState,
-                        uiSettings = mapUiSettings,
-                        onMapClick = {
-                        },
-                    ) {
-                        mapViewUiState.storeList.forEach { store ->
-                            StoreMarker(
-                                store = store,
-                                onClick = {
-                                    Toast.makeText(uiState.context, store.name, Toast.LENGTH_SHORT)
-                                        .show()
-                                }
+                    ClusterMapView(
+                        storeMapUiState = storeMapUiState,
+                        mapViewModel = mapViewModel,
+                        onMarkerClick = { store ->
+                            storeMapUiState.selectedIndex.value =
+                                storeMapUiState.storeList.indexOfFirst { it.id == store.id }
+                            pagerState.moveItem(
+                                scope = scope,
+                                animate = false,
+                                page = storeMapUiState.selectedIndex.value
                             )
+                            isCardVisible = true
+                        },
+                        onMapClick = {
+                            isCardVisible = false
+                        },
+                        onGoogleMap = {
+                            googleMap = it
                         }
-                    }
+                    )
 
                     Box(
                         modifier = Modifier
@@ -152,51 +154,64 @@ fun MapScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(110.dp)
+                                .offset(y = offsetY)
                                 .align(Alignment.BottomCenter),
-                            storeList = mapViewUiState.storeList,
-                            onSelectStore = { store ->
-                                val latLng = LatLng(store.latitude, store.longitude)
-                                cameraPositionState.position = CameraPosition.fromLatLngZoom(
-                                    latLng,
-                                    cameraPositionState.position.zoom
-                                )
-                            },
+                            pagerState = pagerState,
+                            storeList = storeMapUiState.storeList,
                             onClickStore = { store ->
-                                navController.navigate("${Screens.STORE_DETAIL}/${store.encode()}")
+                                if (store.storeState.isOperation()) {
+                                    navController.navigate("${Screens.STORE_DETAIL}/${store.encode()}")
+                                } else {
+                                    showAlert = true
+                                }
                             }
                         )
                     }
 
 
-                    Column(
+                    Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .padding(top = 20.dp, end = 20.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-
-                        RoundButton(
-                            modifier = Modifier
-                                .size(36.dp),
-                            painter = painterResource(id = R.drawable.ic_icon_store),
-                            imageSize = 24.dp,
-                            onClick = {
-                                val encode = mapViewUiState.storeList.encode()
+                        MapFloatingButtonBox(
+                            modifier = Modifier,
+                            onMenu = { navController.navigate(Screens.INFO.route) },
+                            onSearch = {
+                                val encode = storeMapUiState.storeList.filter { it.storeState.isOperation() }.encode()
+                                navController.navigate("${Screens.STORE_SEARCH}/${encode}")
+                            },
+                            onStoreList = {
+                                val encode = storeMapUiState.storeList.encode()
                                 navController.navigate("${Screens.STORE_LIST}/${encode}")
                             }
-                        )
-
-                        RoundButton(
-                            modifier = Modifier
-                                .size(36.dp),
-                            imageSize = 24.dp,
-                            painter = painterResource(id = R.drawable.ic_icon_profile),
-                            onClick = { navController.navigate(Screens.INFO.route) }
                         )
                     }
                 }
             }
         }
     }
+
+    if (showAlert) {
+        Alert(
+            message = "폐업된 점포입니다.",
+            onDismissRequest = { showAlert = false }
+        )
+    }
+
+    var backPressedTime by remember { mutableLongStateOf(0L) }
+    BackHandler {
+        if (System.currentTimeMillis() - backPressedTime <= 2000L) {
+            // 앱 종료
+            context.findActivity().finish()
+        } else {
+            Toast.makeText(context, "뒤로 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
+        }
+        backPressedTime = System.currentTimeMillis()
+    }
+
 }
+
+
+
 

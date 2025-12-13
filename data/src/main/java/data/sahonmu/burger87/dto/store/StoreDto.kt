@@ -22,8 +22,9 @@ data class StoreDto(
     @SerialName("update_date")val updateDate: String? = null,
     @SerialName("state")val state: String,
     @SerialName("thumb_image")val thumbImage: String,
-    @SerialName("on_the_way")val onTheWay: String,
     @SerialName("city_filter")val cityFilter: String,
+    @SerialName("visit_count")val visitCount: Int,
+    @SerialName("last_visit_date")val lastVisitDate: String,
 
 
 )

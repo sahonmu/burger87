@@ -1,0 +1,14 @@
+package com.sahonmu.burger87.enums
+
+
+enum class InfoMenu(val menuName: String) {
+    INSTAGRAM("개발자 버거일기장"),
+    ANNOUNCEMENT("공지사항"),
+    BASED_ON_SCORE("점수채점 기준"),
+    PROVIDING_INFO("정보제공"),
+    SHARING_EVENT_INFO("이벤트정보 공유"),
+
+    REPORT("버거추천하기"),
+    OPEN_SOURCE("오픈소스"),
+    VERSION_INFO("앱 버전정보"),
+}

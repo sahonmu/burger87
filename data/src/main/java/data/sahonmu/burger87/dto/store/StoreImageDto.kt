@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-//@SuppressLint("UnsafeOptInUsageError")
+@SuppressLint("UnsafeOptInUsageError")
 @Serializable
 data class StoreImageDto(
     @SerialName("id")val id: Long,

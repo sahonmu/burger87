@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.sahonmu.burger87.R
-import com.sahonmu.burger87.utils.log.bitmap.BitmapUtils
+import com.sahonmu.burger87.utils.bitmap.BitmapUtils
 import domain.sahonmu.burger87.vo.store.Store
 
 @Composable
@@ -17,7 +17,7 @@ fun StoreMarker(
 ) {
 
     val context = LocalContext.current
-    val markerIcon = remember { BitmapUtils.vectorToBitmap(context, R.drawable.ic_44_search) }
+    val markerIcon = remember { BitmapUtils.vectorToBitmap(context, R.drawable.ic_burger) }
 
     val latLng = LatLng(store.latitude, store.longitude)
     Marker(

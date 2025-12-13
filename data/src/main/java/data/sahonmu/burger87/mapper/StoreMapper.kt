@@ -24,8 +24,9 @@ fun StoreDto.toDomain(): Store = Store(
     state = this.state,
     thumbImage = this.thumbImage,
     score = this.score,
-    onTheWay = this.onTheWay,
     cityFilter = this.cityFilter,
+    visitCount = this.visitCount,
+    lastVisitDate = this.lastVisitDate,
 )
 fun StoreImageDto.toDomain(): StoreImage = StoreImage(
     id = this.id,

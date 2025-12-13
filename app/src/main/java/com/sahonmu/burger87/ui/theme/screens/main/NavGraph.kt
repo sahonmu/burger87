@@ -9,14 +9,23 @@ import androidx.navigation.compose.composable
 import com.sahonmu.burger87.common.BundleKey
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.decode
+import com.sahonmu.burger87.extensions.decodeAnnouncement
 import com.sahonmu.burger87.extensions.decodeList
 import com.sahonmu.burger87.ui.theme.base.BaseScreen
+import com.sahonmu.burger87.ui.theme.screens.announcement.detail.AnnouncementDetailScreen
+import com.sahonmu.burger87.ui.theme.screens.announcement.list.AnnouncementListScreen
+import com.sahonmu.burger87.ui.theme.screens.info.data.ProvidingInfoScreen
+import com.sahonmu.burger87.ui.theme.screens.info.event.SharingEventInfoScreen
 import com.sahonmu.burger87.ui.theme.screens.info.main.InfoScreen
+import com.sahonmu.burger87.ui.theme.screens.info.score.BasedOnScoreScreen
+import com.sahonmu.burger87.ui.theme.screens.info.version.AppVersionScreen
 import com.sahonmu.burger87.ui.theme.screens.map.MapScreen
 import com.sahonmu.burger87.ui.theme.screens.splash.SplashScreen
 import com.sahonmu.burger87.ui.theme.screens.store.detail.StoreDetailScreen
 import com.sahonmu.burger87.ui.theme.screens.store.list.StoreListScreen
-import com.sahonmu.burger87.viewmodels.MapViewModel
+import com.sahonmu.burger87.ui.theme.screens.store.search.StoreSearchScreen
+import com.sahonmu.burger87.viewmodels.StoreViewModel
+import domain.sahonmu.burger87.vo.announcement.Announcement
 import domain.sahonmu.burger87.vo.store.Store
 import timber.log.Timber
 
@@ -123,6 +132,46 @@ fun NavGraphBuilder.store(
                 )
         }
     }
+
+
+    composable("${Screens.STORE_SEARCH.route}/{${BundleKey.DATA}}") {
+        it.arguments?.getString(BundleKey.DATA)?.let { json ->
+            Timber.i("list = ${json.decodeList().toMutableList()}")
+            BaseScreen(
+                content = {
+                    StoreSearchScreen(
+                        navController = navController,
+                        storeList = json.decodeList().toMutableList()
+                    )
+                },
+            )
+        }
+    }
+}
+
+fun NavGraphBuilder.info(
+    navController: NavHostController
+) {
+    composable(Screens.INFO.route) { BaseScreen(content = { InfoScreen(navController = navController) })}
+    composable(Screens.APP_VERSION.route) { BaseScreen(content = { AppVersionScreen(navController = navController) })}
+    composable(Screens.BASED_ON_SCORE.route) { BaseScreen(content = { BasedOnScoreScreen(navController = navController) })}
+    composable(Screens.PROVIDING_INFO.route) { BaseScreen(content = { ProvidingInfoScreen(navController = navController) })}
+    composable(Screens.SHARING_EVENT_INFO.route) { BaseScreen(content = { SharingEventInfoScreen(navController = navController) })}
+    composable(Screens.ANNOUNCEMENT_LIST.route) { BaseScreen(content = { AnnouncementListScreen(navController = navController) })}
+    composable("${Screens.ANNOUNCEMENT_DETAIL.route}/{${BundleKey.DATA}}") {
+        it.arguments?.getString(BundleKey.DATA)?.let { json ->
+            json.decodeAnnouncement().let { announcement ->
+                BaseScreen(
+                    content = {
+                        AnnouncementDetailScreen(
+                            navController = navController,
+                            announcement = announcement as Announcement
+                        )
+                    },
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -138,21 +187,17 @@ fun NavGraph(
 
         // 지도
         composable(Screens.MAP.route) {
-            val mapViewModel: MapViewModel = hiltViewModel()
+            val storeViewModel: StoreViewModel = hiltViewModel()
             BaseScreen(
                 content = {
                     MapScreen(
                         navController = navController,
-                        mapViewModel = mapViewModel
+                        storeViewModel = storeViewModel
                     )
                 }
             )
         }
-
-        store(navController)
-
-        composable(Screens.INFO.route) {
-            BaseScreen(content = { InfoScreen(navController = navController) })
-        }
+        store(navController= navController)
+        info(navController = navController)
     }
 }

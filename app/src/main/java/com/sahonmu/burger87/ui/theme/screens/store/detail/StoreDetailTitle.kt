@@ -38,7 +38,7 @@ fun StoreDetailTitle(
         modifier = modifier.fillMaxSize(),
     ) {
 
-        val (back, text, empty) = createRefs()
+        val (back, text) = createRefs()
 
         Box(
             modifier = Modifier
@@ -70,7 +70,7 @@ fun StoreDetailTitle(
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
                 start.linkTo(back.end)
-                end.linkTo(empty.start)
+                end.linkTo(parent.end, margin = 20.dp)
             },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -85,38 +85,6 @@ fun StoreDetailTitle(
                 fontSize = 14.sp,
                 color = Score
             )
-        }
-
-        Box(
-            modifier = Modifier
-                .constrainAs(
-                    empty
-                ) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(text.end)
-                    end.linkTo(parent.end)
-                }
-                .size(56.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            if (state == StoreState.CLOSED) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-//                    Image(
-//                        modifier = Modifier.size(18.dp),
-//                        painter = painterResource(R.drawable.emoji_sad_selected),
-//                        contentDescription = null
-//                    )
-                    Text(
-                        color = Base,
-                        text = "폐점",
-                        fontSize = 14.sp
-                    )
-                }
-            }
         }
     }
 }

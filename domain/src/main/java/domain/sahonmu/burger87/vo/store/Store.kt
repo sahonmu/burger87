@@ -19,8 +19,22 @@ data class Store(
     val state: String,
     val thumbImage: String,
     val score: Float,
-    val onTheWay: String,
     val cityFilter: String,
+    val visitCount: Int,
+    val lastVisitDate: String
 ) {
     var storeState = state.storeState()
+    var startIndex = 0
+    var endIndex = 0
+    var fullName = if(branch.isEmpty()) name else "${name}(${branch})"
+    var isMatch = startIndex + endIndex != 0
+
+    fun isKeywordMatch(startIndex: Int, endIndex: Int): Boolean {
+        return startIndex + endIndex != 0
+    }
+
+    fun isKeywordMatch(): Boolean {
+        return startIndex + endIndex != 0
+    }
+
 }

@@ -22,9 +22,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -42,8 +48,11 @@ import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Score
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.fontPadding
+import com.sahonmu.burger87.ui.theme.screens.components.Alert
+import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import domain.sahonmu.burger87.enums.StoreState
+import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.enums.storeState
 import domain.sahonmu.burger87.vo.store.Store
 
@@ -67,13 +76,28 @@ fun StoreListRow(
     onClick: (Store) -> Unit = { }
 ) {
 
+    var showAlert by rememberSaveable { mutableStateOf(false) }
+
+    if (showAlert) {
+        Alert(
+            message = "폐업된 점포입니다.",
+            onDismissRequest = { showAlert = false }
+        )
+    }
+
     Card(
-        modifier = modifier,
+        modifier = modifier.height(110.dp),
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(
             containerColor = White,
         ),
-        onClick = { onClick(store) }
+        onClick = {
+            if(store.storeState.isOperation()) {
+                onClick(store)
+            } else {
+                showAlert = true
+            }
+        }
     ) {
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
@@ -106,23 +130,25 @@ fun StoreListRow(
                     start.linkTo(left.end, margin = 10.dp)
                     end.linkTo(right.start, margin = 8.dp)
                     bottom.linkTo(parent.bottom)
-                },
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
+                }
+            ) {
 
                 Text(
                     text = if (store.branch.isEmpty()) store.name else "${store.name}(${store.branch})",
                     fontSize = 14.5.sp,
                     style = fontPadding
                 )
-                Text(
-                    text = store.address,
-                    fontSize = 11.sp,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    style = fontPadding
-                )
 
+                if (store.storeState.isOperation()) {
+                    HeightMargin(height = 4.dp)
+                    Text(
+                        text = store.address,
+                        fontSize = 11.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        style = fontPadding
+                    )
+                }
             }
 
             Column(
@@ -190,6 +216,12 @@ fun StoreListRow(
                     }
                     WidthMargin(8.dp)
                 }
+            }
+
+            if (!store.storeState.isOperation()) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0x77E7E7ED)))
             }
         }
     }

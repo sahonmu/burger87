@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,8 +39,8 @@ import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.PagerIndicator
-import com.sahonmu.burger87.utils.log.IntentUtils
-import com.sahonmu.burger87.viewmodels.MapViewModel
+import com.sahonmu.burger87.utils.IntentUtils
+import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.enums.storeState
 import domain.sahonmu.burger87.vo.store.Store
 
@@ -49,8 +50,8 @@ fun StoreDetailScreen(
     navController: NavHostController,
     store: Store,
 ) {
-    val mapViewModel: MapViewModel = hiltViewModel()
-    val storeDetailUiState = mapViewModel.storeDetailUiState.collectAsState().value
+    val storeViewModel: StoreViewModel = hiltViewModel()
+    val storeDetailUiState = storeViewModel.storeDetailUiState.collectAsState().value
 
     val pagerState = rememberPagerState(pageCount = {
         storeDetailUiState.storeImageLst.size
@@ -58,12 +59,12 @@ fun StoreDetailScreen(
 
     val context = rememberUiState().context
 
-    var showAlert by remember { mutableStateOf(false) }
-    var showAlertMessage by remember { mutableStateOf("") }
+    var showAlert by rememberSaveable { mutableStateOf(false) }
+    var showAlertMessage by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        mapViewModel.requestStoreImageList(store.id)
-        mapViewModel.requestStoreMenuList(store.id)
+        storeViewModel.requestStoreImageList(store.id)
+        storeViewModel.requestStoreMenuList(store.id)
     }
 
     Column(

@@ -1,6 +1,5 @@
 package com.sahonmu.burger87.ui.theme.screens.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +21,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.ui.theme.Black
+import com.sahonmu.burger87.ui.theme.White
 
 
 @Composable
@@ -45,37 +44,40 @@ fun RoundButtonPreview() {
 @Composable
 fun RoundButton(
     modifier: Modifier = Modifier,
-    color: Color = Color.White,
+    color: Color = White,
     painter: Painter,
     round: Dp = 28.dp,
     imageSize: Dp = 28.dp,
 //    colorFilter: Color = Black,
-    onClick: (() -> Unit)? = null
+    borderColor: Color = Black,
+    onClick: () -> Unit = { }
 ) {
 
-    Card(
-        modifier = modifier
-            .clip(shape = RoundedCornerShape(round))
-            .clickable {
-                onClick?.invoke()
-            },
-        shape = RoundedCornerShape(round),
-        colors = CardDefaults.cardColors(
-//            contentColor = color,
-            containerColor = color
-        ),
-        border = BorderStroke(width = 1.dp, color = Black)
-    ) {
-        Box(
+    Box(modifier = modifier) {
+        Card(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                modifier = Modifier.size(imageSize),
-                painter = painter,
-//                colorFilter = ColorFilter.tint(colorFilter),
-                contentDescription = null
+            shape = RoundedCornerShape(round),
+            colors = CardDefaults.cardColors(
+                containerColor = color,
+            ),
+            elevation = CardDefaults.elevatedCardElevation(
+                defaultElevation = 5.dp
             )
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .clickable {
+                        onClick()
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    modifier = Modifier.size(imageSize),
+                    painter = painter,
+//                colorFilter = ColorFilter.tint(colorFilter),
+                    contentDescription = null
+                )
+            }
         }
     }
 }

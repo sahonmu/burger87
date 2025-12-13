@@ -41,24 +41,20 @@ android {
     productFlavors {
         create("live") {
             dimension = "version"
-            buildConfigField("String", "SUPABASE_API_KEY", "\"andreia\"")
-            buildConfigField("String", "SUPABASE_API_URL", "\"andreia_dev\"")
+//            buildConfigField("String", "SUPABASE_API_KEY", "sb_publishable_mxRTEpx_4uwsRvUjU0w1JQ_3NS5Jzbe")
+//            buildConfigField("String", "SUPABASE_API_URL", "\"https://qgdnsxoaozeipuxcltka.supabase.co\"")
         }
 
         create("dev") {
             dimension = "version"
-            buildConfigField("String", "SUPABASE_API_KEY", "\"andreia_dev\"")
-            buildConfigField("String", "SUPABASE_API_URL", "\"andreia_dev\"")
+//            buildConfigField("String", "SUPABASE_API_KEY", "sb_publishable_mxRTEpx_4uwsRvUjU0w1JQ_3NS5Jzbe")
+//            buildConfigField("String", "SUPABASE_API_URL", "\"https://qgdnsxoaozeipuxcltka.supabase.co\"")
         }
     }
 
     buildFeatures {
         buildConfig = true
     }
-
-//    composeOptions {
-//        kotlinCompilerExtensionVersion = "1.5.3" // Match with Kotlin 1.9.20
-//    }
 }
 
 dependencies {

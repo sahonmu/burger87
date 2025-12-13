@@ -22,14 +22,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.common.DataManager
+import com.sahonmu.burger87.extensions.toYearMonthDay
 import com.sahonmu.burger87.ui.theme.Gray_700
 import com.sahonmu.burger87.ui.theme.Base
+import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.White
+import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Margin
 import domain.sahonmu.burger87.vo.store.Store
 
@@ -52,29 +56,48 @@ fun StoreDetailInfoBox(
             color = Gray_700
         )
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Margin(modifier = Modifier.weight(1f))
-            IconBorderBox(
-                painter = painterResource(R.drawable.ic_instagram),
-                onClick = { onInstagram() }
-            )
-            IconBorderBox(
-                painter = painterResource(R.drawable.ic_call),
-                onClick = { onCall() }
-            )
-            IconBorderBox(
-                painter = painterResource(R.drawable.ic_icon_share),
-                onClick = { onShare() }
-            )
-//            IconBorderBox(
-//                painter = painterResource(R.drawable.ic_icon_location),
-//                onClick = { }
-//            )
-        }
-    }
+        HeightMargin(24.dp)
 
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                contentAlignment = Alignment.BottomStart
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    IconBorderBox(
+                        painter = painterResource(R.drawable.ic_instagram),
+                        onClick = { onInstagram() }
+                    )
+                    IconBorderBox(
+                        painter = painterResource(R.drawable.ic_call),
+                        onClick = { onCall() }
+                    )
+                    IconBorderBox(
+                        painter = painterResource(R.drawable.ic_share),
+                        onClick = { onShare() }
+                    )
+
+                }
+            }
+            Margin(modifier = Modifier.weight(1f))
+            Box(
+                modifier = Modifier,
+                contentAlignment = Alignment.CenterEnd
+            ) {
+
+                val text = if (store.updateDate == null) store.createdAt else store.updateDate
+                Text(
+                    text = "업데이트 : ${text?.toYearMonthDay()}\n최근방문 : ${store.lastVisitDate.toYearMonthDay()}\n방문 횟수 : ${store.visitCount}회",
+                    color = Gray_900,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.End,
+                )
+            }
+        }
+
+
+    }
 }
 
 @Composable
