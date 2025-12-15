@@ -11,5 +11,6 @@ fun EventDto.toDomain(): Event = Event(
     title = this.title,
     contents = this.contents,
     image = this.image,
-    storeId = this.storeId
+    storeId = this.storeId,
+    link = this.link
 )

@@ -38,7 +38,8 @@ data class StoreDetailUiState(
     val loadState: LoadState = LoadState.LOADING,
     var storeImageLst: MutableList<StoreImage> = mutableListOf(),
     var storeMenuList: MutableList<StoreMenu> = mutableListOf(),
-    var selectedTab: MutableState<StoreDetailTab> = mutableStateOf(StoreDetailTab.INFO)
+    var selectedTab: MutableState<StoreDetailTab> = mutableStateOf(StoreDetailTab.INFO),
+    var store: Store? = null
 )
 
 
@@ -114,11 +115,25 @@ class StoreViewModel @Inject constructor(
 
     fun requestStoreMenuList(id: Long) {
         viewModelScope.launch {
-            Timber.i("list ==== ${storeUseCase.getStoreMenu(id)}")
-            storeUseCase.getStoreMenu(id).collect { list ->
+            storeUseCase.storeMenuList(id).collect { list ->
                 _storeDetailUiState.update { state ->
                     state.copy(
                         storeMenuList = if (list.isEmpty()) list as MutableList<StoreMenu> else list.sortedBy { it.id } as MutableList<StoreMenu>
+                    )
+                }
+            }
+        }
+    }
+
+
+    fun requestStoreDetailList(id: Long) {
+//        requestStoreMenuList(id)
+//        requestStoreImageList(id)
+        viewModelScope.launch {
+            storeUseCase.storeDetail(id).collect { store ->
+                _storeDetailUiState.update { state ->
+                    state.copy(
+                        store = store
                     )
                 }
             }

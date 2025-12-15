@@ -8,12 +8,13 @@ import data.sahonmu.burger87.mapper.toDomain
 import domain.sahonmu.burger87.repository.store.StoreRepository
 import domain.sahonmu.burger87.vo.store.Store
 import io.github.jan.supabase.postgrest.Postgrest
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class StoreRepositoryImpl(
     private val postgrest: Postgrest,
 ) : StoreRepository {
-    override fun getStore() = flow {
+    override fun getStoreList() = flow {
         try {
             val response = postgrest["store"].select()
                 .decodeList<StoreDto>()
@@ -24,6 +25,19 @@ class StoreRepositoryImpl(
             e.printStackTrace()
             emit(emptyList())
         }
+    }
+
+    override fun getStoreDetail(id: Long) = flow {
+        val response =
+            postgrest["store"].select {
+                filter {
+                    eq("id", id)
+                }
+                limit(1)
+                single()
+            }.decodeAs<StoreDto>()
+        Log.i("RESPONSE", "response = ${response}")
+        emit(response.toDomain())
     }
 
 

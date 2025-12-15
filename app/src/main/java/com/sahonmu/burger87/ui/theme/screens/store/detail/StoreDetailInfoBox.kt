@@ -36,6 +36,7 @@ import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Margin
 import domain.sahonmu.burger87.vo.store.Store
+import timber.log.Timber
 
 @Composable
 fun StoreDetailInfoBox(
@@ -87,6 +88,7 @@ fun StoreDetailInfoBox(
             ) {
 
                 val text = if (store.updateDate == null) store.createdAt else store.updateDate
+                Timber.i("//////// ${store.createdAt} / ${store.lastVisitDate} / ${store.updateDate}")
                 Text(
                     text = "업데이트 : ${text?.toYearMonthDay()}\n최근방문 : ${store.lastVisitDate.toYearMonthDay()}\n방문 횟수 : ${store.visitCount}회",
                     color = Gray_900,

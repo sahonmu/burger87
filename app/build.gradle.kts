@@ -5,11 +5,9 @@ plugins {
 
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
-    id("com.google.android.gms.oss-licenses-plugin")
-//    kotlin("plugin.serialization")
+//    alias(libs.plugins.aboutLibraries.android)
+//    id("com.mikepenz.aboutlibraries.plugin.android")
     kotlin("kapt")
-
-//    alias(libs.plugins.secrets.gradle.plugin)
 }
 
 
@@ -141,6 +139,6 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.10.1")
 
-    implementation("com.google.android.gms:play-services-oss-licenses:17.1.0")
+//    implementation(libs.aboutLibraries.compose.m3)
 
 }

@@ -9,5 +9,6 @@ data class Event(
     val title: String,
     val contents: String,
     val image: String?,
-    val storeId: Long?
+    val storeId: Long?,
+    val link: String?
 )
