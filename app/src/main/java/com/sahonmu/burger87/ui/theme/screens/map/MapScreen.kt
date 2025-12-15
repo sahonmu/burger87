@@ -43,9 +43,12 @@ import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
+import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
+import com.sahonmu.burger87.viewmodels.MainViewModel
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.enums.isOperation
+import timber.log.Timber
 
 @Preview
 @Composable
@@ -62,6 +65,8 @@ fun MapScreen(
     val uiState = rememberUiState()
     val scope = uiState.scope
     val context = uiState.context
+
+    val mainViewModel = composableActivityViewModel<MainViewModel>()
 
     val mapViewModel: MapViewModel = viewModel()
     val storeMapUiState = storeViewModel.storeMapUiState.collectAsState().value
@@ -82,6 +87,11 @@ fun MapScreen(
 
     LaunchedEffect(Unit) {
         storeViewModel.requestStoreList()
+    }
+
+    LaunchedEffect(storeMapUiState.storeList) {
+        Timber.i("클론 = ${storeMapUiState.storeList.size}")
+        mainViewModel.clone(storeMapUiState.storeList)
     }
 
     LaunchedEffect(pagerState, storeMapUiState.storeList) {

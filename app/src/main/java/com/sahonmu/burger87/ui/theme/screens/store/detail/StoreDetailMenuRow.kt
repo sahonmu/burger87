@@ -34,6 +34,7 @@ import com.sahonmu.burger87.ui.theme.Gray_700
 import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.White
 import domain.sahonmu.burger87.vo.store.StoreMenu
+import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -63,6 +64,7 @@ fun StoreDetailMenuRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
+        Timber.i("============ ${storeMenu.name} / ${storeMenu.image}")
         if (storeMenu.image.isNotEmpty()) {
             GlideImage(
                 modifier = Modifier
@@ -72,7 +74,7 @@ fun StoreDetailMenuRow(
                 model = storeMenu.image,
                 contentDescription = null,
             ) {
-                it.centerCrop()
+                it.centerCrop().error(R.drawable.ic_burger)
             }
         } else {
             Box(modifier = Modifier.size(80.dp), contentAlignment = Alignment.Center) {

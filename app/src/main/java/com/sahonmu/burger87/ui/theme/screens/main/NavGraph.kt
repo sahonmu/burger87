@@ -22,6 +22,7 @@ import com.sahonmu.burger87.ui.theme.screens.menu.main.MenuListScreen
 import com.sahonmu.burger87.ui.theme.screens.menu.score.BasedOnScoreScreen
 import com.sahonmu.burger87.ui.theme.screens.menu.version.AppVersionScreen
 import com.sahonmu.burger87.ui.theme.screens.map.MapScreen
+import com.sahonmu.burger87.ui.theme.screens.menu.statistics.StatisticsScreen
 import com.sahonmu.burger87.ui.theme.screens.splash.SplashScreen
 import com.sahonmu.burger87.ui.theme.screens.store.detail.StoreDetailScreen
 import com.sahonmu.burger87.ui.theme.screens.store.list.StoreListScreen
@@ -87,6 +88,7 @@ fun NavGraphBuilder.info(
     navController: NavHostController
 ) {
     composable(Screens.MENU.route) { BaseScreen(content = { MenuListScreen(navController = navController) })}
+    composable(Screens.STATISTICS.route) { BaseScreen(content = { StatisticsScreen(navController = navController) })}
     composable(Screens.APP_VERSION.route) { BaseScreen(content = { AppVersionScreen(navController = navController) })}
     composable(Screens.BASED_ON_SCORE.route) { BaseScreen(content = { BasedOnScoreScreen(navController = navController) })}
     composable(Screens.PROVIDING_INFO.route) { BaseScreen(content = { ProvidingInfoScreen(navController = navController) })}

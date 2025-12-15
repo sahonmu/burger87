@@ -9,6 +9,7 @@ enum class InfoMenu(val menuName: String) {
     SHARING_EVENT_INFO("이벤트정보 공유"),
 
     REPORT("버거추천하기"),
+    STATISTICS("통계"),
     OPEN_SOURCE("오픈소스"),
     VERSION_INFO("앱 버전정보"),
 }

@@ -85,6 +85,8 @@ fun MenuListScreen(
                             context.startActivity(Intent(context, OssLicensesActivity::class.java))
                         } else if (item == InfoMenu.VERSION_INFO) {
                             navController.navigate(Screens.APP_VERSION.route)
+                        } else if (item == InfoMenu.STATISTICS) {
+                            navController.navigate(Screens.STATISTICS.route)
                         }
                     }
                 )
