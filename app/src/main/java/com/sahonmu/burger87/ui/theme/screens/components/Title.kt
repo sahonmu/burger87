@@ -203,36 +203,36 @@ fun TitleWithIncludeClosed(
 
         }
 
-        Row(
-            modifier = Modifier
-                .constrainAs(
-                    empty
-                ) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(text.end)
-                    end.linkTo(parent.end)
-                },
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "폐점 포함",
-                fontSize = 13.sp,
-                color = Base
-            )
-            Checkbox(
-                modifier = Modifier.size(30.dp),
-                colors = CheckboxDefaults.colors(
-                    checkedColor = Base
-                ),
-                checked = checked,
-                onCheckedChange = {
-                    checked = it
-                    onCheck(checked)
-                }
-            )
-            WidthMargin(10.dp)
-        }
+//        Row(
+//            modifier = Modifier
+//                .constrainAs(
+//                    empty
+//                ) {
+//                    top.linkTo(parent.top)
+//                    bottom.linkTo(parent.bottom)
+//                    start.linkTo(text.end)
+//                    end.linkTo(parent.end)
+//                },
+//            verticalAlignment = Alignment.CenterVertically,
+//        ) {
+//            Text(
+//                text = "폐점 포함",
+//                fontSize = 13.sp,
+//                color = Base
+//            )
+//            Checkbox(
+//                modifier = Modifier.size(30.dp),
+//                colors = CheckboxDefaults.colors(
+//                    checkedColor = Base
+//                ),
+//                checked = checked,
+//                onCheckedChange = {
+//                    checked = it
+//                    onCheck(checked)
+//                }
+//            )
+//            WidthMargin(10.dp)
+//        }
     }
 
 }

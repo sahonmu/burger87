@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.sahonmu.burger87.enums.LoadState
+import com.sahonmu.burger87.enums.SortMenu
 import com.sahonmu.burger87.enums.StoreDetailTab
 import com.sahonmu.burger87.viewmodels.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,8 +22,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.collections.Map
 import kotlin.collections.toList
 import kotlin.collections.toMutableList
+import kotlin.collections.toSortedMap
 
 
 data class StoreMapUiState(
@@ -45,10 +48,13 @@ data class StoreDetailUiState(
 
 data class StoreSortListUiState(
     var storeList: MutableList<Store> = mutableListOf(),
-    var sortList: MutableList<Store> = mutableListOf(),
+    var displayList: MutableList<Store> = mutableListOf(),
     var cityGroup: Map<String, List<Store>> = linkedMapOf(),
-    var scoreGroup: Map<Float, List<Store>> = linkedMapOf(),
-    var charGroup: Map<Char, List<Store>> = linkedMapOf(),
+    var scoreGroup: Map<String, List<Store>> = linkedMapOf(),
+    var charGroup: Map<String, List<Store>> = linkedMapOf(),
+    var visitCountGroup: Map<String, List<Store>> = linkedMapOf(),
+    var filterGroup: Map<String, List<Store>> = linkedMapOf(),
+    var selectedFilterMenu: String = "",
     var includeClosed: Boolean = true,
 )
 
@@ -142,35 +148,21 @@ class StoreViewModel @Inject constructor(
 
     fun addAllStore(storeList: MutableList<Store>) {
         _storeListUiState.update { state ->
-            val scoreGroup = storeList.groupBy { it.score }.toSortedMap( compareByDescending { it })
+            val list = storeList.sortedBy { it.id }.sortedByDescending { it.storeState.isOperation() }.toMutableList()
+//            val list = state.storeList.sortedBy { it.id }
+            val scoreGroup = list.groupBy { it.score.toString() }.toSortedMap( compareByDescending { it })
             state.copy(
-                storeList = storeList,
-                sortList = storeList,
-                cityGroup = storeList.groupBy { it.cityFilter }.toList().sortedByDescending { it.second.size }.toMap(),
-                scoreGroup = scoreGroup,
-                charGroup = storeList.groupBy { getChosung(it.name.first().uppercaseChar()) }.toList().sortedBy { it.first }.toMap(),
-            )
-        }
-    }
-
-    fun includeClosedStore(include: Boolean) {
-        _storeListUiState.update { state ->
-            var list = state.storeList
-            if(!include) {
-                list = list.filterNot { it.storeState == StoreState.CLOSED }.toMutableList()
-            }
-
-            val scoreGroup = list.groupBy { it.score }.toSortedMap( compareByDescending { it })
-
-            state.copy(
-                sortList = list,
-                includeClosed = include,
+                storeList = list,
+                displayList = list,
                 cityGroup = list.groupBy { it.cityFilter }.toList().sortedByDescending { it.second.size }.toMap(),
                 scoreGroup = scoreGroup,
-                charGroup = list.groupBy { getChosung(it.name.first().uppercaseChar()) }.toList().sortedBy { it.first }.toMap(),
+                charGroup = list.groupBy { getChosung(it.name.first().uppercaseChar()).toString() }.toList().sortedBy { it.first }.toMap(),
+                visitCountGroup = list.groupBy { it.visitCount.toString() }.toList().sortedByDescending { it.first.toInt() }.toMap(),
+                filterGroup = scoreGroup
             )
         }
     }
+
 
     fun getChosung(c: Char): Char {
         val base = 0xAC00
@@ -194,6 +186,85 @@ class StoreViewModel @Inject constructor(
         _storeSearchUiState.update { state ->
             state.copy(
                 searchList = storeList
+            )
+        }
+    }
+
+    fun filterCity(city: String, includeClosed: Boolean = true) {
+        val list = if(includeClosed) storeListUiState.value.storeList else storeListUiState.value.storeList.filter { it.storeState.isOperation() }
+        _storeListUiState.update { state ->
+            state.copy(
+                displayList = list.filter { it.cityFilter == city }.toMutableList(),
+                selectedFilterMenu = city
+            )
+        }
+    }
+
+    fun filterScore(score: String) {
+        score.toFloatOrNull()?.let {
+            _storeListUiState.update { state ->
+                state.copy(
+                    displayList = state.storeList.filter { it.score == score.toFloat() }.toMutableList()
+                )
+            }
+        }
+    }
+
+    fun filterChar(char: String) {
+        _storeListUiState.update { state ->
+            state.copy(
+                displayList = state.storeList.filter { getChosung(it.name.first().uppercaseChar()).toString() == char }.toMutableList(),
+            )
+        }
+    }
+
+    fun filterVisitCount(visitCount: String) {
+        visitCount.toIntOrNull()?.let {
+            _storeListUiState.update { state ->
+                state.copy(
+                    displayList = state.storeList.filter { it.visitCount == visitCount.toInt() }.toMutableList()
+                )
+            }
+        }
+    }
+
+    fun filterReset() {
+        _storeListUiState.update { state ->
+            state.copy(
+                displayList = state.storeList
+            )
+        }
+    }
+
+    fun filterList(selectedSortMenu: SortMenu) {
+        _storeListUiState.update { state ->
+            var filterMenu: String
+            val filterGroup = when(selectedSortMenu) {
+                SortMenu.CITY -> {
+                    filterMenu = state.cityGroup.maxBy { it.value.size }.key
+                    filterCity(filterMenu)
+                    state.cityGroup
+                } SortMenu.SCORE -> {
+                    filterMenu = state.scoreGroup.maxBy { it.key }.key
+                    filterScore(filterMenu)
+                    state.scoreGroup
+                } SortMenu.CHAR -> {
+                    filterMenu = state.charGroup.keys.first()
+                    filterChar(filterMenu)
+                    state.charGroup
+                } SortMenu.VISIT_COUNT -> {
+                    filterMenu = state.visitCountGroup.keys.first()
+                    filterVisitCount(filterMenu)
+                    state.visitCountGroup
+                } else -> {
+                    filterMenu = ""
+                    linkedMapOf()
+                }
+            }
+
+            state.copy(
+                filterGroup = filterGroup,
+                selectedFilterMenu = filterMenu
             )
         }
     }
