@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,12 +36,20 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.sahonmu.burger87.R
+import com.sahonmu.burger87.enums.EventState
+import com.sahonmu.burger87.enums.Screens
+import com.sahonmu.burger87.enums.checkSchedule
+import com.sahonmu.burger87.extensions.encode
+import com.sahonmu.burger87.extensions.toYearMonthDay
 import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Gray_200
+import com.sahonmu.burger87.ui.theme.Gray_400
 import com.sahonmu.burger87.ui.theme.Gray_50
 import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.White
 import domain.sahonmu.burger87.vo.announcement.Announcement
+import domain.sahonmu.burger87.vo.event.Event
+import domain.sahonmu.burger87.vo.store.Store
 
 @Preview(showBackground = true)
 @Composable
@@ -406,6 +416,81 @@ fun AnnouncementDetailTitle(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun Title(
+    event: Event,
+    store: Store? = null,
+    link: String? = null,
+    onBack: () -> Unit = { },
+    onStore: () -> Unit = { },
+    onLink: () -> Unit = { }
+) {
+
+    val eventState = checkSchedule(
+        startDate = event.startDate,
+        endDate = event.endDate
+    )
+    val color = when (eventState) {
+        EventState.SCHEDULED -> {
+            Base
+        }
+        EventState.FINISHED -> {
+            Gray_400
+        }
+        else -> {
+            Gray_900
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .clip(RoundedCornerShape(28.dp))
+                .clickable { onBack() },
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_44_back),
+                contentDescription = null
+            )
+        }
+        Text(
+            text = eventState.state,
+            fontSize = 16.sp,
+            color = Gray_900
+        )
+        Margin(modifier = Modifier.weight(1f))
+
+//        store?.let {
+//            RoundButton(
+//                modifier = Modifier.size(36.dp),
+//                painter = painterResource(id = R.drawable.ic_burger),
+//                imageSize = 17.dp,
+//                color = White,
+//                onClick = { onStore() }
+//            )
+//            WidthMargin(width = 16.dp)
+//        }
+//
+//        link?.let {
+//            RoundButton(
+//                modifier = Modifier.size(36.dp),
+//                painter = painterResource(id = R.drawable.ic_call),
+//                imageSize = 17.dp,
+//                color = White,
+//                onClick = { onLink() }
+//            )
+//            WidthMargin(width = 16.dp)
+//        }
     }
 }
 

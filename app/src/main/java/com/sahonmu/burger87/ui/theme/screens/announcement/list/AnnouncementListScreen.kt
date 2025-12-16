@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,6 +62,17 @@ fun AnnouncementListScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
+
+            items(announcementUiState.headerAnnouncementList) { item ->
+                AnnouncementListRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { navController.navigate("${Screens.ANNOUNCEMENT_DETAIL}/${item.encode()}") },
+                    announcement = item,
+                )
+                Line(height = 1.dp, color = Gray_200)
+            }
+
             itemsIndexed(announcementUiState.announcementList) { index, item ->
                 AnnouncementListRow(
                     modifier = Modifier

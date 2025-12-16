@@ -65,4 +65,10 @@ object IntentUtils {
         context.startActivity(intent)
     }
 
+
+    fun startActivityBrowser(context: Context, url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        context.startActivity(intent)
+    }
+
 }

@@ -31,11 +31,13 @@ import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.White
+import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.Margin
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.ui.theme.screens.components.Title
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
+import com.sahonmu.burger87.utils.IntentUtils
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.vo.event.Event
 
@@ -56,11 +58,14 @@ fun EventDetailScreen(
     val storeViewModel: StoreViewModel = hiltViewModel()
     val storeDetailUiState = storeViewModel.storeDetailUiState.collectAsState().value
 
-    event.storeId?.let { id ->
-        LaunchedEffect(Unit) {
-            storeViewModel.requestStoreDetailList(id)
-        }
-    }
+//    event.storeId?.let { id ->
+//        LaunchedEffect(Unit) {
+//            storeViewModel.requestStoreDetailList(id)
+//        }
+//    }
+
+    val uiState = rememberUiState()
+    val context = uiState.context
 
     Surface {
         Column(
@@ -70,56 +75,26 @@ fun EventDetailScreen(
                 .navigationBarsPadding()
         ) {
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(RoundedCornerShape(28.dp))
-                        .clickable { navController.popBackStack() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_44_back),
-                        contentDescription = null
-                    )
-                }
-                Margin(modifier = Modifier.weight(1f))
+            Title(
+                event = event,
+                store = storeDetailUiState.store,
+                onBack = { navController.popBackStack() },
+                onStore = { navController.navigate("${Screens.STORE_DETAIL}/${storeDetailUiState.store!!.encode()}") },
+                onLink = { }
+            )
 
-                storeDetailUiState.store?.let { store ->
-                    RoundButton(
-                        modifier = Modifier.size(36.dp),
-                        painter = painterResource(id = R.drawable.ic_burger),
-                        imageSize = 17.dp,
-                        color = White,
-                        onClick = { navController.navigate("${Screens.STORE_DETAIL}/${store.encode()}") }
-                    )
-                    WidthMargin(width = 16.dp)
-                }
-
-                event.link?.let { link ->
-                    RoundButton(
-                        modifier = Modifier.size(36.dp),
-                        painter = painterResource(id = R.drawable.ic_call),
-                        imageSize = 17.dp,
-                        color = White,
-                        onClick = { link }
-                    )
-                    WidthMargin(width = 16.dp)
-                }
-            }
 
             Line(height = 1.dp, color = Gray_200)
 
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-            }
+            EventDetailBox(
+                modifier = Modifier.fillMaxSize(),
+                event = event,
+                onLink = {
+                    event.link?.let { url ->
+                        IntentUtils.startActivityBrowser(context = context, url = url)
+                    }
+                }
+            )
         }
     }
 }

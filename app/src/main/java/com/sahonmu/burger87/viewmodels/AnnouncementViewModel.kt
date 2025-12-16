@@ -13,6 +13,7 @@ import javax.inject.Inject
 
 data class AnnouncementListUiState(
     var announcementList: MutableList<Announcement> = mutableListOf(),
+    var headerAnnouncementList: MutableList<Announcement> = mutableListOf(),
 )
 
 
@@ -30,12 +31,12 @@ class AnnouncementViewModel @Inject constructor(
             announcementUseCase.invoke().collect { announcementList ->
                 _announcementListUiState.update { state ->
                     state.copy(
-                        announcementList = announcementList as MutableList<Announcement>,
+                        announcementList = announcementList.filter { !it.isHeader } .sortedBy { it.id }.toMutableList(),
+                        headerAnnouncementList = announcementList.filter { it.isHeader } .sortedBy { it.id }.toMutableList(),
                     )
                 }
             }
         }
     }
-
 
 }
