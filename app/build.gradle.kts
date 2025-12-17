@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,9 +8,14 @@ plugins {
 
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
-//    alias(libs.plugins.aboutLibraries.android)
-//    id("com.mikepenz.aboutlibraries.plugin.android")
     kotlin("kapt")
+}
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 
@@ -27,8 +35,18 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+        }
+    }
+
     buildTypes {
-        release {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -36,6 +54,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -57,7 +76,7 @@ android {
 //            versionName = "1.0.0"
             manifestPlaceholders["appNameGradle"] = "@string/app_name"
             manifestPlaceholders["appLabel"] = "@string/app_name"
-            resValue("string", "google_maps_api_key", "AIzaSyDmcAQ5GqHyUR3zBH_sQgmeXTo3da8IV6o")
+            resValue("string", "google_maps_api_key", "AIzaSyB1jHrknrOeD7G49CCd4GY47Pu-qMnmyL4")
         }
 
         create("dev") {
@@ -138,7 +157,5 @@ dependencies {
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 
     implementation("com.google.code.gson:gson:2.10.1")
-
-//    implementation(libs.aboutLibraries.compose.m3)
 
 }

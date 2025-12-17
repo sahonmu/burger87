@@ -32,9 +32,17 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
-//    composeOptions {
-//        kotlinCompilerExtensionVersion = "1.5.3" // Match with Kotlin 1.9.20
-//    }
+    flavorDimensions += "version"
+    productFlavors {
+        create("live") {
+            dimension = "version"
+        }
+
+        create("dev") {
+            dimension = "version"
+        }
+    }
+
 }
 
 dependencies {
