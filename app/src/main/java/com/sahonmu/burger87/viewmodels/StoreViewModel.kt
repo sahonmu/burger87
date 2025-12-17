@@ -185,7 +185,7 @@ class StoreViewModel @Inject constructor(
     fun searchByReset(storeList: MutableList<Store>) {
         _storeSearchUiState.update { state ->
             state.copy(
-                searchList = storeList
+                searchList = storeList.sortedBy { it.name }.toMutableList()
             )
         }
     }

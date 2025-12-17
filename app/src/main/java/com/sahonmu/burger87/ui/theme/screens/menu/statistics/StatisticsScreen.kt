@@ -24,6 +24,7 @@ import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
 import com.sahonmu.burger87.viewmodels.MainViewModel
 import domain.sahonmu.burger87.enums.StoreState
 import domain.sahonmu.burger87.vo.store.Store
+import timber.log.Timber
 
 
 @Preview(showBackground = true)
@@ -69,18 +70,23 @@ fun StatisticsScreen(
                 val scoreSorted = storeUiState.displayList.groupBy { it.score }.toSortedMap(compareByDescending { it }).toList()
                 val scoreFirst = scoreSorted[0]
                 val scoreLast = scoreSorted[scoreSorted.lastIndex]
-                StatisticsListRow(
+                StatisticsListMultiRow(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최고점 상점",
-                    contents = scoreText(scoreFirst.second),
+                    contents = "${scoreFirst.first}점",
+                    storeList = scoreFirst.second,
                     painter = painterResource(R.drawable.emoji_strring_selected),
+                    backgroundColor = Color(0xFFFFFFC6E1),
                     contentsColor = Color(0xFFFFE6076C)
                 )
-                StatisticsListRow(
+
+                StatisticsListMultiRow(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최하점 상점",
-                    contents = scoreText(scoreLast.second),
+                    contents = "${scoreLast.first}점",
+                    storeList = scoreLast.second,
                     painter = painterResource(R.drawable.emoji_scared_selected),
+                    backgroundColor = Color(0xFFFFC1CFFF),
                     contentsColor = Color(0xFFFF495A93)
                 )
             }
@@ -91,31 +97,47 @@ fun StatisticsScreen(
                 val visitCountSilver = visitCountSorted[1]
                 val visitCountBronze = visitCountSorted[2]
 
-                StatisticsListRow(
+                val visitCountGroup = storeUiState.displayList.groupBy { it.name }.maxBy { it.value.size }
+                StatisticsListMultiRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = "최대 방문 지점",
+                    contents = visitCountGroup.key,
+                    storeList = visitCountGroup.value,
+                    painter = painterResource(R.drawable.emoji_pleased_selected),
+                    backgroundColor = Color(0xFFFFFFCCBC),
+                    contentsColor = Color(0xFFFF8D2F45),
+                    showBranch = true
+                )
+
+                StatisticsListMultiRow(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최대 방문 1위",
-                    contents = visitCountText(visitCountGold.second),
+                    contents = "${visitCountGold.first}회",
+                    storeList = visitCountGold.second,
                     painter = painterResource(R.drawable.emoji_pleased_selected),
+                    backgroundColor = Color(0xFFFFFFCCBC),
                     contentsColor = Color(0xFFFF8D2F45)
                 )
 
-                StatisticsListRow(
+                StatisticsListMultiRow(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최대 방문 2위",
-                    contents = visitCountText(visitCountSilver.second),
+                    contents = "${visitCountSilver.first}회",
+                    storeList = visitCountSilver.second,
                     painter = painterResource(R.drawable.emoji_pleased_selected),
+                    backgroundColor = Color(0xFFFFFFCCBC),
                     contentsColor = Color(0xFFFF8D2F45)
                 )
 
-
-                StatisticsListRow(
+                StatisticsListMultiRow(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최대 방문 3위",
-                    contents = visitCountText(visitCountBronze.second),
+                    contents = "${visitCountBronze.first}회",
+                    storeList = visitCountBronze.second,
                     painter = painterResource(R.drawable.emoji_pleased_selected),
+                    backgroundColor = Color(0xFFFFFFCCBC),
                     contentsColor = Color(0xFFFF8D2F45)
                 )
-
 
                 val visitLocation = storeUiState.displayList.groupBy { it.cityFilter }.toList()
                     .sortedByDescending { it.second.size }
