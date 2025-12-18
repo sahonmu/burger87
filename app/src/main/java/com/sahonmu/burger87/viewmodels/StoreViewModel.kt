@@ -86,13 +86,12 @@ class StoreViewModel @Inject constructor(
     fun requestStoreList() {
         viewModelScope.launch {
             storeUseCase.invoke().collect { storeList ->
-
+                Timber.i("storeList = ${storeList.size}")
                 val boundBuilder = LatLngBounds.builder()
                 storeList.forEach { store ->
                     val point = LatLng(store.latitude, store.longitude)
                     boundBuilder.include(point)
                 }
-
                 _storeMapUiState.update { state ->
                     state.copy(
                         loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,

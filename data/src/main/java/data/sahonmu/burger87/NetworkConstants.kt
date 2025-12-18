@@ -13,7 +13,7 @@ object  NetworkConstants {
             "https://qgdnsxoaozeipuxcltka.supabase.co"
         }
         else -> {
-            "https://qgdnsxoaozeipuxcltka.supabase.co"
+            "https://iysxmhbndelqwmrlcjrc.supabase.co"
         }
     }
 
@@ -22,7 +22,7 @@ object  NetworkConstants {
             "sb_publishable_mxRTEpx_4uwsRvUjU0w1JQ_3NS5Jzbe"
         }
         else -> {
-            "sb_publishable_mxRTEpx_4uwsRvUjU0w1JQ_3NS5Jzbe"
+            "sb_publishable_bYHh9J5zK79BL3kxvDeklw_f8QstHGx"
         }
     }
 

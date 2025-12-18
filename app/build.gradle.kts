@@ -36,11 +36,17 @@ android {
     }
 
     signingConfigs {
+//        create("release") {
+//            storeFile = file(keystoreProperties["storeFile"] as String)
+//            storePassword = keystoreProperties["storePassword"] as String
+//            keyAlias = keystoreProperties["keyAlias"] as String
+//            keyPassword = keystoreProperties["keyPassword"] as String
+//        }//
         create("release") {
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = file("/Users/jjh/Documents/project/burgerMap/sahonmu.jks")
+            storePassword = "wngus9224!@"
+            keyAlias = "sahonmu"
+            keyPassword = "wngus9224!@"
         }
     }
 

@@ -90,7 +90,6 @@ fun MapScreen(
     }
 
     LaunchedEffect(storeMapUiState.storeList) {
-        Timber.i("클론 = ${storeMapUiState.storeList.size}")
         mainViewModel.clone(storeMapUiState.storeList)
     }
 
