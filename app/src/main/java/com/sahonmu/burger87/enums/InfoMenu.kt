@@ -4,7 +4,7 @@ package com.sahonmu.burger87.enums
 enum class InfoMenu(val menuName: String) {
     INSTAGRAM("버거87의 버거일기장"),
     ANNOUNCEMENT("공지사항"),
-    BASED_ON_SCORE("점수기준"),
+    BASED_ON_SCORE("별점기준"),
     PROVIDING_INFO("정보출처"),
     SHARING_EVENT_INFO("이벤트"),
 

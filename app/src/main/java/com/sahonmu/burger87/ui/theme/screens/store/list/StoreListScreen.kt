@@ -144,7 +144,7 @@ fun StoreListScreen(
                 }
                 items(storeListUiState.filterGroup.toList()) { item ->
                     val menu = when (selectedSortMenu) {
-                        SortMenu.CITY, SortMenu.CHAR -> item.first
+                        SortMenu.CITY -> item.first
                         SortMenu.SCORE -> "${item.first}점"
                         SortMenu.VISIT_COUNT -> "${item.first}회방문"
                         else -> ""
@@ -163,10 +163,6 @@ fun StoreListScreen(
 
                                 SortMenu.SCORE -> {
                                     storeViewModel.filterScore(storeListUiState.selectedFilterMenu)
-                                }
-
-                                SortMenu.CHAR -> {
-                                    storeViewModel.filterChar(storeListUiState.selectedFilterMenu)
                                 }
 
                                 SortMenu.VISIT_COUNT -> {

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 data class AnnouncementListUiState(
@@ -29,6 +30,7 @@ class AnnouncementViewModel @Inject constructor(
     fun requestAnnouncementList() {
         viewModelScope.launch {
             announcementUseCase.invoke().collect { announcementList ->
+                Timber.i("announcementList = ${announcementList}")
                 _announcementListUiState.update { state ->
                     state.copy(
                         announcementList = announcementList.filter { !it.isHeader } .sortedBy { it.id }.toMutableList(),

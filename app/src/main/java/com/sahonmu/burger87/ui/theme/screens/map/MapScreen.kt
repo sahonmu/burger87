@@ -34,7 +34,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.sahonmu.burger87.common.Constants
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
@@ -44,6 +48,7 @@ import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
+import com.sahonmu.burger87.utils.bitmap.BitmapUtils
 import com.sahonmu.burger87.viewmodels.MainViewModel
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
@@ -84,6 +89,7 @@ fun MapScreen(
     )
 
     var googleMap by remember { mutableStateOf<GoogleMap?>(null) }
+    var selectedMarker by remember { mutableStateOf<Marker?>(null) }
 
     LaunchedEffect(Unit) {
         storeViewModel.requestStoreList()
@@ -96,10 +102,20 @@ fun MapScreen(
     LaunchedEffect(pagerState, storeMapUiState.storeList) {
         snapshotFlow { pagerState.currentPage }.collect { position ->
             storeMapUiState.selectedIndex.value = position
-            googleMap?.let {
+            googleMap?.let { map ->
                 val store = storeMapUiState.storeList[position]
+                storeMapUiState.selectedStore.value = store
+                Timber.i("마커 삭제 = ${store.name}")
                 val latLng = LatLng(store.latitude, store.longitude)
-                it.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
+                selectedMarker?.remove()
+                val view = selectedMarker(context, store)
+                val markerOption = MarkerOptions()
+                    .position(latLng)
+                    .anchor(0.5f, 0.5f)
+                    .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
+                    .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
+                selectedMarker = map.addMarker(markerOption)
+                map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
             }
         }
     }
@@ -131,13 +147,62 @@ fun MapScreen(
                                 animate = false,
                                 page = storeMapUiState.selectedIndex.value
                             )
+
+                            googleMap?.let { map ->
+                                Timber.i("마커 삭제 마커클릭 = ${store.name}")
+                                selectedMarker?.remove()
+                                val latLng = LatLng(store.latitude, store.longitude)
+                                map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+                                val view = selectedMarker(context, store)
+                                val markerOption = MarkerOptions()
+                                    .position(latLng)
+                                    .anchor(0.5f, 0.5f)
+                                    .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
+                                    .icon(
+                                        BitmapDescriptorFactory.fromBitmap(
+                                            BitmapUtils.viewToBitmap(
+                                                view.rootView
+                                            )
+                                        )
+                                    )
+                                selectedMarker = map.addMarker(markerOption)
+                                storeMapUiState.selectedStore.value = store
+                            }
                             isCardVisible = true
                         },
                         onMapClick = {
                             isCardVisible = false
+                            selectedMarker?.remove()
+                            Timber.i("마커 삭제 맵클릭")
+                        },
+                        onEmptyCameraPosition = { store ->
+                            val latLng = LatLng(store.latitude, store.longitude)
+                            googleMap?.let { map ->
+                                selectedMarker?.remove()
+                                val view = selectedMarker(context, store)
+                                val markerOption = MarkerOptions()
+                                    .position(latLng)
+                                    .anchor(0.5f, 0.5f)
+                                    .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
+                                    .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
+                                selectedMarker = map.addMarker(markerOption)
+                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5f))
+                                storeMapUiState.selectedStore.value = store
+                            }
                         },
                         onGoogleMap = {
                             googleMap = it
+                            storeMapUiState.selectedStore.value?.let { store ->
+                                val latLng = LatLng(store.latitude, store.longitude)
+                                selectedMarker?.remove()
+                                val view = selectedMarker(context, store)
+                                val markerOption = MarkerOptions()
+                                    .position(latLng)
+                                    .anchor(0.5f, 0.5f)
+                                    .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
+                                    .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
+                                selectedMarker = it.addMarker(markerOption)
+                            }
                         }
                     )
 

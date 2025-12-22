@@ -100,7 +100,7 @@ fun StatisticsScreen(
                 val visitCountGroup = storeUiState.displayList.groupBy { it.name }.maxBy { it.value.size }
                 StatisticsListMultiRow(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "최대 방문 지점",
+                    title = "최대 방문 브랜드",
                     contents = visitCountGroup.key,
                     storeList = visitCountGroup.value,
                     painter = painterResource(R.drawable.emoji_pleased_selected),

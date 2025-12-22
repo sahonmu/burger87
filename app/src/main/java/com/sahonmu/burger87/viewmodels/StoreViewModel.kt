@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.sahonmu.burger87.BuildConfig
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.SortMenu
 import com.sahonmu.burger87.enums.StoreDetailTab
@@ -33,7 +34,8 @@ data class StoreMapUiState(
     var originList: MutableList<Store> = mutableListOf(),
     var storeList: MutableList<Store> = mutableListOf(),
     var boundBuilder: LatLngBounds.Builder = LatLngBounds.builder(),
-    var selectedIndex: MutableState<Int> = mutableStateOf(0)
+    var selectedIndex: MutableState<Int> = mutableStateOf(0),
+    var selectedStore: MutableState<Store?> = mutableStateOf(null)
 )
 
 
@@ -51,7 +53,7 @@ data class StoreSortListUiState(
     var displayList: MutableList<Store> = mutableListOf(),
     var cityGroup: Map<String, List<Store>> = linkedMapOf(),
     var scoreGroup: Map<String, List<Store>> = linkedMapOf(),
-    var charGroup: Map<String, List<Store>> = linkedMapOf(),
+//    var charGroup: Map<String, List<Store>> = linkedMapOf(),
     var visitCountGroup: Map<String, List<Store>> = linkedMapOf(),
     var filterGroup: Map<String, List<Store>> = linkedMapOf(),
     var selectedFilterMenu: String = "",
@@ -86,12 +88,12 @@ class StoreViewModel @Inject constructor(
     fun requestStoreList() {
         viewModelScope.launch {
             storeUseCase.invoke().collect { storeList ->
-                Timber.i("storeList = ${storeList.size}")
                 val boundBuilder = LatLngBounds.builder()
                 storeList.forEach { store ->
                     val point = LatLng(store.latitude, store.longitude)
                     boundBuilder.include(point)
                 }
+//                val list = if(BuildConfig.DEBUG) storeList.sortedByDescending { it.id }.toMutableList() else storeList.sortedByDescending { it.storeState.isOp }.toMutableList()
                 _storeMapUiState.update { state ->
                     state.copy(
                         loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
@@ -155,21 +157,10 @@ class StoreViewModel @Inject constructor(
                 displayList = list,
                 cityGroup = list.groupBy { it.cityFilter }.toList().sortedByDescending { it.second.size }.toMap(),
                 scoreGroup = scoreGroup,
-                charGroup = list.groupBy { getChosung(it.name.first().uppercaseChar()).toString() }.toList().sortedBy { it.first }.toMap(),
                 visitCountGroup = list.groupBy { it.visitCount.toString() }.toList().sortedByDescending { it.first.toInt() }.toMap(),
                 filterGroup = scoreGroup
             )
         }
-    }
-
-
-    fun getChosung(c: Char): Char {
-        val base = 0xAC00
-        val last = 0xD7A3
-        if (c.code < base || c.code > last) return c
-
-        val index = (c.code - base) / (21 * 28)
-        return "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ"[index]
     }
 
     fun searchByKeyword(keyword: String, storeList: MutableList<Store>) {
@@ -209,14 +200,6 @@ class StoreViewModel @Inject constructor(
         }
     }
 
-    fun filterChar(char: String) {
-        _storeListUiState.update { state ->
-            state.copy(
-                displayList = state.storeList.filter { getChosung(it.name.first().uppercaseChar()).toString() == char }.toMutableList(),
-            )
-        }
-    }
-
     fun filterVisitCount(visitCount: String) {
         visitCount.toIntOrNull()?.let {
             _storeListUiState.update { state ->
@@ -247,10 +230,6 @@ class StoreViewModel @Inject constructor(
                     filterMenu = state.scoreGroup.maxBy { it.key }.key
                     filterScore(filterMenu)
                     state.scoreGroup
-                } SortMenu.CHAR -> {
-                    filterMenu = state.charGroup.keys.first()
-                    filterChar(filterMenu)
-                    state.charGroup
                 } SortMenu.VISIT_COUNT -> {
                     filterMenu = state.visitCountGroup.keys.first()
                     filterVisitCount(filterMenu)
