@@ -93,13 +93,17 @@ class StoreViewModel @Inject constructor(
                     val point = LatLng(store.latitude, store.longitude)
                     boundBuilder.include(point)
                 }
-//                val list = if(BuildConfig.DEBUG) storeList.sortedByDescending { it.id }.toMutableList() else storeList.sortedByDescending { it.storeState.isOp }.toMutableList()
+//                var list = storeList.sortedByDescending { it.id }.sortedByDescending { it.storeState.isOperation() }.toMutableList()
+                val list = if(BuildConfig.DEBUG)
+                    storeList.sortedByDescending { it.id }.toMutableList()
+                else
+                    storeList.sortedByDescending { it.id }.sortedByDescending { it.storeState.isOperation() }.toMutableList()
                 _storeMapUiState.update { state ->
                     state.copy(
                         loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
                         originList = storeList.sortedBy { it.id }.toMutableList(),
-//                        storeList = storeList.sortedByDescending { it.storeState.isOperation() } as MutableList<Store>,
                         storeList = storeList.sortedByDescending { it.id }.toMutableList(),
+//                        storeList = list,
                         boundBuilder = boundBuilder
                     )
                 }
@@ -147,19 +151,22 @@ class StoreViewModel @Inject constructor(
         }
     }
 
-    fun addAllStore(storeList: MutableList<Store>) {
-        _storeListUiState.update { state ->
-            val list = storeList.sortedBy { it.id }.sortedByDescending { it.storeState.isOperation() }.toMutableList()
-//            val list = state.storeList.sortedBy { it.id }
-            val scoreGroup = list.groupBy { it.score.toString() }.toSortedMap( compareByDescending { it })
-            state.copy(
-                storeList = list,
-                displayList = list,
-                cityGroup = list.groupBy { it.cityFilter }.toList().sortedByDescending { it.second.size }.toMap(),
-                scoreGroup = scoreGroup,
-                visitCountGroup = list.groupBy { it.visitCount.toString() }.toList().sortedByDescending { it.first.toInt() }.toMap(),
-                filterGroup = scoreGroup
-            )
+    fun addAllStore() {
+        viewModelScope.launch {
+            storeUseCase.invoke().collect { storeList ->
+                _storeListUiState.update { state ->
+                    val list = storeList.sortedBy { it.id }.sortedByDescending { it.storeState.isOperation() }.toMutableList()
+                    val scoreGroup = list.groupBy { it.score.toString() }.toSortedMap( compareByDescending { it })
+                    state.copy(
+                        storeList = list,
+                        displayList = list,
+                        cityGroup = list.groupBy { it.cityFilter }.toList().sortedByDescending { it.second.size }.toMap(),
+                        scoreGroup = scoreGroup,
+                        visitCountGroup = list.groupBy { it.visitCount.toString() }.toList().sortedByDescending { it.first.toInt() }.toMap(),
+                        filterGroup = scoreGroup
+                    )
+                }
+            }
         }
     }
 

@@ -57,7 +57,7 @@ import timber.log.Timber
 fun StoreListScreenPreview() {
     StoreListScreen(
         navController = rememberNavController(),
-        storeList = mutableListOf()
+//        storeList = mutableListOf()
     )
 }
 
@@ -65,7 +65,7 @@ fun StoreListScreenPreview() {
 @Composable
 fun StoreListScreen(
     navController: NavHostController,
-    storeList: MutableList<Store>,
+//    storeList: MutableList<Store>,
 ) {
 
     val uiState = rememberUiState()
@@ -82,7 +82,8 @@ fun StoreListScreen(
     val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
-        storeViewModel.addAllStore(storeList)
+        storeViewModel.addAllStore()
+//        storeViewModel.requestStoreList()
     }
 
     Column(

@@ -2,8 +2,6 @@ package com.sahonmu.burger87.ui.theme.screens.map
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -44,13 +42,13 @@ fun MapFloatingButtonBox(
             onClick = { onMenu() }
         )
 
-        RoundButton(
-            modifier = Modifier.size(size),
-            painter = painterResource(id = R.drawable.ic_44_search),
-            imageSize = 32.dp,
-            color = White,
-            onClick = { onSearch() }
-        )
+//        RoundButton(
+//            modifier = Modifier.size(size),
+//            painter = painterResource(id = R.drawable.ic_44_search),
+//            imageSize = 32.dp,
+//            color = White,
+//            onClick = { onSearch() }
+//        )
 
         RoundButton(
             modifier = Modifier.size(size),

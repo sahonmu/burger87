@@ -54,18 +54,8 @@ fun NavGraphBuilder.store(
         }
     }
 
-    composable("${Screens.STORE_LIST.route}/{${BundleKey.DATA}}") {
-        it.arguments?.getString(BundleKey.DATA)?.let { json ->
-            Timber.i("list = ${json.decodeList().toMutableList()}")
-                BaseScreen(
-                    content = {
-                        StoreListScreen(
-                            navController = navController,
-                            storeList = json.decodeList().toMutableList()
-                        )
-                    },
-                )
-        }
+    composable(Screens.STORE_LIST.route) {
+        BaseScreen( content = { StoreListScreen(navController = navController ) } )
     }
 
 

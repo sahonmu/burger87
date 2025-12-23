@@ -186,7 +186,7 @@ fun MapScreen(
                                     .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
                                     .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
                                 selectedMarker = map.addMarker(markerOption)
-                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5f))
+                                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5f))
                                 storeMapUiState.selectedStore.value = store
                             }
                         },
@@ -246,8 +246,7 @@ fun MapScreen(
                                 navController.navigate("${Screens.STORE_SEARCH}/${encode}")
                             },
                             onStoreList = {
-                                val encode = storeMapUiState.storeList.encode()
-                                navController.navigate("${Screens.STORE_LIST}/${encode}")
+                                navController.navigate(Screens.STORE_LIST.route)
                             }
                         )
                     }

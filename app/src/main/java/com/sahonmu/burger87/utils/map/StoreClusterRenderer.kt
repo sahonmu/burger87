@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
@@ -42,22 +43,32 @@ class StoreClusterRenderer(
         marker: Marker
     ) {
         super.onClusterItemRendered(item, marker)
-        operationLayout.visibility = if (item.store.storeState.isOperation()) View.VISIBLE else View.GONE
-        closedLayout.visibility = if (item.store.storeState.isOperation()) View.GONE else View.VISIBLE
+        operationLayout.visibility =
+            if (item.store.storeState.isOperation()) View.VISIBLE else View.GONE
+        closedLayout.visibility =
+            if (item.store.storeState.isOperation()) View.GONE else View.VISIBLE
         scoreTextView.text = item.store.score.toString()
         marker.setIcon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(markerView.rootView)))
         marker.setAnchor(0.5f, 0.5f)
-        marker.zIndex = if(item.store.storeState.isOperation()) Constants.MarKerZIndex.STORE_OPRERATION else Constants.MarKerZIndex.STORE_CLOSED
+        marker.zIndex =
+            if (item.store.storeState.isOperation()) Constants.MarKerZIndex.STORE_OPRERATION else Constants.MarKerZIndex.STORE_CLOSED
     }
 
     // 개별 마커 설정
-//    override fun onBeforeClusterItemRendered(item: StoreClusterItem, markerOptions: MarkerOptions) {
-//        super.onBeforeClusterItemRendered(item, markerOptions)
+    override fun onBeforeClusterItemRendered(item: StoreClusterItem, markerOptions: MarkerOptions) {
+        super.onBeforeClusterItemRendered(item, markerOptions)
 //        operationLayout.visibility =
 //            if (item.store.state == "operation") View.VISIBLE else View.GONE
 //        closedLayout.visibility = if (item.store.state == "operation") View.GONE else View.VISIBLE
-//        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(markerView.rootView)))
-//    }
+        operationLayout.visibility =
+            if (item.store.storeState.isOperation()) View.VISIBLE else View.GONE
+        closedLayout.visibility =
+            if (item.store.storeState.isOperation()) View.GONE else View.VISIBLE
+        scoreTextView.text = item.store.score.toString()
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(markerView.rootView)))
+            .anchor(0.5f, 0.5f)
+            .zIndex(if (item.store.storeState.isOperation()) Constants.MarKerZIndex.STORE_OPRERATION else Constants.MarKerZIndex.STORE_CLOSED)
+    }
 
     override fun onClusterRendered(cluster: Cluster<StoreClusterItem?>, marker: Marker) {
         super.onClusterRendered(cluster, marker)
@@ -67,19 +78,23 @@ class StoreClusterRenderer(
         marker.setAnchor(0.5f, 0.5f)
     }
 
-//    override fun onBeforeClusterRendered(
-//        cluster: Cluster<StoreClusterItem>,
-//        markerOptions: MarkerOptions
-//    ) {
-////        super.onBeforeClusterRendered(cluster, markerOptions)
-//        val size = convertRangeLabel(cluster.size)
-//        clusterTextView.text = size
-//        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(clusterView.rootView)))
-//    }
+    override fun onBeforeClusterRendered(
+        cluster: Cluster<StoreClusterItem>,
+        markerOptions: MarkerOptions
+    ) {
+        super.onBeforeClusterRendered(cluster, markerOptions)
+        val size = convertRangeLabel(cluster.size)
+        clusterTextView.text = size
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(clusterView.rootView)))
+            .anchor(0.5f, 0.5f)
+    }
 
-//    override fun onClustersChanged(clusters: Set<Cluster<StoreClusterItem?>?>?) {
-//        super.onClustersChanged(clusters)
-//    }
+    override fun onClustersChanged(clusters: Set<Cluster<StoreClusterItem?>?>?) {
+//        if(true) {
+//            return
+//        }
+        super.onClustersChanged(clusters)
+    }
 
 
     fun convertRangeLabel(value: Int): String {
