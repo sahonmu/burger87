@@ -102,8 +102,8 @@ class StoreViewModel @Inject constructor(
                     state.copy(
                         loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
                         originList = storeList.sortedBy { it.id }.toMutableList(),
-                        storeList = storeList.sortedByDescending { it.id }.toMutableList(),
-//                        storeList = list,
+//                        storeList = storeList.sortedByDescending { it.id }.toMutableList(),
+                        storeList = list,
                         boundBuilder = boundBuilder
                     )
                 }

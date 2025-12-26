@@ -105,7 +105,6 @@ fun MapScreen(
             googleMap?.let { map ->
                 val store = storeMapUiState.storeList[position]
                 storeMapUiState.selectedStore.value = store
-                Timber.i("마커 삭제 = ${store.name}")
                 val latLng = LatLng(store.latitude, store.longitude)
                 selectedMarker?.remove()
                 val view = selectedMarker(context, store)
@@ -149,7 +148,6 @@ fun MapScreen(
                             )
 
                             googleMap?.let { map ->
-                                Timber.i("마커 삭제 마커클릭 = ${store.name}")
                                 selectedMarker?.remove()
                                 val latLng = LatLng(store.latitude, store.longitude)
                                 map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
@@ -186,7 +184,7 @@ fun MapScreen(
                                     .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
                                     .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
                                 selectedMarker = map.addMarker(markerOption)
-                                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5f))
+                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
                                 storeMapUiState.selectedStore.value = store
                             }
                         },
