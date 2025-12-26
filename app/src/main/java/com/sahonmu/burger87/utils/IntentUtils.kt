@@ -76,6 +76,7 @@ object IntentUtils {
     fun startActivityOpenAppSetting(context: Context) {
         val intent = Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//            Settings.ACTION_LOCATION_SOURCE_SETTINGS,
             Uri.fromParts("package", context.packageName, null)
         )
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

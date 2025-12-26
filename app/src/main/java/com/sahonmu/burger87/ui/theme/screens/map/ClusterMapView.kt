@@ -184,26 +184,5 @@ fun mapSetting(context: Context, map: GoogleMap, latLngBounds: LatLngBounds) {
     }
 }
 
-fun selectedMarkerOption(context: Context, store: Store): MarkerOptions {
-    val view = selectedMarker(context, store)
-    val latLng = LatLng(store.latitude, store.longitude)
-    return MarkerOptions()
-        .position(latLng)
-        .anchor(0.5f, 0.5f)
-        .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
-        .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
-}
-
-fun selectedMarker(context: Context, store: Store): View {
-    val markerView: View = LayoutInflater.from(context).inflate(R.layout.view_marker_selected, null)
-    val operationLayout: FrameLayout = markerView.findViewById(R.id.operationLayout)
-    val closedLayout: FrameLayout = markerView.findViewById(R.id.closedLayout)
-    val scoreTextView: TextView = markerView.findViewById(R.id.scoreTextView)
-
-    operationLayout.visibility = if (store.storeState.isOperation()) View.VISIBLE else View.GONE
-    closedLayout.visibility = if (store.storeState.isOperation()) View.GONE else View.VISIBLE
-    scoreTextView.text = store.score.toString()
-    return markerView
-}
 
 

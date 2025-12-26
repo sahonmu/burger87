@@ -20,18 +20,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
+import com.sahonmu.burger87.ui.theme.screens.components.Confirm
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.utils.IntentUtils
 
 @Composable
 fun LocationPermissionHandler(
-    onPermissionGranted: () -> Unit
+    onPermissionGranted: () -> Unit,
+    onPermissionDenied: () -> Unit
 ) {
     val context = rememberUiState().context
     val activity = context as Activity
 
-    var permissionDenied by remember { mutableStateOf(false) }
-    var permanentlyDenied by remember { mutableStateOf(false) }
+    var showIntentPermission by remember { mutableStateOf(false) }
 
     val permissionLauncher =
         rememberLauncherForActivityResult(
@@ -42,8 +43,6 @@ fun LocationPermissionHandler(
 
             when {
                 fineGranted || coarseGranted -> {
-                    permissionDenied = false
-                    permanentlyDenied = false
                     onPermissionGranted()
                 }
 
@@ -52,11 +51,11 @@ fun LocationPermissionHandler(
                     activity,
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) -> {
-                    permanentlyDenied = true
+                    showIntentPermission = true
                 }
 
                 else -> {
-                    permissionDenied = true
+                    onPermissionDenied()
                 }
             }
         }
@@ -77,56 +76,18 @@ fun LocationPermissionHandler(
         }
     }
 
-    when {
-        permissionDenied -> {
-            PermissionDeniedUI(
-                onRetry = {
-                    permissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        )
-                    )
-                }
-            )
-        }
-
-        permanentlyDenied -> {
-            PermissionPermanentlyDeniedUI(
-                onGoToSettings = {
-                    IntentUtils.startActivityOpenAppSetting(context)
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun PermissionDeniedUI(onRetry: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("위치 권한이 필요합니다")
-        HeightMargin(height = 12.dp)
-        Button(onClick = onRetry) {
-            Text("다시 요청")
-        }
-    }
-}
-
-@Composable
-fun PermissionPermanentlyDeniedUI(onGoToSettings: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("설정에서 위치 권한을 허용해주세요")
-        HeightMargin(height = 12.dp)
-        Button(onClick = onGoToSettings) {
-            Text("설정으로 이동")
-        }
+    if(showIntentPermission) {
+        Confirm(
+            message = "위치 기능을 사용하려면\n위치권한 동의가 필요합니다.\n설정으로 이동하기",
+            positiveButtonText = "이동하기",
+            negativeButtonText = "취소",
+            onPositive = {
+                IntentUtils.startActivityOpenAppSetting(context)
+                onPermissionDenied()
+            },
+            onDismissRequest = {
+                onPermissionDenied()
+            }
+        )
     }
 }

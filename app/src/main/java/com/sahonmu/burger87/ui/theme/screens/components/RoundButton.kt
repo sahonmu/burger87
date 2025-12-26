@@ -1,5 +1,6 @@
 package com.sahonmu.burger87.ui.theme.screens.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -48,8 +49,7 @@ fun RoundButton(
     painter: Painter,
     round: Dp = 28.dp,
     imageSize: Dp = 28.dp,
-//    colorFilter: Color = Black,
-    borderColor: Color = Black,
+    borderColor: Color = White,
     onClick: () -> Unit = { }
 ) {
 
@@ -62,7 +62,8 @@ fun RoundButton(
             ),
             elevation = CardDefaults.elevatedCardElevation(
                 defaultElevation = 5.dp
-            )
+            ),
+            border = BorderStroke(width = 1.dp, color = borderColor)
         ) {
             Box(
                 modifier = Modifier.fillMaxSize()

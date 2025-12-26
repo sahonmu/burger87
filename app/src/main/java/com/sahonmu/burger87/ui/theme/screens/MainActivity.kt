@@ -35,6 +35,7 @@ import com.sahonmu.burger87.ui.theme.screens.components.Toast
 import com.sahonmu.burger87.ui.theme.screens.main.NavGraph
 import com.sahonmu.burger87.viewmodels.AppInfoViewModel
 import com.sahonmu.burger87.viewmodels.MainViewModel
+import com.sahonmu.burger87.viewmodels.base.LocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -82,6 +83,7 @@ class MainActivity : ComponentActivity() {
                 val scope = uiState.scope
 
                 val mainViewModel = composableActivityViewModel<MainViewModel>()
+                val locationViewModel = composableActivityViewModel<LocationViewModel>()
                 val appInfoViewModel: AppInfoViewModel = hiltViewModel()
 
                 val navController = rememberNavController()

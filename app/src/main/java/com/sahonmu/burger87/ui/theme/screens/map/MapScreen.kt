@@ -1,5 +1,6 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,6 +39,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -48,21 +56,27 @@ import com.sahonmu.burger87.R
 import com.sahonmu.burger87.common.Constants
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
+import com.sahonmu.burger87.enums.TrackingState
 import com.sahonmu.burger87.extensions.encode
 import com.sahonmu.burger87.extensions.findActivity
 import com.sahonmu.burger87.extensions.moveItem
+import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
+import com.sahonmu.burger87.ui.theme.permission.CheckPermission
+import com.sahonmu.burger87.ui.theme.permission.LocationPermissionHandler
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Margin
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
+import com.sahonmu.burger87.utils.IntentUtils
 import com.sahonmu.burger87.utils.bitmap.BitmapUtils
 import com.sahonmu.burger87.viewmodels.MainViewModel
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
+import com.sahonmu.burger87.viewmodels.base.LocationViewModel
 import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.vo.store.Store
 import timber.log.Timber
@@ -84,15 +98,21 @@ fun MapScreen(
     val context = uiState.context
 
     val mainViewModel = composableActivityViewModel<MainViewModel>()
+    val locationViewModel = composableActivityViewModel<LocationViewModel>()
 
     val mapViewModel: MapViewModel = viewModel()
     val storeMapUiState = storeViewModel.storeMapUiState.collectAsState().value
+
+    val locationUiState = locationViewModel.locationUiState.collectAsState().value
+    var showLocationPermission by rememberSaveable { mutableStateOf(false) }
 
     val pagerState = rememberPagerState(pageCount = {
         storeMapUiState.storeList.size
     })
 
+    var trackingState by rememberSaveable { mutableStateOf(TrackingState.NONE) }
     var showAlert by rememberSaveable { mutableStateOf(false) }
+    var showAlertMessage by rememberSaveable { mutableStateOf("") }
     var isCardVisible by rememberSaveable { mutableStateOf(true) }
     val cardHeight = 125.dp
     val offsetY by animateDpAsState(
@@ -102,6 +122,11 @@ fun MapScreen(
 
     var googleMap by remember { mutableStateOf<GoogleMap?>(null) }
     var selectedMarker by remember { mutableStateOf<Marker?>(null) }
+    var myLocationMarker by remember { mutableStateOf<Marker?>(null) }
+
+    val fusedClient = remember {
+        LocationServices.getFusedLocationProviderClient(context)
+    }
 
     LaunchedEffect(Unit) {
         storeViewModel.requestStoreList()
@@ -109,11 +134,6 @@ fun MapScreen(
 
     LaunchedEffect(storeMapUiState.storeList) {
         mainViewModel.clone(storeMapUiState.storeList)
-
-//        val KOREA_BOUNDS = LatLngBounds(
-//            LatLng(33.0, 124.0),  // SW (제주 남쪽~서쪽)
-//            LatLng(39.0, 132.0)   // NE (강원 북동쪽)
-//        )
     }
 
     LaunchedEffect(pagerState, storeMapUiState.storeList) {
@@ -124,12 +144,20 @@ fun MapScreen(
                 storeMapUiState.selectedStore.value = store
                 val latLng = LatLng(store.latitude, store.longitude)
                 selectedMarker?.remove()
-                val markerOption = selectedMarkerOption(context = context, store = store)
+                val markerOption = mapViewModel.selectedMarkerOption(context = context, store = store)
                 selectedMarker = map.addMarker(markerOption)
                 map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
             }
         }
     }
+
+//    LaunchedEffect(locationUiState.myLocationMarkerOption.position) {
+//        if(!locationViewModel.isEmptyLocation()) {
+//            val position = locationUiState.myLocationMarkerOption.position
+//            Timber.i("위치정보 = ${position.latitude},${position.longitude}")
+//            googleMap?.animateCamera(CameraUpdateFactory.newLatLng(position))
+//        }
+//    }
 
     Box(
         modifier = Modifier
@@ -161,7 +189,7 @@ fun MapScreen(
 
                             googleMap?.let { map ->
                                 selectedMarker?.remove()
-                                val markerOption = selectedMarkerOption(context = context, store = store)
+                                val markerOption = mapViewModel.selectedMarkerOption(context = context, store = store)
                                 selectedMarker = map.addMarker(markerOption)
                                 val latLng = LatLng(store.latitude, store.longitude)
                                 map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
@@ -178,7 +206,7 @@ fun MapScreen(
                             val latLng = LatLng(store.latitude, store.longitude)
                             googleMap?.let { map ->
                                 selectedMarker?.remove()
-                                val markerOption = selectedMarkerOption(context = context, store = store)
+                                val markerOption = mapViewModel.selectedMarkerOption(context = context, store = store)
                                 selectedMarker = map.addMarker(markerOption)
                                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
                                 storeMapUiState.selectedStore.value = store
@@ -188,7 +216,7 @@ fun MapScreen(
                             googleMap = it
                             storeMapUiState.selectedStore.value?.let { store ->
                                 selectedMarker?.remove()
-                                val markerOption = selectedMarkerOption(context = context, store = store)
+                                val markerOption = mapViewModel.selectedMarkerOption(context = context, store = store)
                                 selectedMarker = it.addMarker(markerOption)
                             }
                         }
@@ -211,7 +239,51 @@ fun MapScreen(
                                     painter = painterResource(id = R.drawable.ic_location),
                                     imageSize = 22.dp,
                                     color = White,
-                                    onClick = {  }
+                                    borderColor = if(trackingState == TrackingState.NONE) White else Base,
+                                    onClick = {
+                                        if(CheckPermission.hasLocationPermission(context)) {
+                                            if(trackingState == TrackingState.NONE) {
+                                                locationViewModel.getCurrentLocation(
+                                                    fusedClient = fusedClient,
+                                                    onSuccess = { lat, lng ->
+                                                        val latLng = LatLng(lat, lng)
+                                                        if(locationViewModel.isEmptyLocation()) {
+                                                            val bitmap = BitmapUtils.vectorToBitmap(
+                                                                context = context,
+                                                                drawableId = R.drawable.ic_my_location,
+                                                                sizePx = 48
+                                                            )
+                                                            val icon = BitmapDescriptorFactory.fromBitmap(bitmap)
+                                                            locationUiState.myLocationMarkerOption
+                                                                .position(latLng)
+                                                                .icon(icon)
+                                                                .anchor(0.5f, 0.5f)
+                                                                .zIndex(Constants.MarKerZIndex.MY_LOCATION)
+                                                            myLocationMarker = googleMap?.addMarker(locationUiState.myLocationMarkerOption)
+                                                        } else {
+                                                            myLocationMarker?.position = latLng
+                                                        }
+                                                        googleMap?.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+                                                        locationViewModel.updateLocation(latLng)
+                                                        trackingState = TrackingState.SHOW
+                                                    },
+                                                    onFail = {
+                                                        showAlertMessage = "위치획득에 실패했습니다."
+                                                        showAlert = false
+                                                    }
+                                                )
+                                            } else {
+                                                trackingState = TrackingState.NONE
+                                                locationViewModel.resetLocation()
+                                                myLocationMarker?.remove()
+                                            }
+//                                            locationViewModel.requestLocationUpdates(
+//                                                fusedClient = fusedClient
+//                                            )
+                                        } else {
+                                            showLocationPermission = true
+                                        }
+                                    }
                                 )
                                 WidthMargin(20.dp)
                             }
@@ -226,6 +298,7 @@ fun MapScreen(
                                     if (store.storeState.isOperation()) {
                                         navController.navigate("${Screens.STORE_DETAIL}/${store.encode()}")
                                     } else {
+                                        showAlertMessage = "폐업된 점포입니다."
                                         showAlert = true
                                     }
                                 }
@@ -252,20 +325,6 @@ fun MapScreen(
                             }
                         )
                     }
-
-//                    Box(
-//                        modifier = Modifier
-//                            .align(Alignment.BottomEnd)
-//                            .padding(bottom = 20.dp, end = 20.dp),
-//                    ) {
-//                        RoundButton(
-//                            modifier = Modifier.size(44.dp),
-//                            painter = painterResource(id = R.drawable.ic_menu),
-//                            imageSize = 18.dp,
-//                            color = White,
-//                            onClick = {  }
-//                        )
-//                    }
                 }
             }
         }
@@ -273,8 +332,51 @@ fun MapScreen(
 
     if (showAlert) {
         Alert(
-            message = "폐업된 점포입니다.",
+            message = showAlertMessage,
             onDismissRequest = { showAlert = false }
+        )
+    }
+
+    if(showLocationPermission) {
+        LocationPermissionHandler(
+            onPermissionGranted = {
+                showLocationPermission = false
+//                locationViewModel.requestLocationUpdates(
+//                    fusedClient = fusedClient
+//                )
+                locationViewModel.getCurrentLocation(
+                    fusedClient = fusedClient,
+                    onSuccess = { lat, lng ->
+                        val latLng = LatLng(lat, lng)
+                        if(locationViewModel.isEmptyLocation()) {
+                            val bitmap = BitmapUtils.vectorToBitmap(
+                                context = context,
+                                drawableId = R.drawable.ic_my_location,
+                                sizePx = 48
+                            )
+                            val icon = BitmapDescriptorFactory.fromBitmap(bitmap)
+                            locationUiState.myLocationMarkerOption
+                                .position(latLng)
+                                .icon(icon)
+                                .anchor(0.5f, 0.5f)
+                                .zIndex(Constants.MarKerZIndex.MY_LOCATION)
+                            myLocationMarker = googleMap?.addMarker(locationUiState.myLocationMarkerOption)
+                        } else {
+                            myLocationMarker?.position = latLng
+                        }
+                        googleMap?.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+                        locationViewModel.updateLocation(latLng)
+                        trackingState = TrackingState.SHOW
+                    },
+                    onFail = {
+                        showAlertMessage = "위치획득에 실패했습니다."
+                        showAlert = false
+                    }
+                )
+            },
+            onPermissionDenied = {
+                showLocationPermission = false
+            },
         )
     }
 
@@ -288,7 +390,16 @@ fun MapScreen(
         }
         backPressedTime = System.currentTimeMillis()
     }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            locationViewModel.resetLocation()
+            locationViewModel.removeLocationUpdates(fusedClient)
+        }
+    }
 }
+
+
 
 
 
