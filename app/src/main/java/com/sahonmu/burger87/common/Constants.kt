@@ -8,4 +8,9 @@ object Constants {
 
     }
 
+    object MarKerZIndex {
+        val STORE_CLOSED = 1f
+        val STORE_OPRERATION = 2f
+        val SELECTED_STORE_MARKER = 3f
+    }
 }

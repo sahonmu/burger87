@@ -1,6 +1,5 @@
 package com.sahonmu.burger87.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -51,8 +50,23 @@ fun Burger87Theme(
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = colorScheme.copy(
+            background = Gray_50,
+            primary = Gray_50,
+            onPrimaryContainer = Gray_200,
+        ),
         typography = Typography,
         content = content
     )
+
+//    @Composable
+//    override fun defaultColor() = Color(0xFFFFC107) // 전체 ripple 색
+//
+//    @Composable
+//    override fun rippleAlpha() = RippleAlpha(
+//        pressedAlpha = 0.16f,
+//        focusedAlpha = 0.12f,
+//        draggedAlpha = 0.08f,
+//        hoveredAlpha = 0.12f
+//    )
 }

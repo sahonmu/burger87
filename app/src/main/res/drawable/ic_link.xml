@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 링크(체인) -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="
+            M4,12
+            a5,5 0 0,1 5,-5
+            h4
+            v2
+            h-4
+            a3,3 0 0,0 0,6
+            h4
+            v2
+            h-4
+            a5,5 0 0,1 -5,-5
+            z
+        " />
+
+    <!-- 외부 이동 화살표 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="
+            M14,4
+            h6
+            v6
+            h-2
+            v-2.6
+            l-6.3,6.3
+            -1.4,-1.4
+            6.3,-6.3
+            h-2.6
+            z
+        " />
+</vector>

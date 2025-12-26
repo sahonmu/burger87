@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fl"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:visibility="visible">
+
+    <FrameLayout
+        android:id="@+id/operationLayout"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_gravity="center"
+        android:background="@drawable/background_marker"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="1dp"
+            android:src="@drawable/ic_burger" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:background="@drawable/background_score"
+            android:paddingHorizontal="4.0dp"
+            android:paddingVertical="2.5dp">
+
+            <TextView
+                android:id="@+id/scoreTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:includeFontPadding="true"
+                android:textColor="#FFC107"
+                android:textSize="9dp"
+                android:textStyle="bold" />
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/closedLayout"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_gravity="center"
+        android:background="@drawable/background_marker"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="폐업"
+            android:textColor="#B52427"
+            android:textSize="11.5dp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+</FrameLayout>
