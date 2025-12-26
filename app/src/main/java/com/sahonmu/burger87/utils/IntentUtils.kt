@@ -4,12 +4,14 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.Settings
+import androidx.core.net.toUri
 
 object IntentUtils {
 
     fun startActivityForInstagram(context: Context, uri: String) {
         val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(uri)
+            data = uri.toUri()
             setPackage("com.instagram.android") // 앱에서 열기
         }
 
@@ -24,7 +26,7 @@ object IntentUtils {
 
     fun startActivityForDialog(context: Context, number: String) {
         val intent = Intent(Intent.ACTION_DIAL).apply {
-            data = Uri.parse("tel:$number")
+            data = "tel:$number".toUri()
         }
         context.startActivity(intent)
     }
@@ -40,7 +42,7 @@ object IntentUtils {
 
     fun startActivityForBurgerReport(context: Context) {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:")
+            data = "mailto:".toUri()
             putExtra(Intent.EXTRA_EMAIL, arrayOf("sahonmu@gmail.com"))
             putExtra(Intent.EXTRA_SUBJECT, "버거맛집 추천합니다!!!")
             putExtra(Intent.EXTRA_TEXT, "버거상호명 :\n지점 :")
@@ -51,7 +53,7 @@ object IntentUtils {
 
     fun startActivityReportData(context: Context) {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:")
+            data = "mailto:".toUri()
             putExtra(Intent.EXTRA_EMAIL, arrayOf("sahonmu@gmail.com"))
             putExtra(Intent.EXTRA_SUBJECT, "정보변경 및 삭제 요청")
             putExtra(Intent.EXTRA_TEXT, "정보변경 상점및 지점 :\n정보변경 내용 : ")
@@ -61,13 +63,22 @@ object IntentUtils {
 
     fun startActivityForGooglePlay(context: Context) {
         val pkg = context.packageName
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$pkg"))
+        val intent = Intent(Intent.ACTION_VIEW, "market://details?id=$pkg".toUri())
         context.startActivity(intent)
     }
 
 
     fun startActivityBrowser(context: Context, url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+        context.startActivity(intent)
+    }
+
+    fun startActivityOpenAppSetting(context: Context) {
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", context.packageName, null)
+        )
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
 

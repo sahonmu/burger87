@@ -117,6 +117,7 @@ dependencies {
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.databinding.runtime)
+    implementation(libs.androidx.games.activity)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

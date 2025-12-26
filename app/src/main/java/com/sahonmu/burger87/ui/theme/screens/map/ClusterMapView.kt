@@ -52,15 +52,23 @@ fun ClusterMapView(
     var googleMap by remember { mutableStateOf<GoogleMap?>(null) }
     var clusterManager by remember { mutableStateOf<ClusterManager<StoreClusterItem>?>(null) }
 
-    var selectedMarker by remember { mutableStateOf<Marker?>(null) }
-
     AndroidView(
         factory = { mapView },
         update = { mv ->
             mv.getMapAsync { map ->
                 if (googleMap == null) {
                     googleMap = map
-                    mapSetting(context, map)
+                    if(storeMapUiState.storeList.isNotEmpty()) {
+                        val bounds = LatLngBounds(
+                            LatLng(
+                                storeMapUiState.storeList.minOf { it.latitude },
+                                storeMapUiState.storeList.minOf { it.longitude }),
+                            LatLng(
+                                storeMapUiState.storeList.maxOf { it.latitude },
+                                storeMapUiState.storeList.maxOf { it.longitude })
+                        )
+                        mapSetting(context, map, bounds)
+                    }
                     onGoogleMap(map)
 
                     // ClusterManager 생성 및 렌더러 등록
@@ -153,13 +161,7 @@ fun rememberMapViewWithLifecycle(): MapView {
     return mapView
 }
 
-private fun mapSetting(context: Context, map: GoogleMap) {
-
-    val KOREA_BOUNDS = LatLngBounds(
-        LatLng(33.0, 124.0),  // SW (제주 남쪽~서쪽)
-        LatLng(39.0, 132.0)   // NE (강원 북동쪽)
-    )
-
+fun mapSetting(context: Context, map: GoogleMap, latLngBounds: LatLngBounds) {
     with(map.uiSettings) {
         isZoomControlsEnabled = false      // + - 버튼
         isCompassEnabled = false            // 나침반
@@ -177,9 +179,19 @@ private fun mapSetting(context: Context, map: GoogleMap) {
         isBuildingsEnabled = false
         isIndoorEnabled = false
         isTrafficEnabled = false
-        setLatLngBoundsForCameraTarget(KOREA_BOUNDS)
+        setLatLngBoundsForCameraTarget(latLngBounds)
         setMapStyle(MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style))
     }
+}
+
+fun selectedMarkerOption(context: Context, store: Store): MarkerOptions {
+    val view = selectedMarker(context, store)
+    val latLng = LatLng(store.latitude, store.longitude)
+    return MarkerOptions()
+        .position(latLng)
+        .anchor(0.5f, 0.5f)
+        .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
+        .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
 }
 
 fun selectedMarker(context: Context, store: Store): View {
@@ -194,12 +206,4 @@ fun selectedMarker(context: Context, store: Store): View {
     return markerView
 }
 
-fun selectedMarkerOption(map: GoogleMap, view: View, store: Store): Marker? {
-    val markerOption = MarkerOptions()
-        .position(LatLng(store.latitude, store.longitude))
-        .anchor(0.5f, 0.5f)
-        .zIndex(2f)
-        .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
-    return map.addMarker(markerOption)
-}
 
