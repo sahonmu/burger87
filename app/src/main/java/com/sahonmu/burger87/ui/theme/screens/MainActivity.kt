@@ -1,6 +1,9 @@
 package com.sahonmu.burger87.ui.theme.screens
 
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -32,6 +35,7 @@ import com.sahonmu.burger87.ui.theme.screens.components.Toast
 import com.sahonmu.burger87.ui.theme.screens.main.NavGraph
 import com.sahonmu.burger87.viewmodels.AppInfoViewModel
 import com.sahonmu.burger87.viewmodels.MainViewModel
+import com.sahonmu.burger87.viewmodels.base.LocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -63,6 +67,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        window.navigationBarColor = Color.WHITE
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        }
+
         setContent {
             Burger87Theme {
 
@@ -71,6 +83,7 @@ class MainActivity : ComponentActivity() {
                 val scope = uiState.scope
 
                 val mainViewModel = composableActivityViewModel<MainViewModel>()
+                val locationViewModel = composableActivityViewModel<LocationViewModel>()
                 val appInfoViewModel: AppInfoViewModel = hiltViewModel()
 
                 val navController = rememberNavController()

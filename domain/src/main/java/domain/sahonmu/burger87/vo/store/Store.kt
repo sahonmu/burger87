@@ -21,20 +21,21 @@ data class Store(
     val score: Float,
     val cityFilter: String,
     val visitCount: Int,
-    val lastVisitDate: String
+    val lastVisitDate: String,
+    val regionType: String
 ) {
     var storeState = state.storeState()
     var startIndex = 0
     var endIndex = 0
     var fullName = if(branch.isEmpty()) name else "${name}(${branch})"
     var isMatch = startIndex + endIndex != 0
-
-    fun isKeywordMatch(startIndex: Int, endIndex: Int): Boolean {
-        return startIndex + endIndex != 0
-    }
+    var distance = 0.0
 
     fun isKeywordMatch(): Boolean {
         return startIndex + endIndex != 0
     }
 
+    fun isDomestic(): Boolean {
+        return regionType == "DOMESTIC"
+    }
 }

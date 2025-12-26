@@ -24,7 +24,10 @@ object DataManager {
             score = 4.0f,
             cityFilter = "전체",
             lastVisitDate = "",
-            visitCount = 1
-        )
+            visitCount = 1,
+            regionType = "DOMESTIC"
+        ).apply {
+            distance = 9999.0
+        }
     }
 }

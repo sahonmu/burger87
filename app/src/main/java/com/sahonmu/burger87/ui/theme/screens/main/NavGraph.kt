@@ -58,20 +58,23 @@ fun NavGraphBuilder.store(
         BaseScreen( content = { StoreListScreen(navController = navController ) } )
     }
 
-
-    composable("${Screens.STORE_SEARCH.route}/{${BundleKey.DATA}}") {
-        it.arguments?.getString(BundleKey.DATA)?.let { json ->
-            Timber.i("list = ${json.decodeList().toMutableList()}")
-            BaseScreen(
-                content = {
-                    StoreSearchScreen(
-                        navController = navController,
-                        storeList = json.decodeList().toMutableList()
-                    )
-                },
-            )
-        }
+    composable(Screens.STORE_SEARCH.route) {
+        BaseScreen( content = { StoreSearchScreen(navController = navController ) } )
     }
+
+//    composable("${Screens.STORE_SEARCH.route}/{${BundleKey.DATA}}") {
+//        it.arguments?.getString(BundleKey.DATA)?.let { json ->
+//            Timber.i("list = ${json.decodeList().toMutableList()}")
+//            BaseScreen(
+//                content = {
+//                    StoreSearchScreen(
+//                        navController = navController,
+//                        storeList = json.decodeList().toMutableList()
+//                    )
+//                },
+//            )
+//        }
+//    }
 }
 
 fun NavGraphBuilder.info(

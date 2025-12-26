@@ -166,20 +166,22 @@ fun StoreDetailScreen(
                     color = Gray_200
                 )
 
-                StoreDetailTab(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .background(White),
-                    selectedTab = storeDetailUiState.selectedTab.value
-                ) { tab ->
-                    storeDetailUiState.selectedTab.value = tab
-                }
+                if(storeDetailUiState.storeMenuList.isNotEmpty()) {
+                    StoreDetailTab(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .background(White),
+                        selectedTab = storeDetailUiState.selectedTab.value
+                    ) { tab ->
+                        storeDetailUiState.selectedTab.value = tab
+                    }
 
-                Line(
-                    height = 1.dp,
-                    color = Gray_200
-                )
+                    Line(
+                        height = 1.dp,
+                        color = Gray_200
+                    )
+                }
             }
 
             if (storeDetailUiState.storeMenuList.isNotEmpty()) {

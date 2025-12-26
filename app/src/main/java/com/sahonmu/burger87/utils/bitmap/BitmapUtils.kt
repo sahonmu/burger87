@@ -65,4 +65,19 @@ object BitmapUtils {
         return bitmap
     }
 
+    fun vectorToBitmap(
+        context: Context,
+        @DrawableRes drawableId: Int,
+        sizePx: Int
+    ): Bitmap {
+        val drawable = ContextCompat.getDrawable(context, drawableId)!!
+        drawable.setBounds(0, 0, sizePx, sizePx)
+
+        val bitmap = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.draw(canvas)
+
+        return bitmap
+    }
+
 }

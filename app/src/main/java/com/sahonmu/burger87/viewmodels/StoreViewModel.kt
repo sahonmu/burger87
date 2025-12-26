@@ -9,6 +9,7 @@ import com.sahonmu.burger87.BuildConfig
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.SortMenu
 import com.sahonmu.burger87.enums.StoreDetailTab
+import com.sahonmu.burger87.utils.math.MathUtils
 import com.sahonmu.burger87.viewmodels.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import domain.sahonmu.burger87.enums.StoreState
@@ -63,6 +64,7 @@ data class StoreSortListUiState(
 
 data class StoreSearchUiState(
     var includeClosed: Boolean = true,
+    var originList: MutableList<Store> = mutableListOf(),
     var searchList: MutableList<Store> = mutableListOf(),
 )
 
@@ -101,13 +103,49 @@ class StoreViewModel @Inject constructor(
                 _storeMapUiState.update { state ->
                     state.copy(
                         loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
-                        originList = storeList.sortedBy { it.id }.toMutableList(),
-//                        storeList = storeList.sortedByDescending { it.id }.toMutableList(),
+                        originList = storeList.toMutableList(),
                         storeList = list,
                         boundBuilder = boundBuilder
                     )
                 }
             }
+        }
+    }
+
+    /**
+     * 점수 필터 클릭시
+     */
+    fun filterScoreByMap(score: Float) {
+        _storeMapUiState.update { state ->
+            val list = state.originList.filter { it.score == score }.sortedByDescending { it.storeState.isOperation() }
+            val boundBuilder = LatLngBounds.builder()
+            list.forEach { store ->
+                val point = LatLng(store.latitude, store.longitude)
+                boundBuilder.include(point)
+            }
+            state.copy(
+                storeList = list.toMutableList(),
+                boundBuilder = boundBuilder
+            )
+        }
+    }
+
+
+    /**
+     * 검색 필터 초기화시
+     */
+    fun resetByMap() {
+        _storeMapUiState.update { state ->
+            val list = state.originList
+            val boundBuilder = LatLngBounds.builder()
+            list.forEach { store ->
+                val point = LatLng(store.latitude, store.longitude)
+                boundBuilder.include(point)
+            }
+            state.copy(
+                storeList = list.toMutableList(),
+                boundBuilder = boundBuilder
+            )
         }
     }
 
@@ -151,7 +189,7 @@ class StoreViewModel @Inject constructor(
         }
     }
 
-    fun addAllStore() {
+    fun requestStoreByStoreList() {
         viewModelScope.launch {
             storeUseCase.invoke().collect { storeList ->
                 _storeListUiState.update { state ->
@@ -170,19 +208,36 @@ class StoreViewModel @Inject constructor(
         }
     }
 
+
+    fun requestStoreBySearchList() {
+        viewModelScope.launch {
+            storeUseCase.invoke().collect { storeList ->
+                _storeSearchUiState.update { state ->
+                    val list = storeList.sortedBy { it.id }.filter { it.storeState.isOperation() }.toMutableList()
+                    state.copy(
+                        originList = list
+                    )
+                }
+            }
+        }
+    }
+
     fun searchByKeyword(keyword: String, storeList: MutableList<Store>) {
         val searchList = storeList.filter { it.fullName.contains(keyword, ignoreCase = true) }
+        searchList.forEach { store ->
+            store.startIndex = store.fullName.indexOf(keyword)
+        }
         _storeSearchUiState.update { state ->
             state.copy(
-                searchList = searchList.toMutableList(),
+                searchList = searchList.sortedBy { it.startIndex }.toMutableList(),
             )
         }
     }
 
-    fun searchByReset(storeList: MutableList<Store>) {
+    fun searchByReset() {
         _storeSearchUiState.update { state ->
             state.copy(
-                searchList = storeList.sortedBy { it.name }.toMutableList()
+                searchList = emptyList<Store>().toMutableList()
             )
         }
     }
@@ -241,8 +296,13 @@ class StoreViewModel @Inject constructor(
                     filterMenu = state.visitCountGroup.keys.first()
                     filterVisitCount(filterMenu)
                     state.visitCountGroup
+                } SortMenu.DISTANCE -> {
+                    filterMenu = ""
+                    filterReset()
+                    linkedMapOf()
                 } else -> {
                     filterMenu = ""
+                    filterReset()
                     linkedMapOf()
                 }
             }
@@ -250,6 +310,31 @@ class StoreViewModel @Inject constructor(
             state.copy(
                 filterGroup = filterGroup,
                 selectedFilterMenu = filterMenu
+            )
+        }
+    }
+
+    fun calculateList(latitude: Double, longitude: Double) {
+        _storeListUiState.update { state ->
+            state.storeList.forEach { item ->
+//                item.distance = MathUtils.calculateDistance(
+//                    lat1 = latitude,
+//                    lon1 = longitude,
+//                    lat2 = item.latitude,
+//                    lon2 = item.longitude
+//                )
+
+                item.distance = MathUtils.distanceBetween(
+                    lat1 = latitude,
+                    lon1 = longitude,
+                    lat2 = item.latitude,
+                    lon2 = item.longitude
+                )
+            }
+            state.copy(
+                displayList = state.storeList.sortedBy { it.distance }.sortedByDescending { it.storeState.isOperation() }.toMutableList(),
+                filterGroup = linkedMapOf(),
+                selectedFilterMenu = ""
             )
         }
     }
