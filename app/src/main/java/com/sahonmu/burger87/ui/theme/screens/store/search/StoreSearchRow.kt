@@ -2,19 +2,16 @@
 
 package com.sahonmu.burger87.ui.theme.screens.store.search
 
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -30,9 +27,7 @@ import com.sahonmu.burger87.common.DataManager
 import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.screens.map.ScoreBox
-import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.vo.store.Store
-import timber.log.Timber
 
 
 @Preview(showBackground = true)
@@ -53,11 +48,10 @@ fun StoreSearchRow(
     modifier: Modifier = Modifier,
     store: Store,
     keyword: String,
-    onClick: () -> Unit = { }
 ) {
 
     ConstraintLayout(
-        modifier = modifier.clickable { onClick() }
+        modifier = modifier.padding(horizontal = 10.dp)
     ) {
         val (image, name, score) = createRefs()
 

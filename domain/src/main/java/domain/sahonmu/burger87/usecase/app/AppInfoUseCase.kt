@@ -11,4 +11,5 @@ class AppInfoUseCase @Inject constructor(
     private val repository: AppInfoRepository
 ) {
     operator fun invoke(): Flow<List<AppInfo>> = repository.appInfo()
+    operator fun invoke(os: String): Flow<List<AppInfo>> = repository.appInfo(os)
 }

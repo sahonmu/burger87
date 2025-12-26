@@ -22,7 +22,6 @@ import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import domain.sahonmu.burger87.vo.announcement.Announcement
-import kotlin.Long
 
 @Preview(showBackground = true)
 @Composable
@@ -36,6 +35,7 @@ fun AnnouncementPreviewDetailBox() {
             contents = "버거왕이 새롭게 리뉴얼됐습니다",
             image = null,
             storeId = null,
+            isHeader = false,
         )
     )
 }
@@ -57,7 +57,7 @@ fun AnnouncementDetailBox(
             Text(
                 text = announcement.title,
                 color = Gray_900,
-                fontSize = 17.5.sp
+                fontSize = 15.sp
             )
 
             HeightMargin(10.dp)
@@ -68,7 +68,7 @@ fun AnnouncementDetailBox(
                 Text(
                     text = announcement.createdAt.toYearMonthDay(),
                     color = Gray_600,
-                    fontSize = 14.sp
+                    fontSize = 13.sp
                 )
             }
             HeightMargin(10.dp)
@@ -77,11 +77,11 @@ fun AnnouncementDetailBox(
 
         announcement.image?.let {
             GlideImage(
-                modifier = Modifier.fillMaxWidth().height(300.dp),
+                modifier = Modifier.fillMaxWidth(),
                 model = it,
                 contentDescription = null
             ) {
-                it.centerCrop()
+                it.centerInside()
             }
         }
 

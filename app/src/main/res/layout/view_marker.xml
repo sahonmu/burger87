@@ -9,15 +9,15 @@
 
     <FrameLayout
         android:id="@+id/operationLayout"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_gravity="center"
         android:background="@drawable/background_marker"
         android:visibility="visible">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_gravity="center"
             android:layout_marginBottom="1dp"
             android:src="@drawable/ic_burger" />
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|end"
                 android:textColor="#FFC107"
-                android:textSize="8dp"
+                android:textSize="7dp"
                 android:textStyle="bold" />
 
         </FrameLayout>
@@ -47,15 +47,15 @@
 
     <FrameLayout
         android:id="@+id/closedLayout"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_gravity="center"
         android:background="@drawable/background_marker"
         android:visibility="gone">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_gravity="center"
             android:layout_marginBottom="1dp"
             android:src="@drawable/ic_burger"
@@ -68,7 +68,7 @@
             android:layout_gravity="center"
             android:text="폐업"
             android:textColor="#B52427"
-            android:textSize="11dp"
+            android:textSize="10dp"
             android:textStyle="bold" />
 
     </FrameLayout>

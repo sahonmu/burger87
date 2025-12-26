@@ -4,6 +4,7 @@ import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.util.Base64
 import com.google.gson.Gson
 import domain.sahonmu.burger87.vo.announcement.Announcement
+import domain.sahonmu.burger87.vo.event.Event
 import domain.sahonmu.burger87.vo.store.Store
 
 
@@ -24,10 +25,14 @@ fun String.decode(): Any {
 
 
 fun String.decodeAnnouncement(): Any {
-//    val decodedJson = URLDecoder.decode(this, "UTF-8")
-//    return Gson().fromJson(decodedJson, Store::class.java)
     val json = String(Base64.decode(this, Base64.URL_SAFE or Base64.NO_WRAP))
     return Gson().fromJson(json, Announcement::class.java)
+}
+
+
+fun String.decodeEvent(): Any {
+    val json = String(Base64.decode(this, Base64.URL_SAFE or Base64.NO_WRAP))
+    return Gson().fromJson(json, Event::class.java)
 }
 
 

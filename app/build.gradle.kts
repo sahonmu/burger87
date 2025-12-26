@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,11 +8,14 @@ plugins {
 
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
-    id("com.google.android.gms.oss-licenses-plugin")
-//    kotlin("plugin.serialization")
     kotlin("kapt")
+}
 
-//    alias(libs.plugins.secrets.gradle.plugin)
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 
@@ -23,14 +29,30 @@ android {
         applicationId = "com.sahonmu.burger87"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 4
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+//        create("release") {
+//            storeFile = file(keystoreProperties["storeFile"] as String)
+//            storePassword = keystoreProperties["storePassword"] as String
+//            keyAlias = keystoreProperties["keyAlias"] as String
+//            keyPassword = keystoreProperties["keyPassword"] as String
+//        }//
+        create("release") {
+            storeFile = file("/Users/jjh/Documents/project/burgerMap/sahonmu.jks")
+            storePassword = "wngus9224!@"
+            keyAlias = "sahonmu"
+            keyPassword = "wngus9224!@"
+        }
+    }
+
     buildTypes {
-        release {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -38,6 +60,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -59,7 +82,7 @@ android {
 //            versionName = "1.0.0"
             manifestPlaceholders["appNameGradle"] = "@string/app_name"
             manifestPlaceholders["appLabel"] = "@string/app_name"
-            resValue("string", "google_maps_api_key", "AIzaSyDmcAQ5GqHyUR3zBH_sQgmeXTo3da8IV6o")
+            resValue("string", "google_maps_api_key", "AIzaSyB1jHrknrOeD7G49CCd4GY47Pu-qMnmyL4")
         }
 
         create("dev") {
@@ -73,10 +96,6 @@ android {
             resValue("string", "google_maps_api_key", "AIzaSyDmcAQ5GqHyUR3zBH_sQgmeXTo3da8IV6o")
         }
     }
-
-//    composeOptions {
-//        kotlinCompilerExtensionVersion = "1.5.3" // Match with Kotlin 1.9.20
-//    }
 
 }
 
@@ -128,7 +147,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
-//    implementation("com.google.firebase:firebase-analytics-ktx:21.3.0")
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
@@ -145,20 +163,5 @@ dependencies {
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 
     implementation("com.google.code.gson:gson:2.10.1")
-
-    implementation("com.google.android.gms:play-services-oss-licenses:17.1.0")
-
-    // Supabase
-//    implementation(platform("io.github.jan-tennert.supabase:bom:3.2.6"))
-//    implementation("io.github.jan-tennert.supabase:auth-kt")
-//    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-//    implementation("io.github.jan-tennert.supabase:storage-kt")
-
-//    implementation("io.github.jan-tennert.supabase:supabase-kt-client")
-//    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-
-//    implementation("io.ktor:ktor-client-android:3.3.2")
-//    implementation("io.ktor:ktor-utils:3.3.2")
-//    implementation("io.ktor:ktor-client-core:3.3.2")
 
 }

@@ -12,7 +12,8 @@ import javax.inject.Singleton
 class StoreUseCase @Inject constructor(
     private val repository: StoreRepository
 ) {
-    operator fun invoke(): Flow<List<Store>> = repository.getStore()
+    operator fun invoke(): Flow<List<Store>> = repository.getStoreList()
     operator fun invoke(id: Long): Flow<List<StoreImage>> = repository.getStoreImageList(id)
-    fun getStoreMenu(id: Long): Flow<List<StoreMenu>> = repository.getStoreMenuList(id)
+    fun storeMenuList(id: Long): Flow<List<StoreMenu>> = repository.getStoreMenuList(id)
+    fun storeDetail(id: Long): Flow<Store> = repository.getStoreDetail(id)
 }

@@ -19,7 +19,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -140,14 +139,25 @@ fun StoreDetailScreen(
 
             stickyHeader {
                 StoreDetailInfoBox(
-                    modifier = Modifier.fillMaxWidth().background(White),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(White),
                     store = store,
-                    onInstagram = { IntentUtils.startActivityForInstagram(context, store.instagram) },
+                    onInstagram = {
+                        IntentUtils.startActivityForInstagram(
+                            context,
+                            store.instagram
+                        )
+                    },
                     onCall = { IntentUtils.startActivityForDialog(context, store.tel) },
                     onShare = {
-                        val name = if(store.branch.isEmpty()) store.name else "${store.name}(${store.branch})"
+                        val name =
+                            if (store.branch.isEmpty()) store.name else "${store.name}(${store.branch})"
                         val instagram = store.instagram.ifEmpty { "" }
-                        IntentUtils.startActivityForShare(context, "${name}\n${store.address}\n${store.tel}\n${instagram}")
+                        IntentUtils.startActivityForShare(
+                            context,
+                            "${name}\n${store.address}\n${store.tel}\n${instagram}"
+                        )
                     }
                 )
 
@@ -159,7 +169,8 @@ fun StoreDetailScreen(
                 StoreDetailTab(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp).background(White),
+                        .height(56.dp)
+                        .background(White),
                     selectedTab = storeDetailUiState.selectedTab.value
                 ) { tab ->
                     storeDetailUiState.selectedTab.value = tab
@@ -190,7 +201,6 @@ fun StoreDetailScreen(
                 }
             }
         }
-
     }
 
     if (showAlert) {

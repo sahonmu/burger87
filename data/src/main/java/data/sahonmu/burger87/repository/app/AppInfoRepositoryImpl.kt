@@ -14,4 +14,12 @@ class AppInfoRepositoryImpl(
         val response = postgrest["app_info"].select().decodeList<AppInfoDto>()
         emit(response.map { it.toDomain() })
     }
+
+    override fun appInfo(os: String) = flow {
+        val response =
+            postgrest["app_info"].select { filter { eq("os", os) } }.decodeList<AppInfoDto>()
+        emit(response.map { it.toDomain() })
+    }
+
+
 }

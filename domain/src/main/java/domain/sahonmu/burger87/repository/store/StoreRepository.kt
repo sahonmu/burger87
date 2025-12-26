@@ -9,7 +9,9 @@ interface StoreRepository {
     suspend fun createProduct(storeEntity: Store): Boolean
     suspend fun updateProduct(storeEntity: Store): Boolean
     suspend fun deleteProduct(id: String): Boolean
-    fun getStore(): Flow<List<Store>>
+    fun getStoreList(): Flow<List<Store>>
+
+    fun getStoreDetail(id: Long): Flow<Store>
     fun getStoreImageList(id: Long): Flow<List<StoreImage>>
     fun getStoreMenuList(id: Long): Flow<List<StoreMenu>>
 }

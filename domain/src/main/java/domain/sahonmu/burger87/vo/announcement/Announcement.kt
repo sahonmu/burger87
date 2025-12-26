@@ -6,5 +6,6 @@ data class Announcement(
     val title: String,
     val contents: String,
     val image: String?,
-    val storeId: Int?,
+    val storeId: Long?,
+    val isHeader: Boolean
 )

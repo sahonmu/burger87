@@ -5,19 +5,15 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,8 +34,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.sahonmu.burger87.R
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.sahonmu.burger87.common.Constants
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
@@ -49,10 +47,13 @@ import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
-import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
+import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
+import com.sahonmu.burger87.utils.bitmap.BitmapUtils
+import com.sahonmu.burger87.viewmodels.MainViewModel
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.enums.isOperation
+import timber.log.Timber
 
 @Preview
 @Composable
@@ -70,6 +71,8 @@ fun MapScreen(
     val scope = uiState.scope
     val context = uiState.context
 
+    val mainViewModel = composableActivityViewModel<MainViewModel>()
+
     val mapViewModel: MapViewModel = viewModel()
     val storeMapUiState = storeViewModel.storeMapUiState.collectAsState().value
 
@@ -86,18 +89,32 @@ fun MapScreen(
     )
 
     var googleMap by remember { mutableStateOf<GoogleMap?>(null) }
+    var selectedMarker by remember { mutableStateOf<Marker?>(null) }
 
     LaunchedEffect(Unit) {
         storeViewModel.requestStoreList()
     }
 
+    LaunchedEffect(storeMapUiState.storeList) {
+        mainViewModel.clone(storeMapUiState.storeList)
+    }
+
     LaunchedEffect(pagerState, storeMapUiState.storeList) {
         snapshotFlow { pagerState.currentPage }.collect { position ->
             storeMapUiState.selectedIndex.value = position
-            googleMap?.let {
+            googleMap?.let { map ->
                 val store = storeMapUiState.storeList[position]
+                storeMapUiState.selectedStore.value = store
                 val latLng = LatLng(store.latitude, store.longitude)
-                it.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
+                selectedMarker?.remove()
+                val view = selectedMarker(context, store)
+                val markerOption = MarkerOptions()
+                    .position(latLng)
+                    .anchor(0.5f, 0.5f)
+                    .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
+                    .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
+                selectedMarker = map.addMarker(markerOption)
+                map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
             }
         }
     }
@@ -114,12 +131,7 @@ fun MapScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            if (storeMapUiState.loadState == LoadState.LOADING) {
-                Text(
-                    text = "로딩중"
-                )
-            } else {
-
+            if (storeMapUiState.loadState == LoadState.FINISHED) {
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -134,13 +146,61 @@ fun MapScreen(
                                 animate = false,
                                 page = storeMapUiState.selectedIndex.value
                             )
+
+                            googleMap?.let { map ->
+                                selectedMarker?.remove()
+                                val latLng = LatLng(store.latitude, store.longitude)
+                                map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+                                val view = selectedMarker(context, store)
+                                val markerOption = MarkerOptions()
+                                    .position(latLng)
+                                    .anchor(0.5f, 0.5f)
+                                    .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
+                                    .icon(
+                                        BitmapDescriptorFactory.fromBitmap(
+                                            BitmapUtils.viewToBitmap(
+                                                view.rootView
+                                            )
+                                        )
+                                    )
+                                selectedMarker = map.addMarker(markerOption)
+                                storeMapUiState.selectedStore.value = store
+                            }
                             isCardVisible = true
                         },
                         onMapClick = {
                             isCardVisible = false
+                            selectedMarker?.remove()
+                            Timber.i("마커 삭제 맵클릭")
+                        },
+                        onEmptyCameraPosition = { store ->
+                            val latLng = LatLng(store.latitude, store.longitude)
+                            googleMap?.let { map ->
+                                selectedMarker?.remove()
+                                val view = selectedMarker(context, store)
+                                val markerOption = MarkerOptions()
+                                    .position(latLng)
+                                    .anchor(0.5f, 0.5f)
+                                    .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
+                                    .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
+                                selectedMarker = map.addMarker(markerOption)
+                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
+                                storeMapUiState.selectedStore.value = store
+                            }
                         },
                         onGoogleMap = {
                             googleMap = it
+                            storeMapUiState.selectedStore.value?.let { store ->
+                                val latLng = LatLng(store.latitude, store.longitude)
+                                selectedMarker?.remove()
+                                val view = selectedMarker(context, store)
+                                val markerOption = MarkerOptions()
+                                    .position(latLng)
+                                    .anchor(0.5f, 0.5f)
+                                    .zIndex(Constants.MarKerZIndex.SELECTED_STORE_MARKER)
+                                    .icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.viewToBitmap(view.rootView)))
+                                selectedMarker = it.addMarker(markerOption)
+                            }
                         }
                     )
 
@@ -176,14 +236,15 @@ fun MapScreen(
                     ) {
                         MapFloatingButtonBox(
                             modifier = Modifier,
-                            onMenu = { navController.navigate(Screens.INFO.route) },
+                            onMenu = { navController.navigate(Screens.MENU.route) },
                             onSearch = {
-                                val encode = storeMapUiState.storeList.filter { it.storeState.isOperation() }.encode()
+                                val encode =
+                                    storeMapUiState.storeList.filter { it.storeState.isOperation() }
+                                        .encode()
                                 navController.navigate("${Screens.STORE_SEARCH}/${encode}")
                             },
                             onStoreList = {
-                                val encode = storeMapUiState.storeList.encode()
-                                navController.navigate("${Screens.STORE_LIST}/${encode}")
+                                navController.navigate(Screens.STORE_LIST.route)
                             }
                         )
                     }

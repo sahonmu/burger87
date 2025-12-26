@@ -6,10 +6,12 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import data.sahonmu.burger87.repository.announcement.AnnouncementRepositoryImpl
 import data.sahonmu.burger87.repository.app.AppInfoRepositoryImpl
+import data.sahonmu.burger87.repository.event.EventRepositoryImpl
 import data.sahonmu.burger87.repository.score.ScoreInfoRepositoryImpl
 import data.sahonmu.burger87.repository.store.StoreRepositoryImpl
 import domain.sahonmu.burger87.repository.announcement.AnnouncementRepository
 import domain.sahonmu.burger87.repository.app.AppInfoRepository
+import domain.sahonmu.burger87.repository.event.EventRepository
 import domain.sahonmu.burger87.repository.score.ScoreInfoRepository
 import domain.sahonmu.burger87.repository.store.StoreRepository
 import io.github.jan.supabase.postgrest.Postgrest
@@ -45,5 +47,11 @@ object RepositoryModule {
     fun provideAnnouncementRepository(
         postgrest: Postgrest
     ): AnnouncementRepository = AnnouncementRepositoryImpl(postgrest)
+
+    @Provides
+    @Singleton
+    fun provideEventRepository(
+        postgrest: Postgrest
+    ): EventRepository = EventRepositoryImpl(postgrest)
 
 }
