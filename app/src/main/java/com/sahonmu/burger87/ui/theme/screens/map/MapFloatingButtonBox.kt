@@ -26,6 +26,7 @@ fun MapFloatingButtonBox(
     onMenu: () -> Unit = { },
     onStoreList: () -> Unit = { },
     onSearch: () -> Unit = { },
+    onCluster: () -> Unit = { }
 ) {
 
     val size = 44.dp
@@ -56,6 +57,14 @@ fun MapFloatingButtonBox(
             imageSize = 17.dp,
             color = White,
             onClick = { onStoreList() }
+        )
+
+        RoundButton(
+            modifier = Modifier.size(size),
+            painter = painterResource(id = R.drawable.ic_cluster),
+            imageSize = 20.dp,
+            color = White,
+            onClick = { onCluster() }
         )
     }
 

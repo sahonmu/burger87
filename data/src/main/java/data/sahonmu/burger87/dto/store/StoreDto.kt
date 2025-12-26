@@ -25,6 +25,7 @@ data class StoreDto(
     @SerialName("city_filter")val cityFilter: String,
     @SerialName("visit_count")val visitCount: Int,
     @SerialName("last_visit_date")val lastVisitDate: String,
+    @SerialName("region_type")val regionType: String,
 
 
 )

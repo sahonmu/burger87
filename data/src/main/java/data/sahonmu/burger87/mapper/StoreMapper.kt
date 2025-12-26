@@ -27,6 +27,7 @@ fun StoreDto.toDomain(): Store = Store(
     cityFilter = this.cityFilter,
     visitCount = this.visitCount,
     lastVisitDate = this.lastVisitDate,
+    regionType = this.regionType,
 )
 fun StoreImageDto.toDomain(): StoreImage = StoreImage(
     id = this.id,

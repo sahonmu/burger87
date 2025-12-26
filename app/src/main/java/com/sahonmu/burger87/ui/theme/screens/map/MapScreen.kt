@@ -1,7 +1,5 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
@@ -39,19 +37,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.common.Constants
 import com.sahonmu.burger87.enums.LoadState
@@ -71,14 +63,12 @@ import com.sahonmu.burger87.ui.theme.screens.components.Margin
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
-import com.sahonmu.burger87.utils.IntentUtils
 import com.sahonmu.burger87.utils.bitmap.BitmapUtils
 import com.sahonmu.burger87.viewmodels.MainViewModel
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import com.sahonmu.burger87.viewmodels.base.LocationViewModel
 import domain.sahonmu.burger87.enums.isOperation
-import domain.sahonmu.burger87.vo.store.Store
 import timber.log.Timber
 
 @Preview
@@ -150,14 +140,6 @@ fun MapScreen(
             }
         }
     }
-
-//    LaunchedEffect(locationUiState.myLocationMarkerOption.position) {
-//        if(!locationViewModel.isEmptyLocation()) {
-//            val position = locationUiState.myLocationMarkerOption.position
-//            Timber.i("위치정보 = ${position.latitude},${position.longitude}")
-//            googleMap?.animateCamera(CameraUpdateFactory.newLatLng(position))
-//        }
-//    }
 
     Box(
         modifier = Modifier
@@ -269,7 +251,7 @@ fun MapScreen(
                                                     },
                                                     onFail = {
                                                         showAlertMessage = "위치획득에 실패했습니다."
-                                                        showAlert = false
+                                                        showAlert = true
                                                     }
                                                 )
                                             } else {
@@ -320,8 +302,19 @@ fun MapScreen(
                                         .encode()
                                 navController.navigate("${Screens.STORE_SEARCH}/${encode}")
                             },
-                            onStoreList = {
-                                navController.navigate(Screens.STORE_LIST.route)
+                            onStoreList = { navController.navigate(Screens.STORE_LIST.route) },
+                            onCluster = {
+                                val boundBuilder = LatLngBounds.builder()
+                                storeMapUiState.storeList.filter { it.isDomestic() }.forEach { store ->
+                                    val point = LatLng(store.latitude, store.longitude)
+                                    boundBuilder.include(point)
+                                }
+                                googleMap?.animateCamera(
+                                    CameraUpdateFactory.newLatLngBounds(
+                                        boundBuilder.build(),
+                                        100,
+                                    )
+                                )
                             }
                         )
                     }
@@ -370,7 +363,7 @@ fun MapScreen(
                     },
                     onFail = {
                         showAlertMessage = "위치획득에 실패했습니다."
-                        showAlert = false
+                        showAlert = true
                     }
                 )
             },
