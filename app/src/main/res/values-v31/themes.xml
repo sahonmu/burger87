@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Burger87" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Burger87" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:windowSplashScreenAnimatedIcon">@mipmap/icon</item>
         <item name="android:windowSplashScreenBackground">@color/base</item>
     </style>

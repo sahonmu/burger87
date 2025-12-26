@@ -21,15 +21,21 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +51,7 @@ import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.Gray_400
 import com.sahonmu.burger87.ui.theme.Gray_50
+import com.sahonmu.burger87.ui.theme.Gray_600
 import com.sahonmu.burger87.ui.theme.Gray_900
 import com.sahonmu.burger87.ui.theme.White
 import domain.sahonmu.burger87.vo.announcement.Announcement
@@ -246,6 +253,14 @@ fun SearchTitle(
 
     var keyword by rememberSaveable { mutableStateOf("") }
 
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -283,6 +298,7 @@ fun SearchTitle(
 
                 BasicTextField(
                     modifier = Modifier
+                        .focusRequester(focusRequester = focusRequester)
                         .fillMaxWidth()
                         .padding(vertical = 1.5.dp, horizontal = 13.dp)
                         .constrainAs(left) {
@@ -299,7 +315,20 @@ fun SearchTitle(
                     },
                     singleLine = true,
                     decorationBox = { innerTextField ->
-                        innerTextField()
+                        Box(
+                            modifier = Modifier
+                                .height(56.dp),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            if (keyword.isEmpty()) {
+                                Text(
+                                    text = "키워드를 입력하세요.",
+                                    color = Gray_400,
+                                    fontSize = 16.sp
+                                )
+                            }
+                            innerTextField()
+                        }
                     }
                 )
 

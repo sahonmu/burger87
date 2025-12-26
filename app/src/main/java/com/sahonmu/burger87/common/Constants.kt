@@ -12,5 +12,10 @@ object Constants {
         val STORE_CLOSED = 1f
         val STORE_OPRERATION = 2f
         val SELECTED_STORE_MARKER = 3f
+
+        val MY_LOCATION = 4f
     }
+
+    const val HEADER_TEXT = "검색"
+    const val CLOSED_STORE = "폐업된 점포입니다."
 }

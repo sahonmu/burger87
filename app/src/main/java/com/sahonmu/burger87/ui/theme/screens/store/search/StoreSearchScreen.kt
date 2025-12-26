@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.sahonmu.burger87.ui.theme.screens.store.search
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -12,31 +10,35 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.sahonmu.burger87.common.Constants
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
+import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.SearchTitle
 import com.sahonmu.burger87.viewmodels.StoreViewModel
-import domain.sahonmu.burger87.vo.store.Store
+import domain.sahonmu.burger87.enums.isOperation
 
 
 @Preview
@@ -44,7 +46,6 @@ import domain.sahonmu.burger87.vo.store.Store
 fun StoreSearchScreenPreview() {
     StoreSearchScreen(
         navController = rememberNavController(),
-        storeList = mutableListOf()
     )
 }
 
@@ -52,11 +53,9 @@ fun StoreSearchScreenPreview() {
 @Composable
 fun StoreSearchScreen(
     navController: NavHostController,
-    storeList: MutableList<Store>,
 ) {
 
     val uiState = rememberUiState()
-    val scope = uiState.scope
 
     val storeViewModel: StoreViewModel = hiltViewModel()
     val storeSearchUiState = storeViewModel.storeSearchUiState.collectAsState().value
@@ -65,12 +64,21 @@ fun StoreSearchScreen(
     var isLaunched by rememberSaveable { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
+    var showAlert by rememberSaveable { mutableStateOf(false) }
+    var showAlertMessage by rememberSaveable { mutableStateOf("") }
+
+    val focusRequester = remember { FocusRequester() }
+
     LaunchedEffect(Unit) {
-        if (!isLaunched) {
+        storeViewModel.requestStoreBySearchList()
+    }
+
+    LaunchedEffect(Unit) {
+//        if (!isLaunched) {
             uiState.keyboardController?.show()
-            storeViewModel.searchByReset(storeList = storeList)
-            isLaunched = true
-        }
+//            storeViewModel.searchByReset(storeList = storeSearchUiState.originList)
+//            isLaunched = true
+//        }
     }
 
     LaunchedEffect(listState) {
@@ -96,9 +104,12 @@ fun StoreSearchScreen(
             onKeyword = { keyword ->
                 input = keyword
                 if (keyword.isNotEmpty()) {
-                    storeViewModel.searchByKeyword(keyword = keyword, storeList = storeList)
+                    storeViewModel.searchByKeyword(
+                        keyword = keyword,
+                        storeList = storeSearchUiState.originList
+                    )
                 } else {
-                    storeViewModel.searchByReset(storeList = storeList)
+                    storeViewModel.searchByReset()
                 }
             }
         )
@@ -118,21 +129,35 @@ fun StoreSearchScreen(
         }
 
         LazyColumn(
+            state = listState,
             modifier = Modifier.fillMaxSize()
         ) {
-            itemsIndexed(storeSearchUiState.searchList) { index, item ->
+            items(storeSearchUiState.searchList) { item ->
                 StoreSearchRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(44.dp)
-                        .clickable { navController.navigate("${Screens.STORE_DETAIL}/${item.encode()}") },
+                        .clickable {
+                            if(item.storeState.isOperation()) {
+                                navController.navigate("${Screens.STORE_DETAIL}/${item.encode()}")
+                            } else {
+                                showAlertMessage = Constants.CLOSED_STORE
+                                showAlert = true
+                            }
+
+                        },
                     store = item,
                     keyword = input,
                 )
-                if (index != storeList.lastIndex) {
-                    Line(height = 1.dp, Gray_200)
-                }
+                Line(height = 1.dp, Gray_200)
             }
         }
+    }
+
+    if (showAlert) {
+        Alert(
+            message = showAlertMessage,
+            onDismissRequest = { showAlert = false }
+        )
     }
 }

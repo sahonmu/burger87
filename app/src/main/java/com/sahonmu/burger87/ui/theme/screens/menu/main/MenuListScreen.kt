@@ -51,7 +51,7 @@ fun MenuListScreen(
             .navigationBarsPadding()
     ) {
         Title(
-            title = "정보",
+            title = "메뉴",
             onBack = { navController.popBackStack() }
         )
 

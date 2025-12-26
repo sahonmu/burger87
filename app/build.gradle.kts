@@ -29,8 +29,8 @@ android {
         applicationId = "com.sahonmu.burger87"
         minSdk = 24
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.0.0"
+        versionCode = 5
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -117,6 +117,7 @@ dependencies {
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.databinding.runtime)
+    implementation(libs.androidx.games.activity)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
