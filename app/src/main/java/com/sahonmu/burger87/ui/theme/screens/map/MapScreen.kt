@@ -294,7 +294,7 @@ fun MapScreen(
                                     if (store.storeState.isOperation()) {
                                         navController.navigate("${Screens.STORE_DETAIL}/${store.encode()}")
                                     } else {
-                                        showAlertMessage = "폐업된 점포입니다."
+                                        showAlertMessage = Constants.CLOSED_STORE
                                         showAlert = true
                                     }
                                 }
@@ -307,12 +307,7 @@ fun MapScreen(
                         storeMapUiState = storeMapUiState,
                         headerText = headerText,
                         onMenu = { navController.navigate(Screens.MENU.route) },
-                        onSearch = {
-                            val encode =
-                                storeMapUiState.storeList.filter { it.storeState.isOperation() }
-                                    .encode()
-                            navController.navigate("${Screens.STORE_SEARCH}/${encode}")
-                        },
+                        onSearch = { navController.navigate(Screens.STORE_SEARCH.route) },
                         onStoreList = { navController.navigate(Screens.STORE_LIST.route) },
                         onCluster = {
                             val boundBuilder = LatLngBounds.builder()

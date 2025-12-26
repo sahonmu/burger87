@@ -31,10 +31,6 @@ data class Store(
     var isMatch = startIndex + endIndex != 0
     var distance = 0.0
 
-    fun isKeywordMatch(startIndex: Int, endIndex: Int): Boolean {
-        return startIndex + endIndex != 0
-    }
-
     fun isKeywordMatch(): Boolean {
         return startIndex + endIndex != 0
     }

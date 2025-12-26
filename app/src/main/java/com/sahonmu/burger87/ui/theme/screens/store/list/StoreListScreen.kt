@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,7 @@ import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import com.sahonmu.burger87.viewmodels.base.LocationViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @Preview
@@ -74,7 +76,6 @@ fun StoreListScreen(
     LaunchedEffect(Unit) {
         storeViewModel.requestStoreByStoreList()
     }
-
 
     Column(
         modifier = Modifier

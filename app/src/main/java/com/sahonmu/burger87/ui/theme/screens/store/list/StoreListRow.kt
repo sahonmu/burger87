@@ -36,6 +36,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.sahonmu.burger87.R
+import com.sahonmu.burger87.common.Constants
 import com.sahonmu.burger87.common.DataManager
 import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.Score
@@ -74,7 +75,7 @@ fun StoreListRow(
 
     if (showAlert) {
         Alert(
-            message = "폐업된 점포입니다.",
+            message = Constants.CLOSED_STORE,
             onDismissRequest = { showAlert = false }
         )
     }

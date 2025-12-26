@@ -64,6 +64,7 @@ data class StoreSortListUiState(
 
 data class StoreSearchUiState(
     var includeClosed: Boolean = true,
+    var originList: MutableList<Store> = mutableListOf(),
     var searchList: MutableList<Store> = mutableListOf(),
 )
 
@@ -207,19 +208,36 @@ class StoreViewModel @Inject constructor(
         }
     }
 
+
+    fun requestStoreBySearchList() {
+        viewModelScope.launch {
+            storeUseCase.invoke().collect { storeList ->
+                _storeSearchUiState.update { state ->
+                    val list = storeList.sortedBy { it.id }.filter { it.storeState.isOperation() }.toMutableList()
+                    state.copy(
+                        originList = list
+                    )
+                }
+            }
+        }
+    }
+
     fun searchByKeyword(keyword: String, storeList: MutableList<Store>) {
         val searchList = storeList.filter { it.fullName.contains(keyword, ignoreCase = true) }
+        searchList.forEach { store ->
+            store.startIndex = store.fullName.indexOf(keyword)
+        }
         _storeSearchUiState.update { state ->
             state.copy(
-                searchList = searchList.toMutableList(),
+                searchList = searchList.sortedBy { it.startIndex }.toMutableList(),
             )
         }
     }
 
-    fun searchByReset(storeList: MutableList<Store>) {
+    fun searchByReset() {
         _storeSearchUiState.update { state ->
             state.copy(
-                searchList = storeList.sortedBy { it.name }.toMutableList()
+                searchList = emptyList<Store>().toMutableList()
             )
         }
     }

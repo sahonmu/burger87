@@ -17,4 +17,5 @@ object Constants {
     }
 
     const val HEADER_TEXT = "검색"
+    const val CLOSED_STORE = "폐업된 점포입니다."
 }
