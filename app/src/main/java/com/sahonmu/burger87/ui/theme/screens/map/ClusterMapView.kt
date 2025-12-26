@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -137,6 +138,16 @@ fun ClusterMapView(
             }
         }
     )
+
+    LaunchedEffect(storeMapUiState.storeList) {
+        if(clusterManager != null) {
+            clusterManager?.clearItems()
+            storeMapUiState.storeList.forEach { store ->
+                clusterManager?.addItem(StoreClusterItem(store))
+            }
+            clusterManager?.cluster()
+        }
+    }
 }
 
 @Composable

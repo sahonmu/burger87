@@ -15,4 +15,6 @@ object Constants {
 
         val MY_LOCATION = 4f
     }
+
+    const val HEADER_TEXT = "검색"
 }

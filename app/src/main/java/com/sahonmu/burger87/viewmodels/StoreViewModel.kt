@@ -102,13 +102,49 @@ class StoreViewModel @Inject constructor(
                 _storeMapUiState.update { state ->
                     state.copy(
                         loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
-                        originList = storeList.sortedBy { it.id }.toMutableList(),
-//                        storeList = storeList.sortedByDescending { it.id }.toMutableList(),
+                        originList = storeList.toMutableList(),
                         storeList = list,
                         boundBuilder = boundBuilder
                     )
                 }
             }
+        }
+    }
+
+    /**
+     * 점수 필터 클릭시
+     */
+    fun filterScoreByMap(score: Float) {
+        _storeMapUiState.update { state ->
+            val list = state.originList.filter { it.score == score }.sortedByDescending { it.storeState.isOperation() }
+            val boundBuilder = LatLngBounds.builder()
+            list.forEach { store ->
+                val point = LatLng(store.latitude, store.longitude)
+                boundBuilder.include(point)
+            }
+            state.copy(
+                storeList = list.toMutableList(),
+                boundBuilder = boundBuilder
+            )
+        }
+    }
+
+
+    /**
+     * 검색 필터 초기화시
+     */
+    fun resetByMap() {
+        _storeMapUiState.update { state ->
+            val list = state.originList
+            val boundBuilder = LatLngBounds.builder()
+            list.forEach { store ->
+                val point = LatLng(store.latitude, store.longitude)
+                boundBuilder.include(point)
+            }
+            state.copy(
+                storeList = list.toMutableList(),
+                boundBuilder = boundBuilder
+            )
         }
     }
 

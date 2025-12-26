@@ -87,7 +87,6 @@ fun MapScreen(
     val scope = uiState.scope
     val context = uiState.context
 
-    val mainViewModel = composableActivityViewModel<MainViewModel>()
     val locationViewModel = composableActivityViewModel<LocationViewModel>()
 
     val mapViewModel: MapViewModel = viewModel()
@@ -103,6 +102,7 @@ fun MapScreen(
     var trackingState by rememberSaveable { mutableStateOf(TrackingState.NONE) }
     var showAlert by rememberSaveable { mutableStateOf(false) }
     var showAlertMessage by rememberSaveable { mutableStateOf("") }
+    var headerText by rememberSaveable { mutableStateOf(Constants.HEADER_TEXT) }
     var isCardVisible by rememberSaveable { mutableStateOf(true) }
     val cardHeight = 125.dp
     val offsetY by animateDpAsState(
@@ -119,11 +119,9 @@ fun MapScreen(
     }
 
     LaunchedEffect(Unit) {
-        storeViewModel.requestStoreList()
-    }
-
-    LaunchedEffect(storeMapUiState.storeList) {
-        mainViewModel.clone(storeMapUiState.storeList)
+        if(storeMapUiState.originList.isEmpty()) {
+            storeViewModel.requestStoreList()
+        }
     }
 
     LaunchedEffect(pagerState, storeMapUiState.storeList) {
@@ -182,7 +180,6 @@ fun MapScreen(
                         onMapClick = {
                             isCardVisible = false
                             selectedMarker?.remove()
-                            Timber.i("마커 삭제 맵클릭")
                         },
                         onEmptyCameraPosition = { store ->
                             val latLng = LatLng(store.latitude, store.longitude)
@@ -305,36 +302,43 @@ fun MapScreen(
                         }
                     }
 
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(top = 20.dp, end = 20.dp),
-                    ) {
-                        MapFloatingButtonBox(
-                            modifier = Modifier,
-                            onMenu = { navController.navigate(Screens.MENU.route) },
-                            onSearch = {
-                                val encode =
-                                    storeMapUiState.storeList.filter { it.storeState.isOperation() }
-                                        .encode()
-                                navController.navigate("${Screens.STORE_SEARCH}/${encode}")
-                            },
-                            onStoreList = { navController.navigate(Screens.STORE_LIST.route) },
-                            onCluster = {
-                                val boundBuilder = LatLngBounds.builder()
-                                storeMapUiState.storeList.filter { it.isDomestic() }.forEach { store ->
+                    MapFloatingButtonBox(
+                        modifier = Modifier.fillMaxWidth(),
+                        storeMapUiState = storeMapUiState,
+                        headerText = headerText,
+                        onMenu = { navController.navigate(Screens.MENU.route) },
+                        onSearch = {
+                            val encode =
+                                storeMapUiState.storeList.filter { it.storeState.isOperation() }
+                                    .encode()
+                            navController.navigate("${Screens.STORE_SEARCH}/${encode}")
+                        },
+                        onStoreList = { navController.navigate(Screens.STORE_LIST.route) },
+                        onCluster = {
+                            val boundBuilder = LatLngBounds.builder()
+                            storeMapUiState.storeList.filter { it.isDomestic() }
+                                .forEach { store ->
                                     val point = LatLng(store.latitude, store.longitude)
                                     boundBuilder.include(point)
                                 }
-                                googleMap?.animateCamera(
-                                    CameraUpdateFactory.newLatLngBounds(
-                                        boundBuilder.build(),
-                                        100,
-                                    )
+                            googleMap?.animateCamera(
+                                CameraUpdateFactory.newLatLngBounds(
+                                    boundBuilder.build(),
+                                    100,
                                 )
-                            }
-                        )
-                    }
+                            )
+                        },
+                        onScore = { score ->
+                            headerText = "${score}점"
+                            storeViewModel.filterScoreByMap(score)
+                            isCardVisible = true
+                        },
+                        onClear = {
+                            headerText = Constants.HEADER_TEXT
+                            storeViewModel.resetByMap()
+                            isCardVisible = true
+                        }
+                    )
                 }
             }
         }
@@ -409,7 +413,6 @@ fun MapScreen(
         }
     }
 }
-
 
 
 
