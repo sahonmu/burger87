@@ -201,6 +201,23 @@ fun MapScreen(
                                 val markerOption = mapViewModel.selectedMarkerOption(context = context, store = store)
                                 selectedMarker = it.addMarker(markerOption)
                             }
+
+                            if(trackingState == TrackingState.SHOW) {
+                                if(myLocationMarker == null && !locationViewModel.isEmptyLocation()) {
+                                    val bitmap = BitmapUtils.vectorToBitmap(
+                                        context = context,
+                                        drawableId = R.drawable.ic_my_location,
+                                        sizePx = 48
+                                    )
+                                    val icon = BitmapDescriptorFactory.fromBitmap(bitmap)
+                                    locationUiState.myLocationMarkerOption
+                                        .position(LatLng(locationUiState.latitude, locationUiState.longitude))
+                                        .icon(icon)
+                                        .anchor(0.5f, 0.5f)
+                                        .zIndex(Constants.MarKerZIndex.MY_LOCATION)
+                                    myLocationMarker = googleMap?.addMarker(locationUiState.myLocationMarkerOption)
+                                }
+                            }
                         }
                     )
 
@@ -386,8 +403,9 @@ fun MapScreen(
 
     DisposableEffect(Unit) {
         onDispose {
-            locationViewModel.resetLocation()
-            locationViewModel.removeLocationUpdates(fusedClient)
+//            locationViewModel.resetLocation()
+//            locationViewModel.removeLocationUpdates(fusedClient)
+            Timber.i("myLocationMarker = onDispose")
         }
     }
 }

@@ -29,6 +29,7 @@ data class Store(
     var endIndex = 0
     var fullName = if(branch.isEmpty()) name else "${name}(${branch})"
     var isMatch = startIndex + endIndex != 0
+    var distance = 0.0
 
     fun isKeywordMatch(startIndex: Int, endIndex: Int): Boolean {
         return startIndex + endIndex != 0
@@ -41,5 +42,4 @@ data class Store(
     fun isDomestic(): Boolean {
         return regionType == "DOMESTIC"
     }
-
 }

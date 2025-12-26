@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.sahonmu.burger87.ui.theme.Base
+import com.sahonmu.burger87.ui.theme.Gray_200
+import com.sahonmu.burger87.ui.theme.Gray_400
 import com.sahonmu.burger87.ui.theme.Gray_600
 import com.sahonmu.burger87.ui.theme.White
 

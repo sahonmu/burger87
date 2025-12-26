@@ -1,4 +1,4 @@
-package com.sahonmu.burger87.ui.theme.screens.map
+package com.sahonmu.burger87.ui.theme.screens.store.list
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -6,28 +6,21 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,6 +44,7 @@ import com.sahonmu.burger87.ui.theme.fontPadding
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
+import com.sahonmu.burger87.utils.math.MathUtils
 import domain.sahonmu.burger87.enums.StoreState
 import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.enums.storeState
@@ -149,6 +143,18 @@ fun StoreListRow(
                         style = fontPadding
                     )
                 }
+
+                if(store.distance != 0.0) {
+                    HeightMargin(height = 4.dp)
+                    Text(
+                        text = MathUtils.formatMeterToKm(store.distance),
+                        fontSize = 10.sp,
+                        maxLines = 1,
+                        color = Base,
+                        overflow = TextOverflow.Ellipsis,
+                        style = fontPadding
+                    )
+                }
             }
 
             Column(
@@ -226,3 +232,5 @@ fun StoreListRow(
         }
     }
 }
+
+

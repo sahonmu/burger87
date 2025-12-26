@@ -26,6 +26,8 @@ object DataManager {
             lastVisitDate = "",
             visitCount = 1,
             regionType = "DOMESTIC"
-        )
+        ).apply {
+            distance = 9999.0
+        }
     }
 }

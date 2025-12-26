@@ -9,6 +9,7 @@ import com.sahonmu.burger87.BuildConfig
 import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.SortMenu
 import com.sahonmu.burger87.enums.StoreDetailTab
+import com.sahonmu.burger87.utils.math.MathUtils
 import com.sahonmu.burger87.viewmodels.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import domain.sahonmu.burger87.enums.StoreState
@@ -151,7 +152,7 @@ class StoreViewModel @Inject constructor(
         }
     }
 
-    fun addAllStore() {
+    fun requestStoreByStoreList() {
         viewModelScope.launch {
             storeUseCase.invoke().collect { storeList ->
                 _storeListUiState.update { state ->
@@ -241,8 +242,13 @@ class StoreViewModel @Inject constructor(
                     filterMenu = state.visitCountGroup.keys.first()
                     filterVisitCount(filterMenu)
                     state.visitCountGroup
+                } SortMenu.DISTANCE -> {
+                    filterMenu = ""
+                    filterReset()
+                    linkedMapOf()
                 } else -> {
                     filterMenu = ""
+                    filterReset()
                     linkedMapOf()
                 }
             }
@@ -250,6 +256,31 @@ class StoreViewModel @Inject constructor(
             state.copy(
                 filterGroup = filterGroup,
                 selectedFilterMenu = filterMenu
+            )
+        }
+    }
+
+    fun calculateList(latitude: Double, longitude: Double) {
+        _storeListUiState.update { state ->
+            state.storeList.forEach { item ->
+//                item.distance = MathUtils.calculateDistance(
+//                    lat1 = latitude,
+//                    lon1 = longitude,
+//                    lat2 = item.latitude,
+//                    lon2 = item.longitude
+//                )
+
+                item.distance = MathUtils.distanceBetween(
+                    lat1 = latitude,
+                    lon1 = longitude,
+                    lat2 = item.latitude,
+                    lon2 = item.longitude
+                )
+            }
+            state.copy(
+                displayList = state.storeList.sortedBy { it.distance }.sortedByDescending { it.storeState.isOperation() }.toMutableList(),
+                filterGroup = linkedMapOf(),
+                selectedFilterMenu = ""
             )
         }
     }
