@@ -18,10 +18,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
 import com.sahonmu.burger87.ui.theme.Gray_200
+import com.sahonmu.burger87.ui.theme.screens.components.EmptyBox
 import com.sahonmu.burger87.ui.theme.screens.components.Line
+import com.sahonmu.burger87.ui.theme.screens.components.ProgressDialog
 import com.sahonmu.burger87.ui.theme.screens.components.Title
 import com.sahonmu.burger87.viewmodels.AnnouncementViewModel
 import timber.log.Timber
@@ -56,31 +59,42 @@ fun AnnouncementListScreen(
             title = "공지사항",
             onBack = { navController.popBackStack() }
         )
-
         Line(height = 1.dp, color = Gray_200)
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-
-            items(announcementUiState.headerAnnouncementList) { item ->
-                AnnouncementListRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { navController.navigate("${Screens.ANNOUNCEMENT_DETAIL}/${item.encode()}") },
-                    announcement = item,
-                )
-                Line(height = 1.dp, color = Gray_200)
+        when (announcementUiState.loadState) {
+            LoadState.LOADING -> {
+                ProgressDialog()
             }
-
-            itemsIndexed(announcementUiState.announcementList) { index, item ->
-                AnnouncementListRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { navController.navigate("${Screens.ANNOUNCEMENT_DETAIL}/${item.encode()}") },
-                    announcement = item,
+            LoadState.EMPTY -> {
+                EmptyBox(
+                    emptyMessage = "공지사항이 없습니다."
                 )
-                Line(height = 1.dp, color = Gray_200)
+            }
+            LoadState.FINISHED -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+
+                    items(announcementUiState.headerAnnouncementList) { item ->
+                        AnnouncementListRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { navController.navigate("${Screens.ANNOUNCEMENT_DETAIL}/${item.encode()}") },
+                            announcement = item,
+                        )
+                        Line(height = 1.dp, color = Gray_200)
+                    }
+
+                    items(announcementUiState.announcementList) { item ->
+                        AnnouncementListRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { navController.navigate("${Screens.ANNOUNCEMENT_DETAIL}/${item.encode()}") },
+                            announcement = item,
+                        )
+                        Line(height = 1.dp, color = Gray_200)
+                    }
+                }
             }
         }
     }

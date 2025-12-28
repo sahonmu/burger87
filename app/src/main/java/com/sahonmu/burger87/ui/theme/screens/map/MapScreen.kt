@@ -60,6 +60,7 @@ import com.sahonmu.burger87.ui.theme.permission.LocationPermissionHandler
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Margin
+import com.sahonmu.burger87.ui.theme.screens.components.ProgressDialog
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
@@ -88,6 +89,7 @@ fun MapScreen(
     val context = uiState.context
 
     val locationViewModel = composableActivityViewModel<LocationViewModel>()
+    val mainViewModel = composableActivityViewModel<MainViewModel>()
 
     val mapViewModel: MapViewModel = viewModel()
     val storeMapUiState = storeViewModel.storeMapUiState.collectAsState().value
@@ -122,6 +124,10 @@ fun MapScreen(
         if(storeMapUiState.originList.isEmpty()) {
             storeViewModel.requestStoreList()
         }
+    }
+
+    LaunchedEffect(storeMapUiState.originList) {
+        mainViewModel.clone(storeMapUiState.originList)
     }
 
     LaunchedEffect(pagerState, storeMapUiState.storeList) {
@@ -199,22 +205,22 @@ fun MapScreen(
                                 selectedMarker = it.addMarker(markerOption)
                             }
 
-                            if(trackingState == TrackingState.SHOW) {
-                                if(myLocationMarker == null && !locationViewModel.isEmptyLocation()) {
-                                    val bitmap = BitmapUtils.vectorToBitmap(
-                                        context = context,
-                                        drawableId = R.drawable.ic_my_location,
-                                        sizePx = 48
-                                    )
-                                    val icon = BitmapDescriptorFactory.fromBitmap(bitmap)
-                                    locationUiState.myLocationMarkerOption
-                                        .position(LatLng(locationUiState.latitude, locationUiState.longitude))
-                                        .icon(icon)
-                                        .anchor(0.5f, 0.5f)
-                                        .zIndex(Constants.MarKerZIndex.MY_LOCATION)
-                                    myLocationMarker = googleMap?.addMarker(locationUiState.myLocationMarkerOption)
-                                }
-                            }
+//                            if(trackingState == TrackingState.SHOW) {
+//                                if(myLocationMarker == null && !locationViewModel.isEmptyLocation()) {
+//                                    val bitmap = BitmapUtils.vectorToBitmap(
+//                                        context = context,
+//                                        drawableId = R.drawable.ic_my_location,
+//                                        sizePx = 48
+//                                    )
+//                                    val icon = BitmapDescriptorFactory.fromBitmap(bitmap)
+//                                    locationUiState.myLocationMarkerOption
+//                                        .position(LatLng(locationUiState.latitude, locationUiState.longitude))
+//                                        .icon(icon)
+//                                        .anchor(0.5f, 0.5f)
+//                                        .zIndex(Constants.MarKerZIndex.MY_LOCATION)
+//                                    myLocationMarker = googleMap?.addMarker(locationUiState.myLocationMarkerOption)
+//                                }
+//                            }
                         }
                     )
 
@@ -335,9 +341,28 @@ fun MapScreen(
                         }
                     )
                 }
+            } else if(storeMapUiState.loadState == LoadState.LOADING) {
+                ProgressDialog()
             }
         }
     }
+
+//    if(trackingState == TrackingState.SHOW) {
+//        if(myLocationMarker == null && !locationViewModel.isEmptyLocation()) {
+//            val bitmap = BitmapUtils.vectorToBitmap(
+//                context = context,
+//                drawableId = R.drawable.ic_my_location,
+//                sizePx = 48
+//            )
+//            val icon = BitmapDescriptorFactory.fromBitmap(bitmap)
+//            locationUiState.myLocationMarkerOption
+//                .position(LatLng(locationUiState.latitude, locationUiState.longitude))
+//                .icon(icon)
+//                .anchor(0.5f, 0.5f)
+//                .zIndex(Constants.MarKerZIndex.MY_LOCATION)
+//            myLocationMarker = googleMap?.addMarker(locationUiState.myLocationMarkerOption)
+//        }
+//    }
 
     if (showAlert) {
         Alert(

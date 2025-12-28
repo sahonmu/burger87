@@ -210,18 +210,18 @@ fun TitleWithIncludeClosed(
 
         }
 
-//        Row(
-//            modifier = Modifier
-//                .constrainAs(
-//                    empty
-//                ) {
-//                    top.linkTo(parent.top)
-//                    bottom.linkTo(parent.bottom)
-//                    start.linkTo(text.end)
-//                    end.linkTo(parent.end)
-//                },
-//            verticalAlignment = Alignment.CenterVertically,
-//        ) {
+        Row(
+            modifier = Modifier
+                .constrainAs(
+                    empty
+                ) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(text.end)
+                    end.linkTo(parent.end)
+                },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
 //            Text(
 //                text = "폐점 포함",
 //                fontSize = 13.sp,
@@ -239,7 +239,7 @@ fun TitleWithIncludeClosed(
 //                }
 //            )
 //            WidthMargin(10.dp)
-//        }
+        }
     }
 
 }

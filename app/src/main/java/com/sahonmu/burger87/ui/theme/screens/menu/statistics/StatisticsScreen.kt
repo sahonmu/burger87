@@ -101,7 +101,7 @@ fun StatisticsScreen(
                 StatisticsListMultiRow(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최대 방문 브랜드",
-                    contents = visitCountGroup.key,
+                    contents = "${visitCountGroup.key}(${visitCountGroup.value.size}개 지점)",
                     storeList = visitCountGroup.value,
                     painter = painterResource(R.drawable.emoji_pleased_selected),
                     backgroundColor = Color(0xFFFFFFCCBC),

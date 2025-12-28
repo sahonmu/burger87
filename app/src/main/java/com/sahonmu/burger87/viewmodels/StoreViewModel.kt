@@ -50,6 +50,7 @@ data class StoreDetailUiState(
 
 
 data class StoreSortListUiState(
+    val loadState: LoadState = LoadState.LOADING,
     var storeList: MutableList<Store> = mutableListOf(),
     var displayList: MutableList<Store> = mutableListOf(),
     var cityGroup: Map<String, List<Store>> = linkedMapOf(),
@@ -64,6 +65,7 @@ data class StoreSortListUiState(
 
 data class StoreSearchUiState(
     var includeClosed: Boolean = true,
+    val loadState: LoadState = LoadState.LOADING,
     var originList: MutableList<Store> = mutableListOf(),
     var searchList: MutableList<Store> = mutableListOf(),
 )
@@ -95,16 +97,11 @@ class StoreViewModel @Inject constructor(
                     val point = LatLng(store.latitude, store.longitude)
                     boundBuilder.include(point)
                 }
-//                var list = storeList.sortedByDescending { it.id }.sortedByDescending { it.storeState.isOperation() }.toMutableList()
-                val list = if(BuildConfig.DEBUG)
-                    storeList.sortedByDescending { it.id }.toMutableList()
-                else
-                    storeList.sortedByDescending { it.id }.sortedByDescending { it.storeState.isOperation() }.toMutableList()
                 _storeMapUiState.update { state ->
                     state.copy(
                         loadState = if (storeList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
                         originList = storeList.toMutableList(),
-                        storeList = list,
+                        storeList = storeList.sortedByDescending { it.lastVisitDate }.toMutableList(),
                         boundBuilder = boundBuilder
                     )
                 }
@@ -201,7 +198,8 @@ class StoreViewModel @Inject constructor(
                         cityGroup = list.groupBy { it.cityFilter }.toList().sortedByDescending { it.second.size }.toMap(),
                         scoreGroup = scoreGroup,
                         visitCountGroup = list.groupBy { it.visitCount.toString() }.toList().sortedByDescending { it.first.toInt() }.toMap(),
-                        filterGroup = scoreGroup
+                        filterGroup = scoreGroup,
+                        loadState = if (list.isEmpty()) LoadState.EMPTY else LoadState.FINISHED
                     )
                 }
             }
@@ -215,7 +213,8 @@ class StoreViewModel @Inject constructor(
                 _storeSearchUiState.update { state ->
                     val list = storeList.sortedBy { it.id }.filter { it.storeState.isOperation() }.toMutableList()
                     state.copy(
-                        originList = list
+                        originList = list,
+                        loadState = if(list.isNotEmpty()) LoadState.FINISHED else LoadState.EMPTY
                     )
                 }
             }
