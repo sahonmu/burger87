@@ -26,7 +26,9 @@ import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.extensions.encode
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.Gray_900
+import com.sahonmu.burger87.ui.theme.screens.components.EmptyBox
 import com.sahonmu.burger87.ui.theme.screens.components.Line
+import com.sahonmu.burger87.ui.theme.screens.components.ProgressDialog
 import com.sahonmu.burger87.ui.theme.screens.components.Title
 import com.sahonmu.burger87.viewmodels.EventViewModel
 
@@ -63,7 +65,6 @@ fun EventListScreen(
         Line(height = 1.dp, color = Gray_200)
 
         if (eventUiState.loadState == LoadState.FINISHED) {
-
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -75,18 +76,12 @@ fun EventListScreen(
                     Line(height = 1.dp, color = Gray_200)
                 }
             }
-
         } else if (eventUiState.loadState == LoadState.EMPTY) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "이벤트 정보가 없습니다.",
-                    fontSize = 17.sp,
-                    color = Gray_900
-                )
-            }
+            EmptyBox(
+                emptyMessage = "이벤트 정보가 없습니다."
+            )
+        } else if(eventUiState.loadState == LoadState.LOADING) {
+            ProgressDialog()
         }
     }
 }

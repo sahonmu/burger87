@@ -1,6 +1,7 @@
 package com.sahonmu.burger87.viewmodels
 
 import androidx.lifecycle.viewModelScope
+import com.sahonmu.burger87.enums.LoadState
 import com.sahonmu.burger87.viewmodels.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import domain.sahonmu.burger87.usecase.announcement.AnnouncementUseCase
@@ -9,10 +10,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 data class AnnouncementListUiState(
+    val loadState: LoadState = LoadState.LOADING,
     var announcementList: MutableList<Announcement> = mutableListOf(),
     var headerAnnouncementList: MutableList<Announcement> = mutableListOf(),
 )
@@ -30,11 +31,11 @@ class AnnouncementViewModel @Inject constructor(
     fun requestAnnouncementList() {
         viewModelScope.launch {
             announcementUseCase.invoke().collect { announcementList ->
-                Timber.i("announcementList = ${announcementList}")
                 _announcementListUiState.update { state ->
                     state.copy(
                         announcementList = announcementList.filter { !it.isHeader } .sortedBy { it.id }.toMutableList(),
                         headerAnnouncementList = announcementList.filter { it.isHeader } .sortedBy { it.id }.toMutableList(),
+                        loadState = if(announcementList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED
                     )
                 }
             }
