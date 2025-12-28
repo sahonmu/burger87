@@ -50,6 +50,7 @@ data class StoreDetailUiState(
 
 
 data class StoreSortListUiState(
+    val loadState: LoadState = LoadState.LOADING,
     var storeList: MutableList<Store> = mutableListOf(),
     var displayList: MutableList<Store> = mutableListOf(),
     var cityGroup: Map<String, List<Store>> = linkedMapOf(),
@@ -201,7 +202,8 @@ class StoreViewModel @Inject constructor(
                         cityGroup = list.groupBy { it.cityFilter }.toList().sortedByDescending { it.second.size }.toMap(),
                         scoreGroup = scoreGroup,
                         visitCountGroup = list.groupBy { it.visitCount.toString() }.toList().sortedByDescending { it.first.toInt() }.toMap(),
-                        filterGroup = scoreGroup
+                        filterGroup = scoreGroup,
+                        loadState = if (list.isEmpty()) LoadState.EMPTY else LoadState.FINISHED
                     )
                 }
             }

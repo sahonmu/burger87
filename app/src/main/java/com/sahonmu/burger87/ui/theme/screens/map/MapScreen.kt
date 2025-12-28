@@ -60,6 +60,7 @@ import com.sahonmu.burger87.ui.theme.permission.LocationPermissionHandler
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.Margin
+import com.sahonmu.burger87.ui.theme.screens.components.ProgressDialog
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
@@ -88,6 +89,7 @@ fun MapScreen(
     val context = uiState.context
 
     val locationViewModel = composableActivityViewModel<LocationViewModel>()
+    val mainViewModel = composableActivityViewModel<MainViewModel>()
 
     val mapViewModel: MapViewModel = viewModel()
     val storeMapUiState = storeViewModel.storeMapUiState.collectAsState().value
@@ -122,6 +124,10 @@ fun MapScreen(
         if(storeMapUiState.originList.isEmpty()) {
             storeViewModel.requestStoreList()
         }
+    }
+
+    LaunchedEffect(storeMapUiState.originList) {
+        mainViewModel.clone(storeMapUiState.originList)
     }
 
     LaunchedEffect(pagerState, storeMapUiState.storeList) {
@@ -335,6 +341,8 @@ fun MapScreen(
                         }
                     )
                 }
+            } else if(storeMapUiState.loadState == LoadState.LOADING) {
+                ProgressDialog()
             }
         }
     }
