@@ -20,6 +20,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.common.Constants
+import com.sahonmu.burger87.ui.theme.Base
+import com.sahonmu.burger87.ui.theme.Black
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.screens.components.HeightMargin
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
@@ -39,12 +41,14 @@ fun MapFloatingButtonBox(
     modifier: Modifier = Modifier,
     storeMapUiState: StoreMapUiState,
     headerText: String,
+    isIncludeCloseStore: Boolean,
     onMenu: () -> Unit = { },
     onStoreList: () -> Unit = { },
     onSearch: () -> Unit = { },
     onCluster: () -> Unit = { },
     onScore: (Float) -> Unit = { },
-    onClear: () -> Unit = { }
+    onClear: () -> Unit = { },
+    onIncludeCloseStore: () -> Unit = { }
 ) {
 
     val size = 44.dp
@@ -99,12 +103,22 @@ fun MapFloatingButtonBox(
                 onClick = { onStoreList() }
             )
 
+            if(storeMapUiState.storeList.isNotEmpty()) {
+                RoundButton(
+                    modifier = Modifier.size(size),
+                    painter = painterResource(id = R.drawable.ic_cluster),
+                    imageSize = 20.dp,
+                    color = White,
+                    onClick = { onCluster() }
+                )
+            }
+
             RoundButton(
                 modifier = Modifier.size(size),
-                painter = painterResource(id = R.drawable.ic_cluster),
-                imageSize = 20.dp,
-                color = White,
-                onClick = { onCluster() }
+                textColor = if(isIncludeCloseStore) Base else Black,
+                borderColor = if(isIncludeCloseStore) Base else White,
+                text = "폐점\n포함",
+                onClick = { onIncludeCloseStore() }
             )
         }
     }

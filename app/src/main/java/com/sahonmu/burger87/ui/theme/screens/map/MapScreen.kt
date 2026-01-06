@@ -118,6 +118,9 @@ fun MapScreen(
         animationSpec = tween(durationMillis = 400)
     )
 
+    var isIncludeCloseStore by rememberSaveable { mutableStateOf(true) }
+    var selectedScore by rememberSaveable { mutableStateOf(0f) }
+
 
     var googleMap by remember { mutableStateOf<GoogleMap?>(null) }
     var selectedMarker by remember { mutableStateOf<Marker?>(null) }
@@ -141,6 +144,10 @@ fun MapScreen(
         snapshotFlow { pagerState.currentPage }.collect { position ->
             storeMapUiState.selectedIndex.value = position
             googleMap?.let { map ->
+                if(storeMapUiState.storeList.isEmpty()) {
+                    selectedMarker?.remove()
+                    return@collect
+                }
                 val store = storeMapUiState.storeList[position]
                 storeMapUiState.selectedStore.value = store
                 val latLng = LatLng(store.latitude, store.longitude)
@@ -172,8 +179,8 @@ fun MapScreen(
                         storeMapUiState = storeMapUiState,
                         mapViewModel = mapViewModel,
                         onMarkerClick = { store ->
-                            storeMapUiState.selectedIndex.value =
-                                storeMapUiState.storeList.indexOfFirst { it.id == store.id }
+                            val selectIndex = storeViewModel.findSelectedIndex(store)
+                            storeMapUiState.selectedIndex.value = selectIndex
                             pagerState.moveItem(
                                 scope = scope,
                                 animate = false,
@@ -320,6 +327,7 @@ fun MapScreen(
                         modifier = Modifier.fillMaxWidth(),
                         storeMapUiState = storeMapUiState,
                         headerText = headerText,
+                        isIncludeCloseStore = isIncludeCloseStore,
                         onMenu = { navController.navigate(Screens.MENU.route) },
                         onSearch = { navController.navigate(Screens.STORE_SEARCH.route) },
                         onStoreList = { navController.navigate(Screens.STORE_LIST.route) },
@@ -338,13 +346,26 @@ fun MapScreen(
                             )
                         },
                         onScore = { score ->
-                            headerText = "${score}점"
-                            storeViewModel.filterScoreByMap(score)
+                            selectedScore = score
+                            headerText = "${selectedScore}점"
+                            storeViewModel.filterScoreByMap(
+                                isIncludeCloseStore = isIncludeCloseStore,
+                                score = selectedScore
+                            )
                             isCardVisible = true
                         },
                         onClear = {
                             headerText = Constants.HEADER_TEXT
-                            storeViewModel.resetByMap()
+                            selectedScore = 0f
+                            storeViewModel.resetByMap(isIncludeCloseStore)
+                            isCardVisible = true
+                        },
+                        onIncludeCloseStore = {
+                            isIncludeCloseStore = !isIncludeCloseStore
+                            storeViewModel.filter(
+                                isIncludeCloseStore = isIncludeCloseStore,
+                                score = selectedScore
+                            )
                             isCardVisible = true
                         }
                     )
