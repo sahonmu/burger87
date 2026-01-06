@@ -7,5 +7,6 @@ data class Announcement(
     val contents: String,
     val image: String?,
     val storeId: Long?,
-    val isHeader: Boolean
+    val isHeader: Boolean,
+    val link: String?
 )

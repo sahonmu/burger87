@@ -140,6 +140,7 @@ fun ClusterMapView(
     )
 
     LaunchedEffect(storeMapUiState.storeList) {
+        Timber.i("마커 드로우 사이즈 = ${storeMapUiState.storeList.size}개")
         if(clusterManager != null) {
             clusterManager?.clearItems()
             storeMapUiState.storeList.forEach { store ->

@@ -10,5 +10,6 @@ fun AnnouncementDto.toDomain(): Announcement = Announcement(
     contents = this.contents,
     image = this.image,
     storeId = this.storeId,
-    isHeader = this.isHeader
+    isHeader = this.isHeader,
+    link = this.link
 )

@@ -3,6 +3,7 @@ package com.sahonmu.burger87.ui.theme.screens.map
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -111,6 +113,14 @@ fun MapScreen(
         targetValue = if (isCardVisible) 0.dp else cardHeight,
         animationSpec = tween(durationMillis = 400)
     )
+    val alpha by animateFloatAsState(
+        targetValue = if (isCardVisible) 1f else 0f,
+        animationSpec = tween(durationMillis = 400)
+    )
+
+    var isIncludeCloseStore by rememberSaveable { mutableStateOf(true) }
+    var selectedScore by rememberSaveable { mutableStateOf(0f) }
+
 
     var googleMap by remember { mutableStateOf<GoogleMap?>(null) }
     var selectedMarker by remember { mutableStateOf<Marker?>(null) }
@@ -134,6 +144,10 @@ fun MapScreen(
         snapshotFlow { pagerState.currentPage }.collect { position ->
             storeMapUiState.selectedIndex.value = position
             googleMap?.let { map ->
+                if(storeMapUiState.storeList.isEmpty()) {
+                    selectedMarker?.remove()
+                    return@collect
+                }
                 val store = storeMapUiState.storeList[position]
                 storeMapUiState.selectedStore.value = store
                 val latLng = LatLng(store.latitude, store.longitude)
@@ -165,8 +179,8 @@ fun MapScreen(
                         storeMapUiState = storeMapUiState,
                         mapViewModel = mapViewModel,
                         onMarkerClick = { store ->
-                            storeMapUiState.selectedIndex.value =
-                                storeMapUiState.storeList.indexOfFirst { it.id == store.id }
+                            val selectIndex = storeViewModel.findSelectedIndex(store)
+                            storeMapUiState.selectedIndex.value = selectIndex
                             pagerState.moveItem(
                                 scope = scope,
                                 animate = false,
@@ -229,6 +243,7 @@ fun MapScreen(
                             .fillMaxWidth()
                             .align(Alignment.BottomCenter)
                             .offset(y = offsetY)
+                            .alpha(alpha)
                             .padding(bottom = 15.dp)
                     ) {
                         Column(
@@ -312,6 +327,7 @@ fun MapScreen(
                         modifier = Modifier.fillMaxWidth(),
                         storeMapUiState = storeMapUiState,
                         headerText = headerText,
+                        isIncludeCloseStore = isIncludeCloseStore,
                         onMenu = { navController.navigate(Screens.MENU.route) },
                         onSearch = { navController.navigate(Screens.STORE_SEARCH.route) },
                         onStoreList = { navController.navigate(Screens.STORE_LIST.route) },
@@ -330,13 +346,26 @@ fun MapScreen(
                             )
                         },
                         onScore = { score ->
-                            headerText = "${score}점"
-                            storeViewModel.filterScoreByMap(score)
+                            selectedScore = score
+                            headerText = "${selectedScore}점"
+                            storeViewModel.filterScoreByMap(
+                                isIncludeCloseStore = isIncludeCloseStore,
+                                score = selectedScore
+                            )
                             isCardVisible = true
                         },
                         onClear = {
                             headerText = Constants.HEADER_TEXT
-                            storeViewModel.resetByMap()
+                            selectedScore = 0f
+                            storeViewModel.resetByMap(isIncludeCloseStore)
+                            isCardVisible = true
+                        },
+                        onIncludeCloseStore = {
+                            isIncludeCloseStore = !isIncludeCloseStore
+                            storeViewModel.filter(
+                                isIncludeCloseStore = isIncludeCloseStore,
+                                score = selectedScore
+                            )
                             isCardVisible = true
                         }
                     )

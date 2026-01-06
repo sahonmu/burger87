@@ -34,7 +34,7 @@ class EventViewModel @Inject constructor(
                 _eventUiState.update { state ->
                     state.copy(
                         loadState = if(eventList.isEmpty()) LoadState.EMPTY else LoadState.FINISHED,
-                        eventList = eventList.sortedBy { it.id }.toMutableList()
+                        eventList = eventList.sortedByDescending { it.endDate }.toMutableList()
                     )
                 }
             }
