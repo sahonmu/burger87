@@ -14,4 +14,5 @@ data class AnnouncementDto(
     @SerialName("image") val image: String?,
     @SerialName("store_id") val storeId: Long?,
     @SerialName("header") val isHeader: Boolean,
+    @SerialName("link") val link: String?,
 )

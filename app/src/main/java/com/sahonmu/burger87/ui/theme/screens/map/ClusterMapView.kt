@@ -1,10 +1,6 @@
 package com.sahonmu.burger87.ui.theme.screens.map
 
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -18,24 +14,17 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterManager
 import com.sahonmu.burger87.R
-import com.sahonmu.burger87.common.Constants
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
-import com.sahonmu.burger87.utils.bitmap.BitmapUtils
 import com.sahonmu.burger87.utils.map.StoreClusterItem
 import com.sahonmu.burger87.utils.map.StoreClusterRenderer
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreMapUiState
-import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.vo.store.Store
-import timber.log.Timber
 
 @Composable
 fun ClusterMapView(
@@ -129,7 +118,6 @@ fun ClusterMapView(
                         val latLng = LatLng(store.latitude, store.longitude)
                         mapViewModel.latLng = latLng
                         mapViewModel.zoom = 14.5f
-                        Timber.i("마커 삭제 = ${mapViewModel.isEmptyLatLng()}")
                         onEmptyCameraPosition(store)
                     } else {
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapViewModel.latLng, mapViewModel.zoom))

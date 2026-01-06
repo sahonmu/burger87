@@ -36,6 +36,7 @@ fun AnnouncementPreviewDetailBox() {
             image = null,
             storeId = null,
             isHeader = false,
+            link = null
         )
     )
 }

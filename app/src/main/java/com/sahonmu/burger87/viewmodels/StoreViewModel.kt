@@ -112,9 +112,13 @@ class StoreViewModel @Inject constructor(
     /**
      * 점수 필터 클릭시
      */
-    fun filterScoreByMap(score: Float) {
+    fun filterScoreByMap(isIncludeCloseStore: Boolean, score: Float) {
         _storeMapUiState.update { state ->
-            val list = state.originList.filter { it.score == score }.sortedByDescending { it.storeState.isOperation() }
+            val list =
+                if(isIncludeCloseStore)
+                    state.originList.filter { it.score == score }.sortedByDescending { it.storeState.isOperation() }
+                else
+                    state.originList.filter { it.score == score }.filter { it.storeState.isOperation() }
             val boundBuilder = LatLngBounds.builder()
             list.forEach { store ->
                 val point = LatLng(store.latitude, store.longitude)
@@ -131,9 +135,10 @@ class StoreViewModel @Inject constructor(
     /**
      * 검색 필터 초기화시
      */
-    fun resetByMap() {
+    fun resetByMap(isIncludeCloseStore: Boolean) {
         _storeMapUiState.update { state ->
-            val list = state.originList
+            val list =
+                if(isIncludeCloseStore) state.originList else state.originList.filter { it.storeState.isOperation() }
             val boundBuilder = LatLngBounds.builder()
             list.forEach { store ->
                 val point = LatLng(store.latitude, store.longitude)
@@ -142,6 +147,33 @@ class StoreViewModel @Inject constructor(
             state.copy(
                 storeList = list.toMutableList(),
                 boundBuilder = boundBuilder
+            )
+        }
+    }
+
+
+    /**
+     * 폐점 제외
+     */
+    fun filter(isIncludeCloseStore: Boolean, score: Float) {
+        _storeMapUiState.update { state ->
+            val list = if(isIncludeCloseStore) {
+                val allList = state.originList.sortedByDescending { it.lastVisitDate }.sortedByDescending { it.storeState.isOperation() }
+                if(score == 0f) {
+                    allList
+                } else {
+                    allList.filter { it.score == score }
+                }
+            } else {
+                val operationList = state.originList.filter { it.storeState.isOperation() }.sortedByDescending { it.lastVisitDate }
+                if(score == 0f) {
+                    operationList
+                } else {
+                    operationList.filter { it.score == score }
+                }
+            }
+            state.copy(
+                storeList = list.toMutableList(),
             )
         }
     }
@@ -336,5 +368,9 @@ class StoreViewModel @Inject constructor(
                 selectedFilterMenu = ""
             )
         }
+    }
+
+    fun findSelectedIndex(store: Store): Int {
+        return storeMapUiState.value.storeList.indexOfFirst { it.id == store.id }
     }
 }

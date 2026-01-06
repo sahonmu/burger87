@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.ui.theme.Black
 import com.sahonmu.burger87.ui.theme.White
@@ -77,6 +79,47 @@ fun RoundButton(
                     painter = painter,
 //                colorFilter = ColorFilter.tint(colorFilter),
                     contentDescription = null
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun RoundButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    round: Dp = 28.dp,
+    borderColor: Color = White,
+    textColor: Color = Black,
+    onClick: () -> Unit = { }
+) {
+
+    Box(modifier = modifier) {
+        Card(
+            modifier = Modifier.fillMaxSize(),
+            shape = RoundedCornerShape(round),
+            colors = CardDefaults.cardColors(
+                containerColor = White,
+            ),
+            elevation = CardDefaults.elevatedCardElevation(
+                defaultElevation = 5.dp
+            ),
+            border = BorderStroke(width = 1.dp, color = borderColor)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .clickable {
+                        onClick()
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = text,
+                    fontSize = 10.sp,
+                    lineHeight = 12.sp,
+                    color = textColor
                 )
             }
         }
