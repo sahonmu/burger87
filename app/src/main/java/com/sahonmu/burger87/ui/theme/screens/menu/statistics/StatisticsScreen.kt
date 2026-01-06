@@ -1,5 +1,6 @@
 package com.sahonmu.burger87.ui.theme.screens.menu.statistics
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.enums.InfoMenu
+import com.sahonmu.burger87.enums.Screens
+import com.sahonmu.burger87.extensions.encode
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.Title
@@ -24,7 +27,6 @@ import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
 import com.sahonmu.burger87.viewmodels.MainViewModel
 import domain.sahonmu.burger87.enums.StoreState
 import domain.sahonmu.burger87.vo.store.Store
-import timber.log.Timber
 
 
 @Preview(showBackground = true)
@@ -34,6 +36,7 @@ fun StatisticsScreenPreview() {
 }
 
 
+@SuppressLint("InvalidColorHexValue")
 @Composable
 fun StatisticsScreen(
     navController: NavHostController,
@@ -74,20 +77,22 @@ fun StatisticsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최고점 상점",
                     contents = "${scoreFirst.first}점",
-                    storeList = scoreFirst.second,
+                    storeList = scoreFirst.second.sortedByDescending { it.lastVisitDate },
                     painter = painterResource(R.drawable.emoji_strring_selected),
                     backgroundColor = Color(0xFFFFFFC6E1),
-                    contentsColor = Color(0xFFFFE6076C)
+                    contentsColor = Color(0xFFFFE6076C),
+                    onStore = { navController.navigate("${Screens.STORE_DETAIL}/${it.encode()}") }
                 )
 
                 StatisticsListMultiRow(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최하점 상점",
                     contents = "${scoreLast.first}점",
-                    storeList = scoreLast.second,
+                    storeList = scoreLast.second.sortedByDescending { it.lastVisitDate },
                     painter = painterResource(R.drawable.emoji_scared_selected),
                     backgroundColor = Color(0xFFFFC1CFFF),
-                    contentsColor = Color(0xFFFF495A93)
+                    contentsColor = Color(0xFFFF495A93),
+                    onStore = { navController.navigate("${Screens.STORE_DETAIL}/${it.encode()}") }
                 )
             }
             item {
@@ -102,53 +107,67 @@ fun StatisticsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최대 방문 브랜드",
                     contents = "${visitCountGroup.key}(${visitCountGroup.value.size}개 지점)",
-                    storeList = visitCountGroup.value,
+                    storeList = visitCountGroup.value.sortedByDescending { it.lastVisitDate },
                     painter = painterResource(R.drawable.emoji_pleased_selected),
                     backgroundColor = Color(0xFFFFFFCCBC),
                     contentsColor = Color(0xFFFF8D2F45),
-                    showBranch = true
+                    showBranch = true,
+                    onStore = { navController.navigate("${Screens.STORE_DETAIL}/${it.encode()}") }
                 )
 
                 StatisticsListMultiRow(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최대 방문 1위",
                     contents = "${visitCountGold.first}회",
-                    storeList = visitCountGold.second,
+                    storeList = visitCountGold.second.sortedByDescending { it.lastVisitDate },
                     painter = painterResource(R.drawable.emoji_pleased_selected),
                     backgroundColor = Color(0xFFFFFFCCBC),
-                    contentsColor = Color(0xFFFF8D2F45)
+                    contentsColor = Color(0xFFFF8D2F45),
+                    onStore = { navController.navigate("${Screens.STORE_DETAIL}/${it.encode()}") }
                 )
 
                 StatisticsListMultiRow(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최대 방문 2위",
                     contents = "${visitCountSilver.first}회",
-                    storeList = visitCountSilver.second,
+                    storeList = visitCountSilver.second.sortedByDescending { it.lastVisitDate },
                     painter = painterResource(R.drawable.emoji_pleased_selected),
                     backgroundColor = Color(0xFFFFFFCCBC),
-                    contentsColor = Color(0xFFFF8D2F45)
+                    contentsColor = Color(0xFFFF8D2F45),
+                    onStore = { navController.navigate("${Screens.STORE_DETAIL}/${it.encode()}") }
                 )
 
                 StatisticsListMultiRow(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최대 방문 3위",
                     contents = "${visitCountBronze.first}회",
-                    storeList = visitCountBronze.second,
+                    storeList = visitCountBronze.second.sortedByDescending { it.lastVisitDate },
                     painter = painterResource(R.drawable.emoji_pleased_selected),
                     backgroundColor = Color(0xFFFFFFCCBC),
-                    contentsColor = Color(0xFFFF8D2F45)
+                    contentsColor = Color(0xFFFF8D2F45),
+                    onStore = { navController.navigate("${Screens.STORE_DETAIL}/${it.encode()}") }
                 )
 
-                val visitLocation = storeUiState.displayList.groupBy { it.cityFilter }.toList()
-                    .sortedByDescending { it.second.size }
-                StatisticsListRow(
+//                val visitLocation = storeUiState.displayList.groupBy { it.cityFilter }.toList()
+//                    .sortedByDescending { it.second.size }
+//                StatisticsListRow(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    title = "최대 방문 지역",
+//                    contents = "${visitLocation.first().first} ${visitLocation.first().second.size}회 방문",
+//                    painter = painterResource(R.drawable.emoji_comfy_selected),
+//                    contentsColor = Color(0xFFFFAB4C63)
+//                )
+
+                val visitLocation = storeUiState.displayList.groupBy { it.cityFilter }
+                StatisticsListLocationMultiRow(
                     modifier = Modifier.fillMaxWidth(),
                     title = "최대 방문 지역",
-                    contents = "${visitLocation.first().first} ${visitLocation.first().second.size}회 방문",
+                    contents = "",
+                    visitLocation = visitLocation,
                     painter = painterResource(R.drawable.emoji_comfy_selected),
-                    contentsColor = Color(0xFFFFAB4C63)
+                    backgroundColor = Color(0xFFFFFED2AA),
+                    contentsColor = Color(0xFFFFAB4C63),
                 )
-
 
                 val closedList = storeUiState.displayList.filter { it.storeState == StoreState.CLOSED }
                 StatisticsListRow(
