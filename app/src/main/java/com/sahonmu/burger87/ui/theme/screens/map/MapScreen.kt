@@ -3,6 +3,7 @@ package com.sahonmu.burger87.ui.theme.screens.map
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -111,6 +113,11 @@ fun MapScreen(
         targetValue = if (isCardVisible) 0.dp else cardHeight,
         animationSpec = tween(durationMillis = 400)
     )
+    val alpha by animateFloatAsState(
+        targetValue = if (isCardVisible) 1f else 0f,
+        animationSpec = tween(durationMillis = 400)
+    )
+
 
     var googleMap by remember { mutableStateOf<GoogleMap?>(null) }
     var selectedMarker by remember { mutableStateOf<Marker?>(null) }
@@ -229,6 +236,7 @@ fun MapScreen(
                             .fillMaxWidth()
                             .align(Alignment.BottomCenter)
                             .offset(y = offsetY)
+                            .alpha(alpha)
                             .padding(bottom = 15.dp)
                     ) {
                         Column(
