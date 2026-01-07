@@ -1,6 +1,7 @@
 package com.sahonmu.burger87.utils
 
 import android.content.Context
+import android.content.pm.PackageManager
 
 object AppUtils {
 
@@ -10,6 +11,15 @@ object AppUtils {
 
     fun Context.getAppVersionCode(): Long {
         return packageManager.getPackageInfo(packageName, 0).longVersionCode
+    }
+
+    fun isAppInstalled(context: Context, packageName: String): Boolean {
+        return try {
+            context.packageManager.getPackageInfo(packageName, 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
     }
 
 }

@@ -11,6 +11,18 @@
         tools:node="remove" />
 
 
+    <queries>
+        <!-- Google Maps -->
+        <package android:name="com.google.android.apps.maps" />
+        <!-- Kakao Map -->
+        <package android:name="net.daum.android.map" />
+        <!-- Naver Map -->
+        <package android:name="com.nhn.android.nmap" />
+        <!-- TMap -->
+        <package android:name="com.skt.tmap.ku" />
+    </queries>
+
+
     <application
         android:name=".Burger87App"
         android:allowBackup="false"
