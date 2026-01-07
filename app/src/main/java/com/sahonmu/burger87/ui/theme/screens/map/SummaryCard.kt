@@ -21,15 +21,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.sahonmu.burger87.R
 import com.sahonmu.burger87.common.DataManager
 import com.sahonmu.burger87.extensions.toYearMonthDay
 import com.sahonmu.burger87.ui.theme.White
 import com.sahonmu.burger87.ui.theme.fontPadding
+import com.sahonmu.burger87.ui.theme.screens.components.Margin
+import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
+import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import domain.sahonmu.burger87.enums.isOperation
 import domain.sahonmu.burger87.vo.store.Store
 
@@ -50,6 +55,8 @@ fun SummaryCardPreview() {
 fun SummaryCard(
     modifier: Modifier = Modifier,
     store: Store,
+    onCarRoute: () -> Unit = { },
+    onTransportationRoute: () -> Unit = { },
     onClick: (Store) -> Unit = { }
 ) {
 
@@ -94,20 +101,45 @@ fun SummaryCard(
                         fontSize = 15.sp,
                         style = fontPadding
                     )
-                    Text(
-                        text = "방문횟수 : ${store.visitCount}회\n최근방문 : ${store.lastVisitDate.toYearMonthDay()}",
-                        fontSize = 10.5.sp,
-                        maxLines = 2,
-                        style = fontPadding
-                    )
-
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "방문횟수 : ${store.visitCount}회\n최근방문 : ${store.lastVisitDate.toYearMonthDay()}",
+                            fontSize = 10.5.sp,
+                            maxLines = 2,
+                            style = fontPadding
+                        )
+                        Margin(modifier = Modifier.weight(1f))
+                        RoundButton(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .align(Alignment.Bottom),
+                            painter = painterResource(id = R.drawable.ic_car_route),
+                            imageSize = 19.dp,
+                            color = White,
+                            onClick = { onCarRoute() }
+                        )
+                        WidthMargin(width = 8.dp)
+                        RoundButton(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .align(Alignment.Bottom),
+                            painter = painterResource(id = R.drawable.ic_transportation_route),
+                            imageSize = 14.5.dp,
+                            color = White,
+                            onClick = { onTransportationRoute() }
+                        )
+                    }
                 }
             }
 
             if (!store.storeState.isOperation()) {
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0x77E7E7ED)))
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0x77E7E7ED))
+                )
             }
         }
     }
@@ -119,6 +151,8 @@ fun SummaryPager(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
     storeList: MutableList<Store>,
+    onCarRoute: () -> Unit = { },
+    onTransportationRoute: () -> Unit = { },
     onClickStore: (Store) -> Unit = { },
 ) {
     HorizontalPager(
@@ -132,6 +166,8 @@ fun SummaryPager(
         SummaryCard(
             modifier = Modifier.fillMaxSize(),
             store = storeList[page],
+            onCarRoute = { onCarRoute() },
+            onTransportationRoute = { onTransportationRoute() },
             onClick = { onClickStore(store) }
         )
     }
