@@ -31,13 +31,19 @@ import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.sahonmu.burger87.common.DataManager
+import com.sahonmu.burger87.enums.MapApp
+import com.sahonmu.burger87.enums.RouteType
+import com.sahonmu.burger87.enums.getInstalledMapApps
+import com.sahonmu.burger87.enums.openRoute
 import com.sahonmu.burger87.ui.theme.Gray_200
 import com.sahonmu.burger87.ui.theme.Gray_50
 import com.sahonmu.burger87.ui.theme.White
+import com.sahonmu.burger87.ui.theme.base.SampleBottomSheet
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.screens.components.Alert
 import com.sahonmu.burger87.ui.theme.screens.components.Line
 import com.sahonmu.burger87.ui.theme.screens.components.PagerIndicator
+import com.sahonmu.burger87.ui.theme.sheet.MapAppList
 import com.sahonmu.burger87.utils.IntentUtils
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import domain.sahonmu.burger87.enums.storeState
@@ -60,6 +66,9 @@ fun StoreDetailScreen(
 
     var showAlert by rememberSaveable { mutableStateOf(false) }
     var showAlertMessage by rememberSaveable { mutableStateOf("") }
+
+    var showSheet by rememberSaveable { mutableStateOf(false) }
+    var routeType by rememberSaveable { mutableStateOf(RouteType.Car) }
 
     LaunchedEffect(Unit) {
         storeViewModel.requestStoreImageList(store.id)
@@ -158,6 +167,10 @@ fun StoreDetailScreen(
                             context,
                             "${name}\n${store.address}\n${store.tel}\n${instagram}"
                         )
+                    },
+                    onRoute = { type ->
+                        routeType = type
+                        showSheet = true
                     }
                 )
 
@@ -213,6 +226,39 @@ fun StoreDetailScreen(
             showAlert = false
         }
     }
+
+    SampleBottomSheet(
+        show = showSheet,
+        onDismiss = { showSheet = false },
+        content = {
+            val list = getInstalledMapApps(context).toMutableList()
+            val routeForTransportation = routeType == RouteType.Transportation
+            if(routeForTransportation) {
+                list.remove(MapApp.TMAP)
+            }
+            if(list.isNotEmpty()) {
+                MapAppList(
+                    title = if(routeForTransportation) "대중교통 안내" else "자동차 안내" ,
+                    list = list,
+                    onClick = { mapApp ->
+                        showSheet = false
+                        openRoute(
+                            context = context,
+                            routeType = routeType,
+                            app = mapApp,
+                            lat = store.latitude,
+                            lng = store.longitude,
+                            name = store.fullName
+                        )
+                    }
+                )
+            } else {
+                showAlert = true
+                showAlertMessage = "설치된 지도 앱이 없습니다.\n(구글지도, 네이버지도, 카카오지도, 티맵)"
+                showSheet = false
+            }
+        }
+    )
 }
 
 @Preview
