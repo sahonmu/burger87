@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -49,13 +48,18 @@ import com.google.android.gms.maps.model.Marker
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.common.Constants
 import com.sahonmu.burger87.enums.LoadState
+import com.sahonmu.burger87.enums.MapApp
+import com.sahonmu.burger87.enums.RouteType
 import com.sahonmu.burger87.enums.Screens
 import com.sahonmu.burger87.enums.TrackingState
+import com.sahonmu.burger87.enums.getInstalledMapApps
+import com.sahonmu.burger87.enums.openRoute
 import com.sahonmu.burger87.extensions.encode
 import com.sahonmu.burger87.extensions.findActivity
 import com.sahonmu.burger87.extensions.moveItem
 import com.sahonmu.burger87.ui.theme.Base
 import com.sahonmu.burger87.ui.theme.White
+import com.sahonmu.burger87.ui.theme.base.SampleBottomSheet
 import com.sahonmu.burger87.ui.theme.base.rememberUiState
 import com.sahonmu.burger87.ui.theme.permission.CheckPermission
 import com.sahonmu.burger87.ui.theme.permission.LocationPermissionHandler
@@ -66,13 +70,13 @@ import com.sahonmu.burger87.ui.theme.screens.components.ProgressDialog
 import com.sahonmu.burger87.ui.theme.screens.components.RoundButton
 import com.sahonmu.burger87.ui.theme.screens.components.WidthMargin
 import com.sahonmu.burger87.ui.theme.screens.composableActivityViewModel
+import com.sahonmu.burger87.ui.theme.sheet.MapAppList
 import com.sahonmu.burger87.utils.bitmap.BitmapUtils
 import com.sahonmu.burger87.viewmodels.MainViewModel
 import com.sahonmu.burger87.viewmodels.MapViewModel
 import com.sahonmu.burger87.viewmodels.StoreViewModel
 import com.sahonmu.burger87.viewmodels.base.LocationViewModel
 import domain.sahonmu.burger87.enums.isOperation
-import timber.log.Timber
 
 @Preview
 @Composable
@@ -121,6 +125,8 @@ fun MapScreen(
     var isIncludeCloseStore by rememberSaveable { mutableStateOf(true) }
     var selectedScore by rememberSaveable { mutableStateOf(0f) }
 
+    var showSheet by rememberSaveable { mutableStateOf(false) }
+    var routeType by rememberSaveable { mutableStateOf(RouteType.Car) }
 
     var googleMap by remember { mutableStateOf<GoogleMap?>(null) }
     var selectedMarker by remember { mutableStateOf<Marker?>(null) }
@@ -200,6 +206,7 @@ fun MapScreen(
                         onMapClick = {
                             isCardVisible = false
                             selectedMarker?.remove()
+                            storeMapUiState.selectedStore.value = null
                         },
                         onEmptyCameraPosition = { store ->
                             val latLng = LatLng(store.latitude, store.longitude)
@@ -218,23 +225,6 @@ fun MapScreen(
                                 val markerOption = mapViewModel.selectedMarkerOption(context = context, store = store)
                                 selectedMarker = it.addMarker(markerOption)
                             }
-
-//                            if(trackingState == TrackingState.SHOW) {
-//                                if(myLocationMarker == null && !locationViewModel.isEmptyLocation()) {
-//                                    val bitmap = BitmapUtils.vectorToBitmap(
-//                                        context = context,
-//                                        drawableId = R.drawable.ic_my_location,
-//                                        sizePx = 48
-//                                    )
-//                                    val icon = BitmapDescriptorFactory.fromBitmap(bitmap)
-//                                    locationUiState.myLocationMarkerOption
-//                                        .position(LatLng(locationUiState.latitude, locationUiState.longitude))
-//                                        .icon(icon)
-//                                        .anchor(0.5f, 0.5f)
-//                                        .zIndex(Constants.MarKerZIndex.MY_LOCATION)
-//                                    myLocationMarker = googleMap?.addMarker(locationUiState.myLocationMarkerOption)
-//                                }
-//                            }
                         }
                     )
 
@@ -311,6 +301,14 @@ fun MapScreen(
                                     .height(110.dp),
                                 pagerState = pagerState,
                                 storeList = storeMapUiState.storeList,
+                                onCarRoute = {
+                                    routeType = RouteType.Car
+                                    showSheet = true
+                                },
+                                onTransportationRoute = {
+                                    routeType = RouteType.Transportation
+                                    showSheet = true
+                                },
                                 onClickStore = { store ->
                                     if (store.storeState.isOperation()) {
                                         navController.navigate("${Screens.STORE_DETAIL}/${store.encode()}")
@@ -376,29 +374,47 @@ fun MapScreen(
         }
     }
 
-//    if(trackingState == TrackingState.SHOW) {
-//        if(myLocationMarker == null && !locationViewModel.isEmptyLocation()) {
-//            val bitmap = BitmapUtils.vectorToBitmap(
-//                context = context,
-//                drawableId = R.drawable.ic_my_location,
-//                sizePx = 48
-//            )
-//            val icon = BitmapDescriptorFactory.fromBitmap(bitmap)
-//            locationUiState.myLocationMarkerOption
-//                .position(LatLng(locationUiState.latitude, locationUiState.longitude))
-//                .icon(icon)
-//                .anchor(0.5f, 0.5f)
-//                .zIndex(Constants.MarKerZIndex.MY_LOCATION)
-//            myLocationMarker = googleMap?.addMarker(locationUiState.myLocationMarkerOption)
-//        }
-//    }
-
     if (showAlert) {
         Alert(
             message = showAlertMessage,
             onDismissRequest = { showAlert = false }
         )
     }
+
+    SampleBottomSheet(
+        show = showSheet,
+        onDismiss = { showSheet = false },
+        content = {
+            val list = getInstalledMapApps(context).toMutableList()
+            val routeForTransportation = routeType == RouteType.Transportation
+            if(routeForTransportation) {
+                list.remove(MapApp.TMAP)
+            }
+            if(list.isNotEmpty()) {
+                MapAppList(
+                    title = if(routeForTransportation) "대중교통 안내" else "자동차 안내" ,
+                    list = list,
+                    onClick = { mapApp ->
+                        showSheet = false
+                        storeMapUiState.selectedStore.value?.let { store ->
+                            openRoute(
+                                context = context,
+                                routeType = routeType,
+                                app = mapApp,
+                                lat = store.latitude,
+                                lng = store.longitude,
+                                name = store.fullName
+                            )
+                        }
+                    }
+                )
+            } else {
+                showAlert = true
+                showAlertMessage = "설치된 지도 앱이 없습니다.\n(구글지도, 네이버지도, 카카오지도, 티맵)"
+                showSheet = false
+            }
+        }
+    )
 
     if(showLocationPermission) {
         LocationPermissionHandler(
@@ -454,13 +470,12 @@ fun MapScreen(
         backPressedTime = System.currentTimeMillis()
     }
 
-    DisposableEffect(Unit) {
-        onDispose {
+//    DisposableEffect(Unit) {
+//        onDispose {
 //            locationViewModel.resetLocation()
 //            locationViewModel.removeLocationUpdates(fusedClient)
-            Timber.i("myLocationMarker = onDispose")
-        }
-    }
+//        }
+//    }
 }
 
 

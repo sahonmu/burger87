@@ -1,0 +1,54 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 버스 본체 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="
+            M6,3
+            H18
+            C19.66,3 21,4.34 21,6
+            V16
+            C21,17.66 19.66,19 18,19
+            H6
+            C4.34,19 3,17.66 3,16
+            V6
+            C3,4.34 4.34,3 6,3z"/>
+
+    <!-- 앞 유리 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="
+            M6,6
+            H18
+            V11
+            H6z"/>
+
+    <!-- 문 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="
+            M9.5,11.5
+            H14.5
+            V17
+            H9.5z"/>
+
+    <!-- 왼쪽 바퀴 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="
+            M7.5,19
+            A1.5,1.5 0 1,1 7.5,22
+            A1.5,1.5 0 1,1 7.5,19z"/>
+
+    <!-- 오른쪽 바퀴 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="
+            M16.5,19
+            A1.5,1.5 0 1,1 16.5,22
+            A1.5,1.5 0 1,1 16.5,19z"/>
+</vector>

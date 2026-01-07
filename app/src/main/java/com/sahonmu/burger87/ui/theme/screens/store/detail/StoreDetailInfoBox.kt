@@ -24,10 +24,12 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sahonmu.burger87.R
 import com.sahonmu.burger87.common.DataManager
+import com.sahonmu.burger87.enums.RouteType
 import com.sahonmu.burger87.extensions.toYearMonthDay
 import com.sahonmu.burger87.ui.theme.Gray_700
 import com.sahonmu.burger87.ui.theme.Base
@@ -45,6 +47,7 @@ fun StoreDetailInfoBox(
     onInstagram: () -> Unit = { },
     onCall: () -> Unit = { },
     onShare: () -> Unit = { },
+    onRoute: (RouteType) -> Unit = { }
 ) {
     Column(
         modifier = modifier
@@ -78,7 +81,16 @@ fun StoreDetailInfoBox(
                         painter = painterResource(R.drawable.ic_share),
                         onClick = { onShare() }
                     )
-
+                    IconBorderBox(
+                        painter = painterResource(R.drawable.ic_car_route),
+                        iconSize = 22.dp,
+                        onClick = { onRoute(RouteType.Car) }
+                    )
+                    IconBorderBox(
+                        painter = painterResource(R.drawable.ic_transportation_route),
+                        iconSize = 16.dp,
+                        onClick = { onRoute(RouteType.Transportation) }
+                    )
                 }
             }
             Margin(modifier = Modifier.weight(1f))
@@ -106,22 +118,23 @@ fun StoreDetailInfoBox(
 fun IconBorderBox(
     modifier: Modifier = Modifier,
     painter: Painter,
+    iconSize: Dp = 18.dp,
     onClick: () -> Unit = { },
 ) {
     Card(
-        modifier = modifier
-            .size(30.dp)
-            .clickable { onClick() }
-            .clip(RoundedCornerShape(15.dp)),
+        modifier = modifier.size(30.dp),
         shape = RoundedCornerShape(15.dp),
         border = BorderStroke(width = 1.dp, color = Base),
         colors = CardDefaults.cardColors(
             containerColor = White
         )
     ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(15.dp)).clickable { onClick() },
+            contentAlignment = Alignment.Center
+        ) {
             Image(
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(iconSize),
                 painter = painter,
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(Base)
