@@ -124,6 +124,8 @@ fun MapScreen(
 
     var isIncludeCloseStore by rememberSaveable { mutableStateOf(true) }
     var selectedScore by rememberSaveable { mutableStateOf(0f) }
+    var selectedStoreIsOperation by rememberSaveable { mutableStateOf(true) }
+    var isNotMoveMap by rememberSaveable { mutableStateOf(false) }
 
     var showSheet by rememberSaveable { mutableStateOf(false) }
     var routeType by rememberSaveable { mutableStateOf(RouteType.Car) }
@@ -155,12 +157,16 @@ fun MapScreen(
                     return@collect
                 }
                 val store = storeMapUiState.storeList[position]
+                selectedStoreIsOperation = store.storeState.isOperation()
                 storeMapUiState.selectedStore.value = store
                 val latLng = LatLng(store.latitude, store.longitude)
                 selectedMarker?.remove()
                 val markerOption = mapViewModel.selectedMarkerOption(context = context, store = store)
                 selectedMarker = map.addMarker(markerOption)
-                map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+                if(!isNotMoveMap) {
+                    map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+                }
+                isNotMoveMap = false
             }
         }
     }
@@ -350,6 +356,11 @@ fun MapScreen(
                                 isIncludeCloseStore = isIncludeCloseStore,
                                 score = selectedScore
                             )
+                            pagerState.moveItem(
+                                scope = scope,
+                                animate = false,
+                                page = 0
+                            )
                             isCardVisible = true
                         },
                         onClear = {
@@ -364,6 +375,16 @@ fun MapScreen(
                                 isIncludeCloseStore = isIncludeCloseStore,
                                 score = selectedScore
                             )
+
+                            if(!isIncludeCloseStore && !selectedStoreIsOperation) {
+                                pagerState.moveItem(
+                                    scope = scope,
+                                    animate = false,
+                                    page = 0
+                                )
+                            } else {
+                                isNotMoveMap = true
+                            }
                             isCardVisible = true
                         }
                     )

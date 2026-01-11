@@ -116,9 +116,9 @@ class StoreViewModel @Inject constructor(
         _storeMapUiState.update { state ->
             val list =
                 if(isIncludeCloseStore)
-                    state.originList.filter { it.score == score }.sortedByDescending { it.storeState.isOperation() }
+                    state.originList.filter { it.score == score }.sortedByDescending { it.lastVisitDate }.sortedByDescending { it.storeState.isOperation() }
                 else
-                    state.originList.filter { it.score == score }.filter { it.storeState.isOperation() }
+                    state.originList.filter { it.score == score }.filter { it.storeState.isOperation() }.sortedByDescending { it.lastVisitDate }
             val boundBuilder = LatLngBounds.builder()
             list.forEach { store ->
                 val point = LatLng(store.latitude, store.longitude)
@@ -137,8 +137,9 @@ class StoreViewModel @Inject constructor(
      */
     fun resetByMap(isIncludeCloseStore: Boolean) {
         _storeMapUiState.update { state ->
+            val sortedList = state.originList.sortedByDescending { it.lastVisitDate }
             val list =
-                if(isIncludeCloseStore) state.originList else state.originList.filter { it.storeState.isOperation() }
+                if(isIncludeCloseStore) sortedList else sortedList.filter { it.storeState.isOperation() }
             val boundBuilder = LatLngBounds.builder()
             list.forEach { store ->
                 val point = LatLng(store.latitude, store.longitude)
